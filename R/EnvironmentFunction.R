@@ -58,7 +58,7 @@ Environment_Function <- function(air_temperature=0,Relative_Humidity=0, d18O_sur
   #FILLING DATAFRAME WITH ARGUMENTS VALUES
 
   # air temperature (C)
-  if(sum(air_temperature)==0)
+  if(length(air_temperature)==0)
   {
     stop("Enter Air Temperature value (in °C)")
   }
@@ -70,7 +70,7 @@ Environment_Function <- function(air_temperature=0,Relative_Humidity=0, d18O_sur
   DF_outputs$MAT <- MAT
 
   #Humidity
-  if(sum(Relative_Humidity)==0)
+  if(length(Relative_Humidity)==0)
   {
     stop("Enter Relative Humidity value between 0 and 1 (%)")
   }
