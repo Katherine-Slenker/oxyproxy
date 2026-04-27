@@ -25,13 +25,13 @@
 #' @return Data frame relative humidity estimates and values of dependent variables.
 #'
 #' @examples
-#' # herbivore_d18OBW <- RH_Function(df)
+#' # herbivore_d18OBW <- rh_function(df)
 #'
 #'
 #'
 #' @export
 ###SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
-RH_Function <- function(RH_Estimation_d18O=0, Outputs=0)
+rh_function <- function(RH_Estimation_d18O=0, Outputs=0)
 {
 
   ### PREPPING DATASET =========================================================

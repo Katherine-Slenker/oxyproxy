@@ -33,7 +33,7 @@
 #' }
 #' @examples
 #' #' # Example parameters for a herbivore diet
-#' herbivore_food <- Food_Function(
+#' herbivore_food <- food_function(
 #'   Digestibility_of_food = 0.6,
 #'   Carbohydrate_Content = 0.8,
 #'   Protein_Content = 0.1,
@@ -42,7 +42,7 @@
 #' )
 #'
 #' # Example parameters for a carnivore diet
-#' carnivore_food <- Food_Function(
+#' carnivore_food <- food_function(
 #'   Digestibility_of_food = 0.85,
 #'   Carbohydrate_Content = 0.1,
 #'   Protein_Content = 0.7,
@@ -53,7 +53,7 @@
 #' @export
 
 ##SET FUNCTION FOR FOOD
-Food_Function <- function(Digestibility_of_food=0, Carbohydrate_Content=0,
+food_function <- function(Digestibility_of_food=0, Carbohydrate_Content=0,
                           Protein_Content=0, Fat_Content=0, Free_Water_Content_Food=0,
                           changeConstant = FALSE)
 {

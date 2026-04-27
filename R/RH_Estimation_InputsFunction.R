@@ -41,7 +41,7 @@
 #'   Temperature = 25,
 #' )
 #'
-#' result <- Input_Function(
+#' result <- input_function(
 #'   species = species_data,
 #'   food = food_data,
 #'   environment = environment_data
@@ -49,7 +49,7 @@
 #'
 #' @export
 ###SET INPUT FUNCTION
-Inverse_Input_Function <- function(Species=0,Food=0,RH_Estimation_EnvironmentFunction=0)
+inverse_input_function <- function(Species=0,Food=0,RH_Estimation_EnvironmentFunction=0)
 {
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables

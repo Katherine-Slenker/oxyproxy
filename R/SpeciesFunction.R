@@ -27,14 +27,14 @@
 
 #' @examples
 #' Example for a plains bison (Bison bison bison)
-#'   result <- Species_Function(body_mass = 600, WaterEconomyIndex = 0.45)
+#'   result <- species_function(body_mass = 600, WaterEconomyIndex = 0.45)
 #'   str(out)
 #'
 #' @export
 
 ## SET FUNCTION FOR SPECIES
 
-Species_Function <- function(body_mass=0, WaterEconomyIndex=0)
+species_function <- function(body_mass=0, WaterEconomyIndex=0)
 {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================

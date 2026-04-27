@@ -18,7 +18,7 @@
 #'   }
 #'   #' @examples
 #' # Example usage with vector inputs
-#' RH_Estimation_EnvironmentFunction(
+#' rh_estimation_environment_function(
 #'   air_temperature = c(10, 20),
 #'   d18O_surfacewater = c(-2, -5)
 #' )
@@ -26,7 +26,7 @@
 #' #' @export
 ###SET FUNCTION FOR ENVIRONMENT
 
-RH_Estimation_EnvironmentFunction <- function(air_temperature=0, d18O_surfacewater=0) {
+rh_estimation_environment_function <- function(air_temperature=0, d18O_surfacewater=0) {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables

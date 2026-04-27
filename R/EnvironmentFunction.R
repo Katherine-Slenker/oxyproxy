@@ -35,7 +35,7 @@
 #'
 #' @examples
 #' # Example usage with vector inputs
-#' Environment_Function(
+#' environment_function(
 #'   air_temperature = c(10, 20),
 #'   Relative_Humidity = c(0.5, 0.75),
 #'   d18O_surfacewater = c(-2, -5)
@@ -45,7 +45,7 @@
 
 ###SET FUNCTION FOR ENVIRONMENT
 
-Environment_Function <- function(air_temperature=0,Relative_Humidity=0, d18O_surfacewater=0) {
+environment_function <- function(air_temperature=0,Relative_Humidity=0, d18O_surfacewater=0) {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
