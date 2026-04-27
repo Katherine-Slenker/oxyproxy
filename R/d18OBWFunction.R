@@ -55,19 +55,19 @@
 #' )
 #'
 #'# Calculate outputs for non-sweating species (default)
-#' herbivore_d18OBW <- d18OBW_Function(herbivore_data)
+#' herbivore_d18OBW <- d18_obw_functionn(herbivore_data)
 #'
 #'
 #' @export
 ###SET d18OBODYWATER FUNCTION
-d18OBW_Function <- function(Outputs=0)
+d18_obw_function <- function(outputs=0)
 {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables from  OUTPUTS dataframe + the three d180 computed here
   # Length = number of rows from OUTPUTS dataframe
-  DF_outputs <- Outputs
-  DF_outputs_temp <- matrix(data = 0, nrow = nrow(Outputs), ncol = 3)
+  DF_outputs <- outputs
+  DF_outputs_temp <- matrix(data = 0, nrow = nrow(outputs), ncol = 3)
   colnames(DF_outputs_temp) <- c("d18Obw", "d18Ophos", "d18Ocarb")
   DF_outputs_temp <- as.data.frame(DF_outputs_temp)
   DF_outputs <- cbind(DF_outputs, DF_outputs_temp)

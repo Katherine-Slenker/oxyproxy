@@ -3,7 +3,7 @@
 #' Given values of digestibility and macronutrient and water content of food,
 #' computes values for food-related parameters (energy, oxygen, and hydrogen content).
 #'
-#' @param Digestibility_of_food Numeric. Digestible organic matter as a
+#' @param digestibility_of_food Numeric. Digestible organic matter as a
 #' percentage of total ingested matter. High values indicate that large
 #' amounts of nutrients are extracted. Must be between 0 and 1.
 #' @param Carbohydrate_Content The percentage of carbohydrates in the diet.
@@ -33,8 +33,8 @@
 #' }
 #' @examples
 #' #' # Example parameters for a herbivore diet
-#' herbivore_food <- Food_Function(
-#'   Digestibility_of_food = 0.6,
+#' herbivore_food <- food_function(
+#'   digestibility_of_food = 0.6,
 #'   Carbohydrate_Content = 0.8,
 #'   Protein_Content = 0.1,
 #'   Fat_Content = 0.1,
@@ -42,8 +42,8 @@
 #' )
 #'
 #' # Example parameters for a carnivore diet
-#' carnivore_food <- Food_Function(
-#'   Digestibility_of_food = 0.85,
+#' carnivore_food <- food_function(
+#'   digestibility_of_food = 0.85,
 #'   Carbohydrate_Content = 0.1,
 #'   Protein_Content = 0.7,
 #'   Fat_Content = 0.2,
@@ -53,7 +53,7 @@
 #' @export
 
 ##SET FUNCTION FOR FOOD
-Food_Function <- function(Digestibility_of_food=0, Carbohydrate_Content=0,
+food_function <- function(digestibility_of_food=0, Carbohydrate_Content=0,
                           Protein_Content=0, Fat_Content=0, Free_Water_Content_Food=0,
                           changeConstant = FALSE)
 {
@@ -61,7 +61,7 @@ Food_Function <- function(Digestibility_of_food=0, Carbohydrate_Content=0,
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
-  DF_outputs <- matrix(data = 0,   nrow = length(Digestibility_of_food)*length(Carbohydrate_Content)*length(Protein_Content)*length(Fat_Content)*length(Free_Water_Content_Food),
+  DF_outputs <- matrix(data = 0,   nrow = length(digestibility_of_food)*length(Carbohydrate_Content)*length(Protein_Content)*length(Fat_Content)*length(Free_Water_Content_Food),
                        ncol = 15)
   colnames(DF_outputs) <- c("Digestibility", "EEE", "foodcarbenergy", "foodcarbcontent",
                             "Ocarb", "Hcarb", "foodproteinenergy",
@@ -86,11 +86,11 @@ Food_Function <- function(Digestibility_of_food=0, Carbohydrate_Content=0,
   DF_outputs$freeH20food <- freeH20food
 
   #Digestibility ===============================================================
-  if(sum(Digestibility_of_food)==0)
+  if(sum(digestibility_of_food)==0)
   {
     stop("Enter Digestibility value as % (0-1)")
   }
-  Digestibility <- Digestibility_of_food
+  Digestibility <- digestibility_of_food
   DF_outputs$Digestibility <- Digestibility
 
   Col_Digestibility_temp <- c()
