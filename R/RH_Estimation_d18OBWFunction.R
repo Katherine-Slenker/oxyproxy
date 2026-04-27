@@ -5,7 +5,7 @@
 #' This function converts measurements of the oxygen-18 enrichment of animal
 #' enamel-carbonate to enamel-phosphate and body water.
 #'
-#' @param d18Ocarbonate Numeric. Oxygen-18 enrichment within the carbonate (CO3)
+#' @param d18O_carbonate Numeric. Oxygen-18 enrichment within the carbonate (CO3)
 #' component of enamel bioapatite.(‰ VPDB)
 #' @return Data frame with estimated δ¹⁸Oenamel-phosphate, and δ¹⁸Obw values.
 #'
@@ -13,30 +13,30 @@
 #' # Example for a herbivore
 
 #'# Calculate outputs for d18O enamel-phosphate and body water
-#' herbivore_d18Oenamel <- d18O_enamel(d18Ocarbonate = 26)
+#' herbivore_d18Oenamel <- d18O_enamel(d18O_carbonate = 26)
 #'
 #'
 #'
 #' @export
 ##Set d18Oenamel function
-d18O_enamel <- function(d18Ocarbonate = 0)
+d18O_enamel <- function(d18O_carbonate = 0)
 {
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
-  DF_outputs <- matrix(data = 0, nrow = length(d18Ocarbonate), ncol = 3)
+  DF_outputs <- matrix(data = 0, nrow = length(d18O_carbonate), ncol = 3)
   colnames(DF_outputs) <- c("d18Ocarbonate","d18Ophosphate","d18Obodywater")
   DF_outputs <- as.data.frame(DF_outputs)
 
   #FILLING DATAFRAME WITH ARGUMENTS VALUES
   # d18Ocarbonate
-  if(sum(d18Ocarbonate)==0)
+  if(sum(d18O_carbonate)==0)
   {
 
     stop("Enter d18Ocarbonate value")
   }
-  d18Oc<- d18Ocarbonate
-  DF_outputs$d18Ocarbonate <- d18Ocarbonate
+  d18Oc<- d18O_carbonate
+  DF_outputs$d18Ocarbonate <- d18O_carbonate
 
   ## 1. d18Ophosphate and d18Obodywater calculation==============================
 

@@ -49,21 +49,21 @@
 #'
 #' @export
 ###SET INPUT FUNCTION
-inverse_input_function <- function(Species=0,Food=0,RH_Estimation_EnvironmentFunction=0)
+inverse_input_function <- function(species=0,Food=0,rh_estimation_environment_function=0)
 {
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
   # Dataframe size is determined by Species x Food x Environment dataframe
-  DF_outputs <- matrix(data = 0, nrow = nrow(Species)*nrow(Food)*nrow(Environment), ncol = ncol(Species)+ncol(Food)+ncol(Environment)+5)
-  colnames(DF_outputs) <- c(colnames(Species), colnames(Food), colnames(Environment),
+  DF_outputs <- matrix(data = 0, nrow = nrow(species)*nrow(Food)*nrow(Environment), ncol = ncol(species)+ncol(Food)+ncol(Environment)+5)
+  colnames(DF_outputs) <- c(colnames(species), colnames(Food), colnames(Environment),
                             "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood",
                             "WaterinFood")
   DF_outputs <- as.data.frame(DF_outputs)
 
   ## 1. FILLING IT WITH PREVIOUS DATA COMING FROM FOOD SPECIES AND ENVIRONMENT FUNCTION
   ### THIS FOLLOWING ALGORITHM IS MADE TO FIND ALL COMBINATION OF VALUES TO COMPUTE THE INPUTS VALUES IN THE NEXT STEPS
-  DF_outputs[,colnames(Species)] <- Species
+  DF_outputs[,colnames(species)] <- species
 
   DF_outputs_Food_temp <- c()
   for(i in 1:nrow(Food)){
