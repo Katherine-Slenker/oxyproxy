@@ -7,7 +7,7 @@
 \usage{
 humidity_oxy_proxy(
   sampled_d18Ocarbonate = 0,
-  model_air_temperature = 0,
+  model_Air_temperature = 0,
   model_d18O_Surfacewater = 0,
   model_Digestibility_of_food = 0,
   model_Carbohydrate_Content = 0,
@@ -17,36 +17,25 @@ humidity_oxy_proxy(
   model_Body_mass = 0,
   model_WaterEconomyIndex = 0,
   changeConstant = FALSE,
-  sweating_species = FALSE,
-  PlotRange = TRUE
+  SweatingSpecies = FALSE,
+  PlotRange = TRUE,
+  printinfo = FALSE
 )
 }
 \arguments{
-\item{sampled_d18Ocarbonate}{Numeric. Measured δ18O of carbonate (per mil).}
+\item{RH_Estimation_d18O}{Data frame containing value of δ¹⁸Obodywater.}
 
-\item{model_air_temperature}{Numeric. air temperature (C).}
+\item{Species}{Data frame containing species physiological parameters.}
 
-\item{model_d18O_Surfacewater}{Numeric. δ18O of surface water (per mil).}
+\item{Food}{Data frame containing species dietary parameters.}
 
-\item{model_Digestibility_of_food}{Numeric. Digestibility of food (percent).}
+\item{RH_Estimation_Environment}{Data frame containing environmental parameters
+sans relative humidity and all variables that are dependent on relative humidity.}
 
-\item{model_Carbohydrate_Content}{Numeric. Carbohydrate content of diet (percent).}
+\item{RH_Estimation_Inputs}{Data frame containing oxygen input data sans all
+variables that are dependent on relative humidity.}
 
-\item{model_Protein_Content}{Numeric. Protein content of diet (percent).}
-
-\item{model_Fat_Content}{Numeric. Fat content of diet (percent).}
-
-\item{model_Free_Water_Content_Food}{Numeric. Free water content in food (percent).}
-
-\item{model_Body_mass}{Numeric. Body mass (kg).}
-
-\item{model_WaterEconomyIndex}{Numeric. Water economy index value (ml/kJ).}
-
-\item{changeConstant}{Numeric. Calibration constant.}
-
-\item{sweating_species}{Logical. TRUE if species uses sweating.}
-
-\item{PlotRange}{Numeric vector. Range of values for plotting.}
+\item{Outputs}{Data frame containing oxygen output data.}
 }
 \value{
 Plots of estimates of relative humidity versus δ¹⁸Obodywater values
@@ -60,12 +49,10 @@ generate plots of estimates of relative humidity against measurements of
 }
 \examples{
 # Example for a herbivore
-Humidity_Estimated <- humidity_oxy_proxy(sampled_d18Ocarbonate = 20,
-model_air_temperature = 4, model_d18O_Surfacewater = -8,
+humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 20, model_Air_temperature = 4, model_d18O_Surfacewater = -8,
 model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.15,
 model_Fat_Content = 0.05, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
-model_WaterEconomyIndex = 0.4, changeConstant = FALSE, sweating_species = FALSE,
-PlotRange = TRUE)
+model_WaterEconomyIndex = 0.4, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
 
 
 }
