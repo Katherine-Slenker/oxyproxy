@@ -1,4 +1,4 @@
-Package: kohnmodel
+Package: oxyproxy
 Type: Package
 Title: Steady-state mass balance model of oxygen flux in animal body
         water
@@ -10,7 +10,7 @@ License: What license is it under?
 Encoding: UTF-8
 NeedsCompilation: no
 Packaged: 2026-02-20 14:44:01 UTC; KatieSlenker
-URL: https://github.com/Katherine-Slenker/kohnmodel
-BugReports: https://github.com/Katherine-Slenker/kohnmodel/issues
+URL: https://github.com/Katherine-Slenker/oxyproxy
+BugReports: https://github.com/Katherine-Slenker/oxyproxy/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

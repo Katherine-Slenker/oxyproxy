@@ -16,14 +16,14 @@
 #'
 #' @examples
 #' # Example for a herbivore
-#'kohn_model_function <- function(model_bodymass = 600, model_WaterEconomyIndex = 0.4, model_digestibility_of_food = 0.6,
+#'oxy_proxy_function <- function(model_bodymass = 600, model_WaterEconomyIndex = 0.4, model_digestibility_of_food = 0.6,
 #'model_Carbohydrate_Content = 0.8, model_Protein_Content= 0.1,
 #'model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.55, model_air_temperature= 4,
 #'model_Relative_Humidity = 0.67, model_d18O_surfacewater= -10, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE)
 #'
 #'
 #' @export
-kohn_model_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, model_digestibility_of_food = 0,
+oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, model_digestibility_of_food = 0,
                                model_Carbohydrate_Content = 0, model_Protein_Content= 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_air_temperature= 0,
                                model_Relative_Humidity = 0, model_d18O_surfacewater= 0, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE)
@@ -93,6 +93,6 @@ kohn_model_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0,
     }
   }
 
-  #Output of Kohn Model Function ========
+  #Output of Oxy Proxy Function ========
   return(d18O)
 }
