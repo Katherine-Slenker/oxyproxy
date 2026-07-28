@@ -6,7 +6,7 @@
 #'air and source water (dairH2OSW).
 #' @param air_temperature Numeric. Air temperature (°C) of environment. Must be
 #' non-zero value.
-#' @param d18O_surfacewater Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
+#' @param d18O_surface_water Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
 #'  Must be provided and non-zero.
 #'#' @return A data frame with all combinations of input values and 12 columns:
 #' \itemize{
@@ -18,20 +18,20 @@
 #'   }
 #'   #' @examples
 #' # Example usage with vector inputs
-#' RH_Estimation_EnvironmentFunction(
+#' rh_estimation_environment_function(
 #'   air_temperature = c(10, 20),
-#'   d18O_surfacewater = c(-2, -5)
+#'   d18O_surface_water = c(-2, -5)
 #' )
 #'
 #' #' @export
 ###SET FUNCTION FOR ENVIRONMENT
 
-RH_Estimation_EnvironmentFunction <- function(air_temperature=0, d18O_surfacewater=0) {
+rh_estimation_environment_function <- function(air_temperature=0, d18O_surface_water=0) {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
-  DF_outputs <- matrix(data = 0, nrow = length(air_temperature)*length(d18O_surfacewater), ncol = 5)
+  DF_outputs <- matrix(data = 0, nrow = length(air_temperature)*length(d18O_surface_water), ncol = 5)
   colnames(DF_outputs) <- c("airtemp", "MAT", "d18Osw", "dairH2O",
                             "dairH2OSW")
   DF_outputs <- as.data.frame(DF_outputs)
@@ -51,11 +51,11 @@ RH_Estimation_EnvironmentFunction <- function(air_temperature=0, d18O_surfacewat
   DF_outputs$MAT <- MAT
 
   # d18Osurfacewater
-  if(sum(d18O_surfacewater)==0)
+  if(sum(d18O_surface_water)==0)
   {
     stop("Enter d18Osw value")
   }
-  d18Osw <- d18O_surfacewater
+  d18Osw <- d18O_surface_water
   DF_outputs_d18Osw_temp <- c()
   for(i in 1:length(d18Osw)){
     DF_outputs_d18Osw_temp <- c(DF_outputs_d18Osw_temp, rep(d18Osw[i], nrow(DF_outputs)/length(d18Osw)))}

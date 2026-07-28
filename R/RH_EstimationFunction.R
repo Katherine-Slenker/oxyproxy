@@ -2,7 +2,7 @@
 #' on values of relative humidity that are needed to calculate oxygen-18 enrichment
 #' of animal body water.
 #'
-#'This function combines the RH_Estimation_d18O, Species, Food,
+#'This function combines the rh_estimation_d18O, Species, Food,
 #'RH_Estimation_Environment, RH_Estimation_Inputs, and Outputs functions to calculate
 #'estimates of relative humidity and variables that are dependent upon relative
 #'humidity values, including water vapor in the lungs, water vapor in  the
@@ -13,7 +13,7 @@
 #'calculations assume that the oxygen-18 enrichment of stem water is equivalent
 #'to that of surface waters.
 #'
-#' @param RH_Estimation_d18O Data frame containing value of δ¹⁸Obodywater.
+#' @param rh_estimation_d18O Data frame containing value of δ¹⁸Obodywater.
 #' @param Species Data frame containing species physiological parameters.
 #' @param Food Data frame containing species dietary parameters.
 #' @param RH_Estimation_Environment Data frame containing environmental parameters
@@ -25,17 +25,17 @@
 #' @return Data frame relative humidity estimates and values of dependent variables.
 #'
 #' @examples
-#' # herbivore_d18OBW <- RH_Function(df)
+#' # herbivore_d18OBW <- rh_function(df)
 #'
 #'
 #'
 #' @export
 ###SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
-RH_Function <- function(RH_Estimation_d18O=0, Outputs=0)
+rh_function <- function(rh_estimation_d18O=0, outputs=0)
 {
 
   ### PREPPING DATASET =========================================================
-  DF_outputs <- merge(Outputs, RH_Estimation_d18O)
+  DF_outputs <- merge(outputs, rh_estimation_d18O)
   DF_outputs_temp <- matrix(data = 0, nrow = nrow(DF_outputs), ncol = 9)
   colnames(DF_outputs_temp) <- c("Humidity", "WVinLungs", "WV",
                                  "d18OleafH2O", "d18Oleafcellulose", "dfoodO2SW",

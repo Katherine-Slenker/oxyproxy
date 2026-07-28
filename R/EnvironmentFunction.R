@@ -11,9 +11,9 @@
 #'
 #' @param air_temperature Numeric. Air temperature (°C) of environment. Must be
 #' non-zero value.
-#' @param Relative_Humidity Numeric. Relative humidity of environment. Must be
+#' @param relative_humidity Numeric. Relative humidity of environment. Must be
 #' between 0 and 1.
-#' @param d18O_surfacewater Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
+#' @param d18O_surface_water Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
 #'  Must be provided and non-zero.
 #'
 #'  #'
@@ -35,22 +35,22 @@
 #'
 #' @examples
 #' # Example usage with vector inputs
-#' Environment_Function(
+#' environment_function(
 #'   air_temperature = c(10, 20),
-#'   Relative_Humidity = c(0.5, 0.75),
-#'   d18O_surfacewater = c(-2, -5)
+#'   relative_humidity = c(0.5, 0.75),
+#'   d18O_surface_water = c(-2, -5)
 #' )
 #'
 #' @export
 
 ###SET FUNCTION FOR ENVIRONMENT
 
-Environment_Function <- function(air_temperature=0,Relative_Humidity=0, d18O_surfacewater=0) {
+environment_function <- function(air_temperature=0,relative_humidity=0, d18O_surface_water=0) {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
-  DF_outputs <- matrix(data = 0, nrow = length(air_temperature)*length(Relative_Humidity)*length(d18O_surfacewater), ncol = 12)
+  DF_outputs <- matrix(data = 0, nrow = length(air_temperature)*length(relative_humidity)*length(d18O_surface_water), ncol = 12)
   colnames(DF_outputs) <- c("airtemp", "MAT", "Humidity", "WVinLungs", "WV", "d18Osw", "dairH2O",
                             "dairH2OSW", "d18OleafH2O", "d18Oleafcellulose", "dfoodO2SW", "dfoodH2Osw")
   DF_outputs <- as.data.frame(DF_outputs)
@@ -58,7 +58,7 @@ Environment_Function <- function(air_temperature=0,Relative_Humidity=0, d18O_sur
   #FILLING DATAFRAME WITH ARGUMENTS VALUES
 
   # air temperature (C)
-  if(sum(air_temperature)==0)
+  if(length(air_temperature)==0)
   {
     stop("Enter Air Temperature value (in °C)")
   }
@@ -70,22 +70,22 @@ Environment_Function <- function(air_temperature=0,Relative_Humidity=0, d18O_sur
   DF_outputs$MAT <- MAT
 
   #Humidity
-  if(sum(Relative_Humidity)==0)
+  if(length(relative_humidity)==0)
   {
     stop("Enter Relative Humidity value between 0 and 1 (%)")
   }
-  Humidity <- Relative_Humidity
+  Humidity <- relative_humidity
   DF_outputs_Humidity_temp <- c()
   for(i in 1:length(Humidity)){
     DF_outputs_Humidity_temp <- c(DF_outputs_Humidity_temp, rep(Humidity[i], nrow(DF_outputs)/length(Humidity)))} ## the dataframe is split in X part for X values of humidity
   DF_outputs$Humidity <- DF_outputs_Humidity_temp
 
   # d18Osurfacewater
-  if(sum(d18O_surfacewater)==0)
+  if(sum(d18O_surface_water)==0)
   {
     stop("Enter d18Osw value per mil")
   }
-  d18Osw <- d18O_surfacewater
+  d18Osw <- d18O_surface_water
   DF_outputs_d18Osw_temp <- c()
   for(i in 1:length(d18Osw)){
     DF_outputs_d18Osw_temp <- c(DF_outputs_d18Osw_temp, rep(d18Osw[i], nrow(DF_outputs)/length(Humidity)/length(d18Osw)))}

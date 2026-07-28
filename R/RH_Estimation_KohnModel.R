@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' # Example for a herbivore
-#' Humidity_KohnModel <- function(sampled_d18Ocarbonate = 20, model_Air_temperature = 4, model_d18O_Surfacewater = -8,
+#' humidity_kohn_model <- function(sampled_d18Ocarbonate = 20, model_Air_temperature = 4, model_d18O_Surfacewater = -8,
 #' model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.15,
 #' model_Fat_Content = 0.05, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
 #' model_WaterEconomyIndex = 0.4, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
@@ -32,7 +32,7 @@
 ### as well as two originals functions dedicated to Humidity (last layer) and d180enamel (first layer) computation
 
 
-Humidity_KohnModel <- function(sampled_d18Ocarbonate = 0, model_Air_temperature = 0, model_d18O_Surfacewater = 0,
+humidity_kohn_model <- function(sampled_d18Ocarbonate = 0, model_Air_temperature = 0, model_d18O_Surfacewater = 0,
                                model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_Body_mass = 0,
                                model_WaterEconomyIndex = 0, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
@@ -79,7 +79,7 @@ Humidity_KohnModel <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   if(length(model_Fat_Content) == 1 & model_Fat_Content[1] == 0){model_Fat_Content <- c(0.1)}
   if(length(model_Free_Water_Content_Food) == 1 & model_Free_Water_Content_Food[1] == 0){model_Free_Water_Content_Food <- c(0.3,0.4,0.5,0.6,0.7,0.8)}
 
-  OF  <- Food_Function(Digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content,
+  OF  <- food_function(Digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content,
                        Protein_Content = model_Protein_Content, Fat_Content = model_Fat_Content, Free_Water_Content_Food = model_Free_Water_Content_Food,
                        changeConstant = FALSE)
 
@@ -87,11 +87,11 @@ Humidity_KohnModel <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   if(length(model_Body_mass) == 1 & model_Body_mass[1] == 0){model_Body_mass <- c(10, 50, 100, 200, 500, 1000, 1500)}
   if(length(model_WaterEconomyIndex) == 1 & model_WaterEconomyIndex[1] == 0){model_WaterEconomyIndex <- c(0.1, 0.2, 0.3,0.4,0.5,0.6)}
 
-  OS <- Species_Function(body_mass = model_Body_mass, WaterEconomyIndex = model_WaterEconomyIndex, changeConstant = FALSE)
+  OS <- species_function(body_mass = model_Body_mass, WaterEconomyIndex = model_WaterEconomyIndex, changeConstant = FALSE)
 
   ### Third layer : Inputs fed with first layer values then Inputs results are used in Outputs function ========
   #What is going in (e.g. drinking water, food, leaf water content, etc...)
-  OI <- Inverse_Input_Function(Species = OS, Food = OF, Environment = OEM)
+  OI <- inverse_input_function(Species = OS, Food = OF, Environment = OEM)
 
   #What is going out (e.g. feces, pee, sweat, etc...)
   OOM <- Inverse_Outputs_Function(Inputs = OI, SweatingSpecies = SweatingSpecies)

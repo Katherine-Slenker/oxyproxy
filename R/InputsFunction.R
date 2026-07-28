@@ -25,14 +25,14 @@
 #'     \item DrinkingWater - Drinking water vapor (half of ingested) (moles H2O)
 #'   }
 #' @examples
-#' result <- Input_Function(
+#' result <- input_function(
 #'   species = species_data,
 #'   food = food_data,
 #'   environment = environment_data
 #' )
 #
 #' @export
-Input_Function <- function(species = 0, food = 0, environment = 0) {
+input_function <- function(species = 0, food = 0, environment = 0) {
   if (identical(species, 0) || identical(food, 0) || identical(environment, 0)) {
     stop("All three arguments (Species, Food, Environment) must be provided as data frames")
   }

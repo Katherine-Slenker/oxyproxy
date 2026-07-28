@@ -7,7 +7,7 @@
 #'total water turnover,urinary water loss, and water vapor loss via urine (WVUrine).
 #'
 #' @param body_mass Numeric. Animal body mass (kg). Must be >0
-#' @param WaterEconomyIndex Numeric. Mass-independent measurement of water flux.
+#' @param water_economy_index Numeric. Mass-independent measurement of water flux.
 #' Ratio of water (ml) per day to energy metabolized (kJ) per day.
 #'   Must be between 0.05 and 0.6.
 #' @return Data frame with all calculated physiological variables:
@@ -27,20 +27,20 @@
 
 #' @examples
 #' Example for a plains bison (Bison bison bison)
-#'   result <- Species_Function(body_mass = 600, WaterEconomyIndex = 0.45)
+#'   result <- species_function(body_mass = 600, water_economy_index = 0.45)
 #'   str(out)
 #'
 #' @export
 
 ## SET FUNCTION FOR SPECIES
 
-Species_Function <- function(body_mass=0, WaterEconomyIndex=0)
+species_function <- function(body_mass=0, water_economy_index=0)
 {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
-  DF_outputs <- matrix(data = 0, nrow = length(body_mass)*length(WaterEconomyIndex), ncol = 15)
+  DF_outputs <- matrix(data = 0, nrow = length(body_mass)*length(water_economy_index), ncol = 15)
   colnames(DF_outputs) <- c("Bodymass", "EnergyExp", "WEI", "TranscutaneousH2OLoss", "WVSkin", "MolesO2Air", "O2FluxLungs",
                             "H2OOral", "H2ONasal", "WVNose", "TotalH2OTurnover", "UrinaryH2OLoss", "WVUrine", "Urea", "d18Oairtakenup")
   DF_outputs <- as.data.frame(DF_outputs)
@@ -54,12 +54,12 @@ Species_Function <- function(body_mass=0, WaterEconomyIndex=0)
   DF_outputs$Bodymass <- body_mass
 
 
-  if(sum(WaterEconomyIndex)==0)
+  if(sum(water_economy_index)==0)
   {
     stop("Enter Water Economy Index value between 0 and 1")
   }
 
-  WEI <- WaterEconomyIndex
+  WEI <- water_economy_index
   DF_outputs_WEI_temp <- c()
   for(i in 1:length(WEI)){
     DF_outputs_WEI_temp <- c(DF_outputs_WEI_temp, rep(WEI[i], nrow(DF_outputs)/length(WEI)))}

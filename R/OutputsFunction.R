@@ -161,7 +161,7 @@ validate_inputs <- function(inputs) {
   }
 }
 
-FECAL_WATER_MULTIPLIER <- 55.56
+fecal_water_multiplier <- 55.56
 FECAL_WATER_CONTENT <- 0.6
 WATER_VAPOR_FRACTION <- 0.5
 SWEAT_HEAT_FRACTION <- 0.75
@@ -181,7 +181,7 @@ calculate_dry_fecal_output <- function(df) {
 #' @keywords internal
 calculate_fecal_water_loss <- function(df) {
   fecal_water_ratio <- FECAL_WATER_CONTENT / (1 - FECAL_WATER_CONTENT)
-  df$DryFecalOutput * FECAL_WATER_MULTIPLIER * fecal_water_ratio
+  df$DryFecalOutput * fecal_water_multiplier * fecal_water_ratio
 }
 
 #' Calculate water vapor from fecal loss
