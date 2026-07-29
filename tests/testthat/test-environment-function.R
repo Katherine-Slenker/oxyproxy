@@ -34,4 +34,29 @@ describe("environment_function()", {
       "d18Osw"
     )
   })
+
+  it("errors on an explicit, physically valid d18O_surface_water of 0", {
+    # BUG: 0 permil is a legitimate VSMOW-relative isotope value, but the
+    # missing-argument guard is `sum(d18O_surface_water) == 0`, so a real 0
+    # is indistinguishable from an omitted argument.
+    expect_error(
+      environment_function(air_temperature = 20, relative_humidity = 0.5, d18O_surface_water = 0),
+      "d18Osw"
+    )
+  })
+
+  it("accepts relative_humidity at the upper boundary of 1", {
+    out <- environment_function(air_temperature = 20, relative_humidity = 1, d18O_surface_water = -5)
+    expect_equal(out$Humidity, 1)
+  })
+
+  it("silently accepts relative_humidity outside [0, 1] instead of erroring", {
+    out <- environment_function(air_temperature = 20, relative_humidity = 1.5, d18O_surface_water = -5)
+    expect_equal(out$Humidity, 1.5)
+  })
+
+  it("accepts negative air_temperature", {
+    out <- environment_function(air_temperature = -10, relative_humidity = 0.5, d18O_surface_water = -5)
+    expect_equal(out$MAT, -10 + 273)
+  })
 })

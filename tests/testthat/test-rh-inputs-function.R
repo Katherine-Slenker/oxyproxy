@@ -33,4 +33,10 @@ describe("inverse_input_function()", {
     energy_density <- 0.8 * 17300 + 0.1 * 20100 + 0.1 * 39700
     expect_equal(out$FoodMassIngested, 500 / (0.6 * 0.9 * energy_density))
   })
+
+  it("builds one row per species combination", {
+    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
+    out <- inverse_input_function(species = two_species, Food = mock_food(), rh_estimation_environment_function = mock_environment())
+    expect_equal(nrow(out), 2)
+  })
 })

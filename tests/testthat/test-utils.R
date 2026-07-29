@@ -55,4 +55,17 @@ describe("combine_inputs()", {
   it("errors if any argument isn't a data frame", {
     expect_error(combine_inputs(list(a = 1), data.frame(x = 1), data.frame(x = 1)))
   })
+
+  it("errors with a confusing message when one input has zero rows", {
+    # NOTE: no explicit empty-input check exists. expand.grid() over
+    # seq_len(0) for species produces zero species_row combinations while
+    # food/environment still contribute real rows, so the row counts
+    # mismatch and data.frame() errors generically rather than with a
+    # clear "empty input" message.
+    species <- data.frame(body_mass = numeric(0), foo = numeric(0))
+    food <- data.frame(digestibility = 0.6, bar = 1)
+    environment <- data.frame(air_temperature = c(0, 10), baz = 1)
+
+    expect_error(combine_inputs(species, food, environment), "differing number of rows")
+  })
 })

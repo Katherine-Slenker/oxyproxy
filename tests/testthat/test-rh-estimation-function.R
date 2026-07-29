@@ -39,4 +39,14 @@ describe("rh_function()", {
       "Humidity"
     )
   })
+
+  it("cross-joins outputs and rh_estimation_d18O when they share no columns", {
+    # merge() with no shared column names does a full Cartesian product.
+    two_outputs <- mock_outputs()[rep(1, 2), ]
+    two_outputs$MolesO2Air <- c(0.42, 0.5)
+    two_d18O <- data.frame(d18Obodywater = c(0.05, 0.06))
+
+    out <- rh_function(rh_estimation_d18O = two_d18O, outputs = two_outputs)
+    expect_equal(nrow(out), 2 * 2)
+  })
 })

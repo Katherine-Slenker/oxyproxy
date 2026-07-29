@@ -10,4 +10,18 @@ describe("humidity_oxy_proxy()", {
     expect_s3_class(out, "data.frame")
     expect_true("Humidity" %in% names(out))
   })
+
+  it("runs with vector inputs and PlotRange = TRUE without erroring", {
+    pdf(NULL)
+    on.exit(dev.off(), add = TRUE)
+
+    out <- humidity_oxy_proxy(
+      sampled_d18Ocarbonate = c(20, 22), model_Air_temperature = 4, model_d18O_Surfacewater = -8,
+      model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.1,
+      model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
+      model_WaterEconomyIndex = 0.4, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE
+    )
+
+    expect_equal(nrow(out), 2)
+  })
 })

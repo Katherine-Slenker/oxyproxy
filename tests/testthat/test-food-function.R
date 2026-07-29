@@ -1,8 +1,5 @@
 describe("food_function()", {
   it("returns one row with the documented columns for a valid herbivore diet", {
-    # BUG: Col_foodcarbcontent_temp/Col_foodproteincontent_temp/
-    # Col_foodfatcontent_temp (R/FoodFunction.R) are used before they're
-    # assigned, so any non-zero digestibility input errors.
     out <- food_function(
       digestibility_of_food = 0.6,
       Carbohydrate_Content = 0.8,
@@ -33,5 +30,30 @@ describe("food_function()", {
       food_function(Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4),
       "Digestibility"
     )
+  })
+
+  it("returns the full factorial cross for vector inputs", {
+    out <- food_function(
+      digestibility_of_food = c(0.5, 0.6), Carbohydrate_Content = c(0.7, 0.8),
+      Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4
+    )
+    expect_equal(nrow(out), 2 * 2)
+  })
+
+  it("accepts digestibility at the upper boundary of 1", {
+    out <- food_function(digestibility_of_food = 1, Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4)
+    expect_equal(out$Digestibility, 1)
+  })
+
+  it("doesn't enforce that Carbohydrate/Protein/Fat content sum to 1", {
+    # Only a caution message is printed; nothing rejects macronutrients
+    # that don't sum to 1.
+    out <- food_function(digestibility_of_food = 0.6, Carbohydrate_Content = 0.9, Protein_Content = 0.9, Fat_Content = 0.9, Free_Water_Content_Food = 0.4)
+    expect_equal(out$EEE, 0.9)
+  })
+
+  it("silently accepts a negative Fat_Content instead of erroring", {
+    out <- food_function(digestibility_of_food = 0.6, Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = -0.1, Free_Water_Content_Food = 0.4)
+    expect_equal(out$foodfatcontent, -0.1)
   })
 })

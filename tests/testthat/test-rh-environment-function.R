@@ -22,4 +22,17 @@ describe("rh_estimation_environment_function()", {
   it("errors when d18O_surface_water is left at its default of 0", {
     expect_error(rh_estimation_environment_function(air_temperature = 20), "d18Osw")
   })
+
+  it("errors on an explicit, physically valid d18O_surface_water of 0", {
+    # Same missing-vs-real-zero conflict as environment_function().
+    expect_error(
+      rh_estimation_environment_function(air_temperature = 20, d18O_surface_water = 0),
+      "d18Osw"
+    )
+  })
+
+  it("accepts negative air_temperature", {
+    out <- rh_estimation_environment_function(air_temperature = -10, d18O_surface_water = -5)
+    expect_equal(out$MAT, -10 + 273)
+  })
 })

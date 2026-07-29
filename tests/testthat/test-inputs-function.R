@@ -52,4 +52,18 @@ describe("input_function()", {
     energy_density <- 0.8 * 17300 + 0.1 * 20100 + 0.1 * 39700
     expect_equal(out$FoodMassIngested, 500 / (0.6 * 0.9 * energy_density))
   })
+
+  it("errors on an explicit zero-row data frame, not just a missing argument", {
+    empty_species <- mock_species()[0, ]
+    expect_error(
+      input_function(species = empty_species, food = mock_food(), environment = mock_environment()),
+      "cannot be empty"
+    )
+  })
+
+  it("builds one row per species x food x environment combination", {
+    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
+    out <- input_function(species = two_species, food = mock_food(), environment = mock_environment())
+    expect_equal(nrow(out), 2)
+  })
 })

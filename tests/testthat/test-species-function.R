@@ -20,4 +20,28 @@ describe("species_function()", {
   it("errors when water_economy_index is left at its default of 0", {
     expect_error(species_function(body_mass = 600), "Water Economy Index")
   })
+
+  it("returns the full factorial cross for vector inputs", {
+    out <- species_function(body_mass = c(10, 20), water_economy_index = c(0.1, 0.2, 0.3))
+    expect_equal(nrow(out), 2 * 3)
+  })
+
+  it("accepts a body mass at the small-but-nonzero boundary", {
+    out <- species_function(body_mass = 0.001, water_economy_index = 0.4)
+    expect_equal(out$Bodymass, 0.001)
+    expect_false(is.nan(out$EnergyExp))
+  })
+
+  it("silently produces NaN for negative body mass instead of erroring", {
+    # NOTE: no validation rejects negative body_mass; it passes sum(x) == 0,
+    # then 900 * (-600)^0.73 is NaN (fractional power of a negative number).
+    out <- species_function(body_mass = -600, water_economy_index = 0.4)
+    expect_true(is.nan(out$EnergyExp))
+  })
+
+  it("doesn't hang and produces NA for changeConstant = TRUE in non-interactive use", {
+    # readline() returns "" non-interactively; as.numeric("") is NA.
+    out <- species_function(body_mass = 600, water_economy_index = 0.4, changeConstant = TRUE)
+    expect_true(is.na(out$Urea))
+  })
 })

@@ -53,4 +53,18 @@ describe("outputs_function()", {
   it("warns when a value that should be non-negative is negative", {
     expect_warning(outputs_function(mock_inputs(H2OOral = -1)), "Negative values")
   })
+
+  it("doesn't warn for Digestibility at the boundaries of 0 or 1", {
+    expect_no_warning(outputs_function(mock_inputs(Digestibility = 0)))
+    expect_no_warning(outputs_function(mock_inputs(Digestibility = 1)))
+  })
+
+  it("warns when Digestibility is outside [0, 1]", {
+    expect_warning(outputs_function(mock_inputs(Digestibility = 1.5)), "Digestibility")
+    expect_warning(outputs_function(mock_inputs(Digestibility = -0.1)), "Digestibility")
+  })
+
+  it("errors on an explicit zero-row data frame", {
+    expect_error(outputs_function(mock_inputs()[0, ]), "empty")
+  })
 })
