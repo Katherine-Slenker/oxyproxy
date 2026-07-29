@@ -25,16 +25,17 @@
 #'     \item WVUrine - Water vapor loss via urine (moles H2O)
 #'     }
 
+#' @param changeConstant Boolean. Default is FALSE. If changed to TRUE, user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)
 #' @examples
-#' Example for a plains bison (Bison bison bison)
-#'   result <- species_function(body_mass = 600, water_economy_index = 0.45)
+#' # Example for a plains bison (Bison bison bison)
+#'   result <- species_function(body_mass = 600, water_economy_index = 0.45, changeConstant = FALSE)
 #'   str(out)
 #'
 #' @export
 
 ## SET FUNCTION FOR SPECIES
 
-species_function <- function(body_mass=0, water_economy_index=0)
+species_function <- function(body_mass=0, water_economy_index=0, changeConstant = FALSE)
 {
 
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
@@ -78,75 +79,64 @@ species_function <- function(body_mass=0, water_economy_index=0)
   if(changeConstant == TRUE){
     ocf_temp <- readline("Please enter a SINGLE value for oxygen utilization factor, 0.2 is the default value : ")
     ocf <- as.numeric(ocf_temp)
-    #Z-factor
-    Zfactor <- 10.5
-    #Urea
-    Urea <- 0.2
-    message("OCF, Zfactor, d8Oairtakenup, and Urea are standardized constants,
-         but can be modified by user by inputing changeConstant == TRUE")
+    Zfactor_temp <- readline("Please enter a SINGLE value for Z-factor, 10.5 is the default value : ")
+    Zfactor <- as.numeric(Zfactor_temp)
+    Urea_temp <- readline("Please enter a SINGLE value for Urea, 0.2 is the default value : ")
+    Urea <- as.numeric(Urea_temp)
+  }
 
-    if(changeConstant == TRUE){
-      ocf_temp <- readline("Please enter a SINGLE value for oxygen utilization factor, 0.2 is the default value : ")
-      ocf <- as.numeric(ocf_temp)
-      Zfactor_temp <- readline("Please enter a SINGLE value for Z-factor, 10.5 is the default value : ")
-      Zfactor <- as.numeric(Zfactor_temp)
-      Urea_temp <- readline("Please enter a SINGLE value for Urea, 0.2 is the default value : ")
-      Urea <- as.numeric(Urea_temp)
-    }
-    DF_outputs$Urea <- Urea
+  #d18Oairtakenup = 23.2 - Zfactor * (1-oxygen utilization factor)
+  d18Oairtakenup <- 23.2 - Zfactor * (1-ocf)
+  DF_outputs$d18Oairtakenup <- d18Oairtakenup
+  DF_outputs$Urea <- Urea
 
+  # 2. BODY MASS (kg) ============================================================
 
-    #d18Oairtakenup = 23.2 - Zfactor * (1-oxygen utilization factor)
-    d18Oairtakenup <- 23.2 - Zfactor * (1-ocf)
-    DF_outputs$d18Oairtakenup <- d18Oairtakenup
+  #Energy Expenditure = 900 x BodyMass^0.73
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$EnergyExp[i] <- 900 * (DF_outputs$Bodymass[i]^0.73)}
 
-    # 2. BODY MASS (kg) ============================================================
+  #TranscutaneousH2OLoss <- 1.44 * bodymass * 0.667
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$TranscutaneousH2OLoss[i] <- 1.44 * (DF_outputs$Bodymass[i]^0.667)}
 
-    #Energy Expenditure = 900 x BodyMass^0.73
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$EnergyExp[i] <- 900 * (DF_outputs$Bodymass[i]^0.73)}
+  #Skin = Transcutaneous Water Loss /2
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$WVSkin[i] <- DF_outputs$TranscutaneousH2OLoss[i]/2}
 
-    #TranscutaneousH2OLoss <- 1.44 * bodymass * 0.667
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$TranscutaneousH2OLoss[i] <- 1.44 * (DF_outputs$Bodymass[i]^0.667)}
+  #MolesO2Air <- EnergyExp * 0.00216
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$MolesO2Air[i] <- DF_outputs$EnergyExp[i] * 0.00216}
 
-    #Skin = Transcutaneous Water Loss /2
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$WVSkin[i] <- DF_outputs$TranscutaneousH2OLoss[i]/2}
+  #O2FluxLungs <- (22.4 * MolesO2Air)/(0.2*0.21)
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$O2FluxLungs[i] <- (22.4 * DF_outputs$MolesO2Air[i])/(0.2*0.21)}
 
-    #MolesO2Air <- EnergyExp * 0.00216
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$MolesO2Air[i] <- DF_outputs$EnergyExp[i] * 0.00216}
+  #H2O exhaled Orally <- O2FluxLungs * 0.5 * 0.003
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$H2OOral[i] <- (DF_outputs$O2FluxLungs[i] * 0.5 * 0.003)}
 
-    #O2FluxLungs <- (22.4 * MolesO2Air)/(0.2*0.21)
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$O2FluxLungs[i] <- (22.4 * DF_outputs$MolesO2Air[i])/(0.2*0.21)}
+  #H2O exhaled nasally <- O2FluxLungs * 0.5 * 0.5 * 0.003
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$H2ONasal[i] <- (DF_outputs$O2FluxLungs[i] * 0.5 * 0.5 * 0.003)}
 
-    #H2O exhaled Orally <- O2FluxLungs * 0.5 * 0.003
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$H2OOral[i] <- (DF_outputs$O2FluxLungs[i] * 0.5 * 0.003)}
+  #Nose = Water Exhaled Nasally/2
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$WVNose[i] <- (DF_outputs$H2ONasal[i]/2)}
 
-    #H2O exhaled nasally <- O2FluxLungs * 0.5 * 0.5 * 0.003
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$H2ONasal[i] <- (DF_outputs$O2FluxLungs[i] * 0.5 * 0.5 * 0.003)}
+  # 3. WATER ECONOMY INDEX (WEI) ====================================================
 
-    #Nose = Water Exhaled Nasally/2
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$WVNose[i] <- (DF_outputs$H2ONasal[i]/2)}
+  #TotalH2OTurnover = WEI * (EnergyExp/18)
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$TotalH2OTurnover[i] <- (DF_outputs$WEI[i] * (DF_outputs$EnergyExp[i]/18))}
 
-    # 3. WATER ECONOMY INDEX (WEI) ====================================================
+  #Urinary H2O Loss <- WEI loss as urine (0.25) * TotalH2OTurnover
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$UrinaryH2OLoss[i] <- ((0.25) * DF_outputs$TotalH2OTurnover[i])}
 
-    #TotalH2OTurnover = WEI * (EnergyExp/18)
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$TotalH2OTurnover[i] <- (DF_outputs$WEI[i] * (DF_outputs$EnergyExp[i]/18))}
+  #Urine = Urinary H2O loss /2
+  for(i in 1:nrow(DF_outputs)){
+    DF_outputs$WVUrine[i] <- (DF_outputs$UrinaryH2OLoss[i]/2)}
 
-    #Urinary H2O Loss <- WEI loss as urine (0.25) * TotalH2OTurnover
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$UrinaryH2OLoss[i] <- ((0.25) * DF_outputs$TotalH2OTurnover[i])}
-
-    #Urine = Urinary H2O loss /2
-    for(i in 1:nrow(DF_outputs)){
-      DF_outputs$WVUrine[i] <- (DF_outputs$UrinaryH2OLoss[i]/2)}
-
-    return(DF_outputs)
-  }}
+  return(DF_outputs)
+}
