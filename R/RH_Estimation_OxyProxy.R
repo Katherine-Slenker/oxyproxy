@@ -38,19 +38,8 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
                                model_WaterEconomyIndex = 0, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
 {
 
-  ### Loading functions, this section will be removed (and call of function modified) when functions are assembled into a package :
-  source("d18Oenamel_V2.R")
-  source("Modified Environment_V2.R")
-  source("Food_Function_V2.R")
-  source("Species_Function_V2.R")
-  source("Modified Inputs_V2.R")
-  source("Inverse_Outputs_CGB.R")
-  source("RelativeHumidity.R")
-
-  ### Looking for empty arguments values
-
   ### First layer : d180 Enamel ==================================================
-  d18Result <- d18Oenamel(d18Ocarbonate = sampled_d18Ocarbonate)
+  d18Result <- d18O_enamel(d18O_carbonate = sampled_d18Ocarbonate)
 
   #### Second layer : Species, Food and mod_environment ==========================
   message("WARNING : If you are missing information about species, food or environment and you struggle to fill the arguments values,
@@ -70,7 +59,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   if(length(model_Air_temperature) == 1 & model_Air_temperature[1] == 0){model_Air_temperature <- c(-40, -30,-20,-10,0,10, 20,30.40)}
   if(length(model_d18O_Surfacewater) == 1 & model_d18O_Surfacewater[1] == 0){model_d18O_Surfacewater <- c(-1, -3, -5, -7, -9, -11,-13,-15, -17, -19,-21,-23,-25)}
 
-  OEM <- Environment_Modified_Function(air_temperature = model_Air_temperature, d18O_surfacewater= model_d18O_Surfacewater)
+  OEM <- rh_estimation_environment_function(air_temperature = model_Air_temperature, d18O_surface_water = model_d18O_Surfacewater)
 
   #Food function (unmodified from base function)
   if(length(model_Digestibility_of_food) == 1 & model_Digestibility_of_food[1] == 0){model_Digestibility_of_food <- c(0.3, 0.4, 0.5, 0.6, 0.7)}
@@ -79,7 +68,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   if(length(model_Fat_Content) == 1 & model_Fat_Content[1] == 0){model_Fat_Content <- c(0.1)}
   if(length(model_Free_Water_Content_Food) == 1 & model_Free_Water_Content_Food[1] == 0){model_Free_Water_Content_Food <- c(0.3,0.4,0.5,0.6,0.7,0.8)}
 
-  OF  <- food_function(Digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content,
+  OF  <- food_function(digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content,
                        Protein_Content = model_Protein_Content, Fat_Content = model_Fat_Content, Free_Water_Content_Food = model_Free_Water_Content_Food,
                        changeConstant = FALSE)
 
@@ -87,17 +76,17 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   if(length(model_Body_mass) == 1 & model_Body_mass[1] == 0){model_Body_mass <- c(10, 50, 100, 200, 500, 1000, 1500)}
   if(length(model_WaterEconomyIndex) == 1 & model_WaterEconomyIndex[1] == 0){model_WaterEconomyIndex <- c(0.1, 0.2, 0.3,0.4,0.5,0.6)}
 
-  OS <- species_function(body_mass = model_Body_mass, WaterEconomyIndex = model_WaterEconomyIndex, changeConstant = FALSE)
+  OS <- species_function(body_mass = model_Body_mass, water_economy_index = model_WaterEconomyIndex, changeConstant = FALSE)
 
   ### Third layer : Inputs fed with first layer values then Inputs results are used in Outputs function ========
   #What is going in (e.g. drinking water, food, leaf water content, etc...)
-  OI <- inverse_input_function(Species = OS, Food = OF, Environment = OEM)
+  OI <- inverse_input_function(species = OS, Food = OF, rh_estimation_environment_function = OEM)
 
   #What is going out (e.g. feces, pee, sweat, etc...)
-  OOM <- Inverse_Outputs_Function(Inputs = OI, SweatingSpecies = SweatingSpecies)
+  OOM <- outputs_function(inputs = OI, sweating_species = SweatingSpecies)
 
   ### Final layer : Computation of the relative humidity =========================
-  RH <- RH_Function(d18Obw_inverse = d18Result, Modified_Outputs = OOM, printinfo = printinfo)
+  RH <- rh_function(rh_estimation_d18O = d18Result, outputs = OOM, printinfo = printinfo)
 
   ### Potential plots if PlotRange == TRUE =======================================
   if(PlotRange == TRUE & nrow(RH) > 1)

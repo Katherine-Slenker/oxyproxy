@@ -55,8 +55,8 @@ inverse_input_function <- function(species=0,Food=0,rh_estimation_environment_fu
   # Width = number of variables
   # Length = number of combination of results
   # Dataframe size is determined by Species x Food x Environment dataframe
-  DF_outputs <- matrix(data = 0, nrow = nrow(species)*nrow(Food)*nrow(Environment), ncol = ncol(species)+ncol(Food)+ncol(Environment)+5)
-  colnames(DF_outputs) <- c(colnames(species), colnames(Food), colnames(Environment),
+  DF_outputs <- matrix(data = 0, nrow = nrow(species)*nrow(Food)*nrow(rh_estimation_environment_function), ncol = ncol(species)+ncol(Food)+ncol(rh_estimation_environment_function)+5)
+  colnames(DF_outputs) <- c(colnames(species), colnames(Food), colnames(rh_estimation_environment_function),
                             "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood",
                             "WaterinFood")
   DF_outputs <- as.data.frame(DF_outputs)
@@ -72,16 +72,16 @@ inverse_input_function <- function(species=0,Food=0,rh_estimation_environment_fu
   DF_outputs[,colnames(Food)] <- DF_outputs_Food_temp
 
   DF_outputs_Environment_temp <- c()
-  for(i in 1:nrow(Environment)){
-    for(j in 1:(nrow(DF_outputs)/nrow(Environment)/nrow(Food))){
-      DF_outputs_Environment_temp <- rbind(DF_outputs_Environment_temp, Environment[i,])}} ## the dataframe is split in X part for X unique rows of Environment divided by number of row of Food
+  for(i in 1:nrow(rh_estimation_environment_function)){
+    for(j in 1:(nrow(DF_outputs)/nrow(rh_estimation_environment_function)/nrow(Food))){
+      DF_outputs_Environment_temp <- rbind(DF_outputs_Environment_temp, rh_estimation_environment_function[i,])}} ## the dataframe is split in X part for X unique rows of Environment divided by number of row of Food
   if(nrow(Food) > 1)
   {
-    DF_outputs[,colnames(Environment)] <- DF_outputs_Environment_temp[rep(1:nrow(DF_outputs_Environment_temp), times = (nrow(DF_outputs)/nrow(Food))),] ## temporary dataframe is replicated based on Food/Species ratio
+    DF_outputs[,colnames(rh_estimation_environment_function)] <- DF_outputs_Environment_temp[rep(1:nrow(DF_outputs_Environment_temp), times = (nrow(DF_outputs)/nrow(Food))),] ## temporary dataframe is replicated based on Food/Species ratio
   }
   if(nrow(Food) == 1)
   {
-    DF_outputs[,colnames(Environment)] <-  DF_outputs_Environment_temp
+    DF_outputs[,colnames(rh_estimation_environment_function)] <-  DF_outputs_Environment_temp
   }
 
 

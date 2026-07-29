@@ -21,6 +21,7 @@
 #' @param RH_Estimation_Inputs Data frame containing oxygen input data sans all
 #' variables that are dependent on relative humidity.
 #' @param Outputs Data frame containing oxygen output data.
+#' @param printinfo Logical. If TRUE, prints the computed Humidity values.
 #'
 #' @return Data frame relative humidity estimates and values of dependent variables.
 #'
@@ -31,7 +32,7 @@
 #'
 #' @export
 ###SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
-rh_function <- function(rh_estimation_d18O=0, outputs=0)
+rh_function <- function(rh_estimation_d18O=0, outputs=0, printinfo=FALSE)
 {
 
   ### PREPPING DATASET =========================================================
