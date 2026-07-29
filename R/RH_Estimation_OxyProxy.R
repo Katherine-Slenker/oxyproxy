@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' # Example for a herbivore
-#' humidity_kohn_model <- function(sampled_d18Ocarbonate = 20, model_Air_temperature = 4, model_d18O_Surfacewater = -8,
+#' humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 20, model_Air_temperature = 4, model_d18O_Surfacewater = -8,
 #' model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.15,
 #' model_Fat_Content = 0.05, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
 #' model_WaterEconomyIndex = 0.4, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
@@ -32,7 +32,7 @@
 ### as well as two originals functions dedicated to Humidity (last layer) and d180enamel (first layer) computation
 
 
-humidity_kohn_model <- function(sampled_d18Ocarbonate = 0, model_Air_temperature = 0, model_d18O_Surfacewater = 0,
+humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature = 0, model_d18O_Surfacewater = 0,
                                model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_Body_mass = 0,
                                model_WaterEconomyIndex = 0, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
@@ -54,7 +54,7 @@ humidity_kohn_model <- function(sampled_d18Ocarbonate = 0, model_Air_temperature
 
   #### Second layer : Species, Food and mod_environment ==========================
   message("WARNING : If you are missing information about species, food or environment and you struggle to fill the arguments values,
-         KohnModel package can try a wide range of simulated values for you. Enter 0 -zero- in the argument you want the model to inject simulated values")
+         oxyproxy package can try a wide range of simulated values for you. Enter 0 -zero- in the argument you want the model to inject simulated values")
 
   if(length(model_Air_temperature) == 1 & model_Air_temperature[1] == 0){BOOL_air_temp <- TRUE}
   if(length(model_d18O_Surfacewater) == 1 & model_d18O_Surfacewater[1] == 0){BOOL_d18O_Surfacewater <- TRUE}
