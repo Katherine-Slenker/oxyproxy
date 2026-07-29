@@ -20,13 +20,10 @@ describe("environment_function()", {
   })
 
   it("silently defaults relative_humidity to 0 instead of erroring", {
-    # NOTE: unlike digestibility_of_food/d18O_surface_water (checked via
-    # sum(x) == 0), the missing-argument guard here is
-    # `if (length(relative_humidity) == 0)`, which never trips for the default
-    # value 0 (length(0) is 1, not 0). So an omitted relative_humidity silently
-    # proceeds with Humidity = 0 rather than erroring like the other two
-    # required arguments do. Documenting the actual behavior here, not
-    # asserting it's correct.
+    # BUG: the missing-argument guard is `length(relative_humidity) == 0`,
+    # which never trips for the default value 0 (length(0) is 1). Unlike
+    # digestibility_of_food/d18O_surface_water, an omitted relative_humidity
+    # doesn't error.
     out <- environment_function(air_temperature = 20, d18O_surface_water = -5)
     expect_equal(out$Humidity, 0)
   })

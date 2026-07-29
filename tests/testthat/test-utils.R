@@ -26,14 +26,30 @@ describe("with_column()", {
 
 describe("combine_inputs()", {
   it("builds the full factorial cross of species x food x environment", {
+    # Multi-column, matching real species_function()/food_function()/
+    # environment_function() output (see next test for single-column inputs).
+    species <- data.frame(body_mass = c(10, 20), foo = 1)
+    food <- data.frame(digestibility = 0.6, bar = 1)
+    environment <- data.frame(air_temperature = c(0, 10, 20), baz = 1)
+
+    out <- combine_inputs(species, food, environment)
+
+    expect_s3_class(out, "data.frame")
+    expect_equal(nrow(out), 2 * 1 * 3)
+    expect_true(all(c("body_mass", "digestibility", "air_temperature") %in% names(out)))
+  })
+
+  it("preserves column names when an input has exactly one column", {
+    # Regression check: `df[rows, ]` without drop = FALSE collapses a
+    # single-column data frame to a bare vector, which would otherwise get
+    # named from the deparsed subsetting expression instead of kept as-is.
     species <- data.frame(body_mass = c(10, 20))
     food <- data.frame(digestibility = 0.6)
     environment <- data.frame(air_temperature = c(0, 10, 20))
 
     out <- combine_inputs(species, food, environment)
 
-    expect_s3_class(out, "data.frame")
-    expect_equal(nrow(out), 2 * 1 * 3)
+    expect_true(all(c("body_mass", "digestibility", "air_temperature") %in% names(out)))
   })
 
   it("errors if any argument isn't a data frame", {

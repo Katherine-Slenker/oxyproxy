@@ -1,11 +1,8 @@
 describe("food_function()", {
   it("returns one row with the documented columns for a valid herbivore diet", {
-    # KNOWN BUG: food_function() references Col_foodcarbcontent_temp,
-    # Col_foodproteincontent_temp, and Col_foodfatcontent_temp (R/FoodFunction.R
-    # lines 107, 114, 121) before they are ever assigned (the assignments happen
-    # later, at lines 151-154, 174-178, 198-202). This currently errors with
-    # "object 'Col_foodcarbcontent_temp' not found" for any non-zero digestibility
-    # input, i.e. every real call. Flip skip() off once that's fixed.
+    # BUG: Col_foodcarbcontent_temp/Col_foodproteincontent_temp/
+    # Col_foodfatcontent_temp (R/FoodFunction.R) are used before they're
+    # assigned, so any non-zero digestibility input errors.
     skip("food_function() errors: uses Col_foodcarbcontent_temp before it's assigned")
 
     out <- food_function(

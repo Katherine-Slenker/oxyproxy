@@ -36,15 +36,9 @@ describe("outputs_function()", {
   })
 
   it("errors for sweating species instead of computing WVSweat", {
-    # KNOWN BUG: outputs_function() picks the sweat calculator via
-    # `ifelse(sweating_species, calculate_wv_sweating, calculate_wv_not_sweating)`
-    # (R/OutputsFunction.R line 109). ifelse() is vectorized and doesn't handle
-    # function-valued yes/no branches correctly; for sweating_species = TRUE it
-    # returns something that fails inside with_column("WVSweat", sweat_function)
-    # with "replacement has 0 rows, data has 1" rather than a real value. The
-    # FALSE path happens to work because calculate_wv_not_sweating's result
-    # (all zeros) survives the coercion. The fix is a plain
-    # `if (sweating_species) calculate_wv_sweating else calculate_wv_not_sweating`.
+    # BUG: sweat_function is picked via ifelse(sweating_species, fn1, fn2)
+    # (R/OutputsFunction.R), which doesn't handle function-valued branches.
+    # Fix: a plain if/else.
     expect_error(
       outputs_function(mock_inputs(), sweating_species = TRUE),
       "replacement has 0 rows"

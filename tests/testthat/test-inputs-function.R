@@ -18,7 +18,7 @@ mock_food <- function() {
 }
 
 mock_environment <- function() {
-  data.frame(WVinLungs = 5)
+  data.frame(WVinLungs = 5, airtemp = 20)
 }
 
 describe("input_function()", {

@@ -22,6 +22,8 @@ with_column <- function(df, column_name, func) {
 #' @keywords internal
 #' @export
 combine_inputs <- function(species, food, environment) {
+  stopifnot(is.data.frame(species), is.data.frame(food), is.data.frame(environment))
+
   combinations <- expand.grid(
     species_row     = seq_len(nrow(species)),
     food_row        = seq_len(nrow(food)),
@@ -29,9 +31,9 @@ combine_inputs <- function(species, food, environment) {
   )
 
   data.frame(
-    species[combinations$species_row, ],
-    food[combinations$food_row, ],
-    environment[combinations$environment_row, ],
+    species[combinations$species_row, , drop = FALSE],
+    food[combinations$food_row, , drop = FALSE],
+    environment[combinations$environment_row, , drop = FALSE],
     FoodMassIngested = 0,
     dryOinflux = 0,
     dryHinflux = 0,

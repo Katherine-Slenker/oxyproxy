@@ -1,22 +1,14 @@
 describe("oxy_proxy_function()", {
   it("runs the full pipeline end-to-end and returns d18Obw estimates", {
-    # KNOWN BUG: oxy_proxy_function() (R/OxyProxy.R) calls its helper functions
-    # with names/arguments from an older naming convention that no longer
-    # matches the actual current functions:
-    #   - Species_Function(...)          -> actual is species_function(body_mass=, water_economy_index=)
-    #   - Food_Function(Digestibility_of_food=...) -> actual is food_function(digestibility_of_food=...)
-    #   - Environment_Function(Relative_Humidity=, d18O_surfacewater=) -> actual is
-    #     environment_function(relative_humidity=, d18O_surface_water=)
-    #   - input_function(Species=, Food=, Environment=) -> actual params are
-    #     species=, food=, environment= (lowercase)
-    #   - Outputs_Function(Inputs=, SweatingSpecies=) -> actual is
-    #     outputs_function(inputs=, sweating_species=)
-    #   - d18OBW_Function(Outputs=) -> actual is d18_obw_function(outputs=)
-    # On top of that, even with those calls fixed, species_function() and
-    # food_function() have their own blocking bugs (see test-species-function.R,
-    # test-food-function.R), so this wrapper cannot currently produce output no
-    # matter how its call sites are corrected. Flip skip() off once all of the
-    # above are fixed.
+    # BUG: oxy_proxy_function() (R/OxyProxy.R) calls helpers by stale
+    # names/args that don't match their real signatures:
+    #   Species_Function        -> species_function(body_mass=, water_economy_index=)
+    #   Food_Function            -> food_function(digestibility_of_food=...)
+    #   Environment_Function     -> environment_function(relative_humidity=, d18O_surface_water=)
+    #   input_function(Species=) -> input_function(species=, food=, environment=)
+    #   Outputs_Function         -> outputs_function(inputs=, sweating_species=)
+    #   d18OBW_Function          -> d18_obw_function(outputs=)
+    # Also blocked by food_function()'s own bug (test-food-function.R).
     skip("oxy_proxy_function() errors: internal calls use stale function/argument names")
 
     out <- oxy_proxy_function(
