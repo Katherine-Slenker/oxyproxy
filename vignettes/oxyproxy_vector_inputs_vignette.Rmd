@@ -1,0 +1,147 @@
+---
+title: "OxyProxy: Vectorized Inputs Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{OxyProxy: Vectorized Inputs Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Overview
+
+This vignette demonstrates how to run oxyproxy using **vector inputs** to explore multiple scenarios at once.
+
+Common use cases:
+- Sensitivity to air temperature and humidity
+- Differences in surface water δ18O across sites
+- Comparing diets or species masses across populations
+
+## Load the package
+
+```{r}
+library(oxyproxy)
+```
+
+## Step 1 — Provide vector environmental inputs
+
+`environment_function()` accepts vectors and returns a **full factorial** design.
+
+```{r}
+env_grid <- environment_function(
+  air_temperature = c(10, 20),
+  relative_humidity = c(0.50, 0.75),
+  d18O_surface_water = c(-2, -5)
+)
+
+env_grid
+nrow(env_grid)
+```
+
+### What to expect
+
+The number of rows equals:
+
+`length(air_temperature) * length(relative_humidity) * length(d18O_surface_water)`
+
+In this example: `2 * 2 * 2 = 8` rows.
+
+## Step 2 — Hold species and food constant, vary environment via the wrapper
+
+This is a typical sensitivity analysis: one species + one diet, many environments, run in a single
+call to `oxy_proxy_function()`.
+
+```{r}
+oxyproxy_many <- oxy_proxy_function(
+  model_bodymass = 70,
+  model_WaterEconomyIndex = 0.40,
+  model_Digestibility_of_food = 0.8,
+  model_Carbohydrate_Content = 0.5,
+  model_Protein_Content = 0.2,
+  model_Fat_Content = 0.3,
+  model_Free_Water_Content_Food = 0.7,
+  model_air_temperature = c(10, 20),
+  model_Relative_Humidity = c(0.50, 0.75),
+  model_d18O_surfacewater = c(-2, -5),
+  changeConstant = FALSE,
+  sweating_species = FALSE,
+  PlotRange = FALSE   # set TRUE if you want a plot for visualization
+)
+
+oxyproxy_many
+```
+
+## Step 3 — Explicit scenario design across species, diet, environment
+
+If you want to vary *everything* (e.g., body mass AND temperature AND diet), build a scenario table
+and run row-wise using the individual pipeline functions.
+
+```{r}
+scenarios <- expand.grid(
+  body_mass = c(20, 70),
+  air_temperature = c(10, 20),
+  relative_humidity = c(0.50, 0.75),
+  d18O_surface_water = c(-2, -5),
+  stringsAsFactors = FALSE
+)
+
+head(scenarios)
+nrow(scenarios)
+```
+
+### Execute scenarios
+
+```{r}
+run_scenario <- function(row) {
+  sp <- species_function(body_mass = row$body_mass, water_economy_index = 0.1)
+
+  fd <- food_function(
+    digestibility_of_food = 0.1,
+    Carbohydrate_Content = 0.1,
+    Protein_Content = 0.2,
+    Fat_Content = 0.7,
+    Free_Water_Content_Food = 0.1,
+    changeConstant = FALSE
+  )
+
+  env <- environment_function(
+    air_temperature = row$air_temperature,
+    relative_humidity = row$relative_humidity,
+    d18O_surface_water = row$d18O_surface_water
+  )
+
+  inputs_out <- input_function(species = sp, food = fd, environment = env)
+  outputs_out <- outputs_function(inputs = inputs_out, sweating_species = FALSE)
+  d18_obw_function(outputs = outputs_out)
+}
+
+outs <- lapply(seq_len(nrow(scenarios)), function(i) run_scenario(scenarios[i, , drop = FALSE]))
+length(outs)
+```
+
+## Summarize results into a data frame
+
+```{r}
+extract_one <- function(out) {
+  data.frame(d18Obw = out$d18Obw, stringsAsFactors = FALSE)
+}
+
+results_df <- do.call(rbind, lapply(outs, extract_one))
+results_df <- cbind(scenarios, results_df)
+
+head(results_df)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
