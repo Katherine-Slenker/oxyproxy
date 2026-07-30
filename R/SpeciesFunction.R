@@ -35,10 +35,28 @@
 
 ## SET FUNCTION FOR SPECIES
 
-species_function <- function(body_mass=0, water_economy_index=0, changeConstant = FALSE)
+species_function <- function(body_mass=numeric(0), water_economy_index=numeric(0), changeConstant = FALSE)
 {
 
-  ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
+  ## 0. VALIDATING ARGUMENTS =====================================================
+  if(length(body_mass)==0)
+  {
+    stop("Enter bodymass value in Kg")
+  }
+  if(any(body_mass <= 0))
+  {
+    stop("Enter bodymass value in Kg greater than 0")
+  }
+  if(length(water_economy_index)==0)
+  {
+    stop("Enter Water Economy Index value between 0 and 1")
+  }
+  if(any(water_economy_index <= 0))
+  {
+    stop("Enter Water Economy Index value between 0 and 1")
+  }
+
+  ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
   DF_outputs <- matrix(data = 0, nrow = length(body_mass)*length(water_economy_index), ncol = 15)
@@ -47,18 +65,8 @@ species_function <- function(body_mass=0, water_economy_index=0, changeConstant 
   DF_outputs <- as.data.frame(DF_outputs)
 
   #FILLING DATAFRAME WITH ARGUMENTS VALUES
-  if(sum(body_mass)==0)
-  {
-    stop("Enter bodymass value in Kg")
-  }
   bodymass <- body_mass
   DF_outputs$Bodymass <- body_mass
-
-
-  if(sum(water_economy_index)==0)
-  {
-    stop("Enter Water Economy Index value between 0 and 1")
-  }
 
   WEI <- water_economy_index
   DF_outputs_WEI_temp <- c()

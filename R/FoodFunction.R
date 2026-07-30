@@ -18,7 +18,7 @@
 #' @param Free_Water_Content_Food The percentage of free water of food.
 #' Must be between 0 and 1.
 #'
-#'#' @return Data frame with all calculated dietary variables:
+#' @return Data frame with all calculated dietary variables:
 #' \itemize{
 #'   \item EEE - Energy extraction efficiency (standardized to 0.9, but must be set between 0-1)
 #'   \item foodcarbenergy-Energy content of carbohydrates (17300 J/g)
@@ -32,7 +32,7 @@
 #'   \item Hfat - Hydrogen atoms per fat unit (60)
 #' }
 #' @examples
-#' #' # Example parameters for a herbivore diet
+#' # Example parameters for a herbivore diet
 #' herbivore_food <- food_function(
 #'   digestibility_of_food = 0.6,
 #'   Carbohydrate_Content = 0.8,
@@ -53,12 +53,38 @@
 #' @export
 
 ##SET FUNCTION FOR FOOD
-food_function <- function(digestibility_of_food=0, Carbohydrate_Content=0,
-                          Protein_Content=0, Fat_Content=0, Free_Water_Content_Food=0,
-                          changeConstant = FALSE)
+food_function <- function(digestibility_of_food=numeric(0), Carbohydrate_Content=numeric(0),
+                          Protein_Content=numeric(0), Fat_Content=numeric(0),
+                          Free_Water_Content_Food=numeric(0), changeConstant = FALSE)
 {
 
-  ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
+  ## 0. VALIDATING ARGUMENTS =====================================================
+  if(length(Free_Water_Content_Food)==0)
+  {
+    stop("Enter Free Water Content of Food as Proportion Value (ex: 0.4)")
+  }
+  if(length(digestibility_of_food)==0)
+  {
+    stop("Enter Digestibility value as % (0-1)")
+  }
+  if(any(digestibility_of_food <= 0))
+  {
+    stop("Enter Digestibility value as % (0-1) greater than 0")
+  }
+  if(length(Carbohydrate_Content)==0)
+  {
+    stop("Enter Carbohydrate Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if(length(Protein_Content)==0)
+  {
+    stop("Enter Protein Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if(length(Fat_Content)==0)
+  {
+    stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+
+  ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
   DF_outputs <- matrix(data = 0,   nrow = length(digestibility_of_food)*length(Carbohydrate_Content)*length(Protein_Content)*length(Fat_Content)*length(Free_Water_Content_Food),
@@ -77,19 +103,11 @@ food_function <- function(digestibility_of_food=0, Carbohydrate_Content=0,
          but it can be modified by user by modifying the argument changeConstant to TRUE")
 
   # free H2O content of food ===================================================
-  if(sum(Free_Water_Content_Food)==0)
-  {
-    stop("Enter Free Water Content of Food as Proportion Value (ex: 0.4)")
-  }
   freeH20food <- Free_Water_Content_Food
 
   DF_outputs$freeH20food <- freeH20food
 
   #Digestibility ===============================================================
-  if(sum(digestibility_of_food)==0)
-  {
-    stop("Enter Digestibility value as % (0-1)")
-  }
   Digestibility <- digestibility_of_food
   DF_outputs$Digestibility <- Digestibility
 
@@ -99,22 +117,8 @@ food_function <- function(digestibility_of_food=0, Carbohydrate_Content=0,
   DF_outputs$Digestibility <- Col_Digestibility_temp
 
   #Macronutrient Content ===============================================================
-  if(sum(Carbohydrate_Content)==0)
-  {
-    stop("Enter Carbohydrate Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
-  }
   foodcarbcontent <- Carbohydrate_Content
-
-  if(sum(Protein_Content)==0)
-  {
-    stop("Enter Protein Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
-  }
   foodproteincontent <- Protein_Content
-
-  if(sum(Fat_Content)==0)
-  {
-    stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
-  }
   foodfatcontent <- Fat_Content
 
   ## 1. CONSTANTS ================================================================
