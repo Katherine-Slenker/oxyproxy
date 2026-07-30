@@ -4,6 +4,10 @@ template:
   bootstrap: 5
 
 reference:
+- title: Overview
+  contents:
+  - oxyproxy-package
+
 - title: d18O body water model
   desc: >
     Estimate oxygen-18 enrichment of animal body water from oxygen inputs

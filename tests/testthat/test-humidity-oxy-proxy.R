@@ -1,4 +1,40 @@
 describe("humidity_oxy_proxy()", {
+  it("reports which arguments had Herbivore Standard values substituted", {
+    expect_message(
+      humidity_oxy_proxy(
+        sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
+        model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0, model_Protein_Content = 0.1,
+        model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
+        model_WaterEconomyIndex = 0.4, PlotRange = FALSE
+      ),
+      "model_Carbohydrate_Content"
+    )
+  })
+
+  it("names every substituted argument, not just the first", {
+    expect_message(
+      humidity_oxy_proxy(
+        sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
+        model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
+        model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
+        model_WaterEconomyIndex = 0.4, PlotRange = FALSE
+      ),
+      "model_Carbohydrate_Content.*model_Protein_Content"
+    )
+  })
+
+  it("reports nothing when every argument is supplied", {
+    expect_no_message(
+      humidity_oxy_proxy(
+        sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
+        model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.1,
+        model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
+        model_WaterEconomyIndex = 0.4, PlotRange = FALSE
+      ),
+      message = "model_"
+    )
+  })
+
   it("runs the full inverse pipeline end-to-end and returns Humidity estimates", {
     out <- humidity_oxy_proxy(
       sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
