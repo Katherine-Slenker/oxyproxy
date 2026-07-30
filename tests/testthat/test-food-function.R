@@ -3,8 +3,6 @@ describe("food_function()", {
     # BUG: Col_foodcarbcontent_temp/Col_foodproteincontent_temp/
     # Col_foodfatcontent_temp (R/FoodFunction.R) are used before they're
     # assigned, so any non-zero digestibility input errors.
-    skip("food_function() errors: uses Col_foodcarbcontent_temp before it's assigned")
-
     out <- food_function(
       digestibility_of_food = 0.6,
       Carbohydrate_Content = 0.8,

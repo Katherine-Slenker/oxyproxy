@@ -104,21 +104,18 @@ food_function <- function(digestibility_of_food=0, Carbohydrate_Content=0,
     stop("Enter Carbohydrate Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
   }
   foodcarbcontent <- Carbohydrate_Content
-  DF_outputs$foodcarbcontent <- Col_foodcarbcontent_temp
 
   if(sum(Protein_Content)==0)
   {
     stop("Enter Protein Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
   }
   foodproteincontent <- Protein_Content
-  DF_outputs$foodproteincontent <- Col_foodproteincontent_temp
 
   if(sum(Fat_Content)==0)
   {
     stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
   }
   foodfatcontent <- Fat_Content
-  DF_outputs$foodfatcontent <- Col_foodfatcontent_temp
 
   ## 1. CONSTANTS ================================================================
   #energy extraction efficiency
@@ -152,6 +149,7 @@ food_function <- function(digestibility_of_food=0, Carbohydrate_Content=0,
   for(i in 1:length(foodcarbcontent)){
     Col_foodcarbcontent_temp <- c(Col_foodcarbcontent_temp, rep(foodcarbcontent[i], nrow(DF_outputs)/length(Digestibility)/length(foodcarbcontent)))}
   Col_foodcarbcontent_temp <- rep(Col_foodcarbcontent_temp, length(Digestibility))
+  DF_outputs$foodcarbcontent <- Col_foodcarbcontent_temp
 
 
 
