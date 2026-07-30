@@ -40,4 +40,33 @@ describe("inverse_input_function()", {
     out <- inverse_input_function(species = two_species, food = mock_food(), environment = mock_environment())
     expect_equal(nrow(out), 2)
   })
+
+  it("builds the full factorial when food rows outnumber species x environment", {
+    # Shapes where nrow(species) * nrow(environment) < nrow(food) are the case the
+    # row-at-a-time construction got wrong; it under-filled and errored.
+    three_food <- mock_food()[rep(1, 3), , drop = FALSE]
+    three_food$Digestibility <- c(0.4, 0.5, 0.6)
+
+    out <- inverse_input_function(
+      species = mock_species(), food = three_food, environment = mock_environment()
+    )
+
+    expect_equal(nrow(out), 3)
+    expect_setequal(out$Digestibility, c(0.4, 0.5, 0.6))
+  })
+
+  it("pairs every species, food, and environment row exactly once", {
+    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
+    two_food <- mock_food()[rep(1, 2), , drop = FALSE]
+    two_food$Digestibility <- c(0.5, 0.6)
+    two_env <- rh_estimation_environment_function(
+      air_temperature = c(10, 20), d18O_surface_water = -5
+    )
+
+    out <- inverse_input_function(species = two_species, food = two_food, environment = two_env)
+
+    expect_equal(nrow(out), 2 * 2 * 2)
+    combos <- paste(out$EnergyExp, out$Digestibility, out$airtemp)
+    expect_equal(sort(combos), sort(unique(combos)))
+  })
 })
