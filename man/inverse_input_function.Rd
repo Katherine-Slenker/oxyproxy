@@ -4,20 +4,20 @@
 \alias{inverse_input_function}
 \title{Calculate all variables of oxygen input from physiology, diet, and environment.}
 \usage{
-inverse_input_function(
-  species = 0,
-  Food = 0,
-  rh_estimation_environment_function = 0
-)
+inverse_input_function(species = 0, food = 0, environment = 0)
 }
 \arguments{
-\item{Food}{Data frame containing food composition data.
+\item{species}{Data frame containing species physiological parameters.
+Must include: EnergyExp, TotalH2OTurnover}
+
+\item{food}{Data frame containing food composition data.
 Must include: Digestibility, EEE, foodcarbcontent, foodcarbenergy, Ocarb,
 Hcarb, foodproteincontent, foodproteinenergy, Oprotein, Hprotein,
 foodfatcontent, foodfatenergy, Ofat, Hfat,  and freeH20food.}
 
-\item{Species}{Data frame containing species physiological parameters.
-Must include: EnergyExp, TotalH2OTurnover, WVinLungs}
+\item{environment}{Data frame from rh_estimation_environment_function(),
+i.e. environmental parameters excluding relative humidity and everything
+derived from it.}
 }
 \value{
 Data frame with all input combinations and calculated physiological
@@ -38,8 +38,7 @@ oxygen inputs to generate estimates of relative humidity.
 # Create example data
 species_data <- data.frame(
   EnergyExp = 5000,
-  TotalH2OTurnover = 1000,
-  WVinLungs = 50
+  TotalH2OTurnover = 1000
 )
 
 food_data <- data.frame(
@@ -53,11 +52,13 @@ food_data <- data.frame(
   freeH20food = 0.75
 )
 
-environment_data <- data.frame(
-  Temperature = 25,
+# As returned by rh_estimation_environment_function()
+environment_data <- rh_estimation_environment_function(
+  air_temperature = 25,
+  d18O_surface_water = -5
 )
 
-result <- input_function(
+result <- inverse_input_function(
   species = species_data,
   food = food_data,
   environment = environment_data
