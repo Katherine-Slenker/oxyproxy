@@ -3,7 +3,7 @@
 \name{humidity_oxy_proxy}
 \alias{humidity_oxy_proxy}
 \title{Plots estimated values of relative humidity converted from measurements of
-δ¹⁸Oenamel-carbonate.}
+d18Oenamel-carbonate.}
 \usage{
 humidity_oxy_proxy(
   sampled_d18Ocarbonate = 0,
@@ -23,36 +23,64 @@ humidity_oxy_proxy(
 )
 }
 \arguments{
-\item{RH_Estimation_d18O}{Data frame containing value of δ¹⁸Obodywater.}
+\item{sampled_d18Ocarbonate}{Numeric. Measured d18O of enamel carbonate
+(per mil VSMOW).}
 
-\item{Species}{Data frame containing species physiological parameters.}
+\item{model_air_temperature}{Numeric. Air temperature in deg C. Enter 0 to
+have the model substitute a range of simulated values.}
 
-\item{Food}{Data frame containing species dietary parameters.}
+\item{model_d18O_Surfacewater}{Numeric. d18O of local surface water
+(per mil VSMOW). Enter 0 to substitute simulated values.}
 
-\item{RH_Estimation_Environment}{Data frame containing environmental parameters
-sans relative humidity and all variables that are dependent on relative humidity.}
+\item{model_Digestibility_of_food}{Numeric. Digestible organic matter as a
+proportion of ingested matter. Enter 0 to substitute simulated values.}
 
-\item{RH_Estimation_Inputs}{Data frame containing oxygen input data sans all
-variables that are dependent on relative humidity.}
+\item{model_Carbohydrate_Content}{Numeric. Proportion of carbohydrate in the diet.}
 
-\item{Outputs}{Data frame containing oxygen output data.}
+\item{model_Protein_Content}{Numeric. Proportion of protein in the diet.}
+
+\item{model_Fat_Content}{Numeric. Proportion of fat in the diet.}
+
+\item{model_Free_Water_Content_Food}{Numeric. Proportion of free water in food.}
+
+\item{model_Body_mass}{Numeric. Body mass in kg.}
+
+\item{model_WaterEconomyIndex}{Numeric. Water economy index (ml/kJ).}
+
+\item{changeConstant}{Logical. If TRUE, prompts for values overriding the
+model constants. Defaults to FALSE.}
+
+\item{sweating_species}{Logical. Whether the species sweats. Defaults to FALSE.}
+
+\item{PlotRange}{Logical. If TRUE, plots relative humidity against any
+argument given more than one value. Defaults to TRUE.}
+
+\item{printinfo}{Logical. If TRUE, prints the computed humidity values.}
 }
 \value{
-Plots of estimates of relative humidity versus δ¹⁸Obodywater values
+Plots of estimates of relative humidity versus d18Obodywater values
 and user-input variables.
 }
 \description{
 This function combines the RH_Estimation_d18O, Species, Food,
 RH_Estimation_Environment, RH_Estimation_Inputs, and Outputs functions to
 generate plots of estimates of relative humidity against measurements of
-δ¹⁸Oenamel-carbonate (converted to δ¹⁸Obodywater) and variables input by user.
+d18Oenamel-carbonate (converted to d18Obodywater) and variables input by user.
 }
 \examples{
-# Example for a herbivore
-humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
-model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.15,
-model_Fat_Content = 0.05, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
-model_WaterEconomyIndex = 0.4, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE)
-
+# Estimate relative humidity from a measured enamel carbonate value
+humidity_oxy_proxy(
+  sampled_d18Ocarbonate = 20,
+  model_air_temperature = 4,
+  model_d18O_Surfacewater = -8,
+  model_Digestibility_of_food = 0.6,
+  model_Carbohydrate_Content = 0.8,
+  model_Protein_Content = 0.15,
+  model_Fat_Content = 0.05,
+  model_Free_Water_Content_Food = 0.5,
+  model_Body_mass = 500,
+  model_WaterEconomyIndex = 0.4,
+  PlotRange = FALSE
+)
 
 }

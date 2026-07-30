@@ -6,8 +6,8 @@
 #' enamel-carbonate to enamel-phosphate and body water.
 #'
 #' @param d18O_carbonate Numeric. Oxygen-18 enrichment within the carbonate (CO3)
-#' component of enamel bioapatite.(‰ VPDB)
-#' @return Data frame with estimated δ¹⁸Oenamel-phosphate, and δ¹⁸Obw values.
+#' component of enamel bioapatite.(per mil VPDB)
+#' @return Data frame with estimated d18Oenamel-phosphate, and d18Obw values.
 #'
 #' @examples
 #' # Example for a herbivore

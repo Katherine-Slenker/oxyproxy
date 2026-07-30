@@ -10,10 +10,10 @@ d18O_enamel(d18O_carbonate = numeric(0))
 }
 \arguments{
 \item{d18O_carbonate}{Numeric. Oxygen-18 enrichment within the carbonate (CO3)
-component of enamel bioapatite.(‰ VPDB)}
+component of enamel bioapatite.(per mil VPDB)}
 }
 \value{
-Data frame with estimated δ¹⁸Oenamel-phosphate, and δ¹⁸Obw values.
+Data frame with estimated d18Oenamel-phosphate, and d18Obw values.
 }
 \description{
 This function converts measurements of the oxygen-18 enrichment of animal

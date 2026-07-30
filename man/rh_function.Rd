@@ -9,21 +9,13 @@ of animal body water.}
 rh_function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE)
 }
 \arguments{
-\item{rh_estimation_d18O}{Data frame containing value of δ¹⁸Obodywater.}
+\item{rh_estimation_d18O}{Data frame containing d18Obodywater values, as
+returned by \code{\link[=d18O_enamel]{d18O_enamel()}}.}
+
+\item{outputs}{Data frame of oxygen output data, as returned by
+\code{\link[=outputs_function]{outputs_function()}}.}
 
 \item{printinfo}{Logical. If TRUE, prints the computed Humidity values.}
-
-\item{Species}{Data frame containing species physiological parameters.}
-
-\item{Food}{Data frame containing species dietary parameters.}
-
-\item{RH_Estimation_Environment}{Data frame containing environmental parameters
-sans relative humidity and all variables that are dependent on relative humidity.}
-
-\item{RH_Estimation_Inputs}{Data frame containing oxygen input data sans all
-variables that are dependent on relative humidity.}
-
-\item{Outputs}{Data frame containing oxygen output data.}
 }
 \value{
 Data frame relative humidity estimates and values of dependent variables.
