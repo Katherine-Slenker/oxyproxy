@@ -15,3 +15,4 @@ Numeric vector of free water in food (moles H2O)
 \description{
 Calculate free water in food
 }
+\keyword{internal}
