@@ -6,7 +6,7 @@
 the carbonate (CO3) component of animal tooth enamel to analogous values
 representing isotopic enrichment of animal body water.}
 \usage{
-d18O_enamel(d18O_carbonate = 0)
+d18O_enamel(d18O_carbonate = numeric(0))
 }
 \arguments{
 \item{d18O_carbonate}{Numeric. Oxygen-18 enrichment within the carbonate (CO3)

@@ -5,22 +5,20 @@
 \title{Calculates water and oxygen fluxes as affected by environmental conditions}
 \usage{
 environment_function(
-  air_temperature = 0,
-  relative_humidity = 0,
-  d18O_surface_water = 0
+  air_temperature = numeric(0),
+  relative_humidity = numeric(0),
+  d18O_surface_water = numeric(0)
 )
 }
 \arguments{
 \item{air_temperature}{Numeric. Air temperature (°C) of environment. Must be
-non-zero value.}
+provided; 0 and negative values are valid.}
 
 \item{relative_humidity}{Numeric. Relative humidity of environment. Must be
 between 0 and 1.}
 
 \item{d18O_surface_water}{Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
-Must be provided and non-zero.
-
-#'}
+Must be provided.}
 }
 \value{
 A data frame with all combinations of input values and 12 columns:
