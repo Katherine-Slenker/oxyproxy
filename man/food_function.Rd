@@ -5,11 +5,11 @@
 \title{Calculates water and oxygen fluxes as affected by species diet}
 \usage{
 food_function(
-  digestibility_of_food = 0,
-  Carbohydrate_Content = 0,
-  Protein_Content = 0,
-  Fat_Content = 0,
-  Free_Water_Content_Food = 0,
+  digestibility_of_food = numeric(0),
+  Carbohydrate_Content = numeric(0),
+  Protein_Content = numeric(0),
+  Fat_Content = numeric(0),
+  Free_Water_Content_Food = numeric(0),
   changeConstant = FALSE
 )
 }
@@ -31,9 +31,10 @@ Must be between 0 and 1. This value should sum with protein and fat
 content to equal 1.}
 
 \item{Free_Water_Content_Food}{The percentage of free water of food.
-Must be between 0 and 1.
-
-#' @return Data frame with all calculated dietary variables:
+Must be between 0 and 1.}
+}
+\value{
+Data frame with all calculated dietary variables:
 \itemize{
 \item EEE - Energy extraction efficiency (standardized to 0.9, but must be set between 0-1)
 \item foodcarbenergy-Energy content of carbohydrates (17300 J/g)
@@ -45,14 +46,14 @@ Must be between 0 and 1.
 \item foodfatenergy - Energy content of fats (39700 J/g)
 \item Ofat - Oxygen atoms per fat unit (2)
 \item Hfat - Hydrogen atoms per fat unit (60)
-}}
+}
 }
 \description{
 Given values of digestibility and macronutrient and water content of food,
 computes values for food-related parameters (energy, oxygen, and hydrogen content).
 }
 \examples{
-#' # Example parameters for a herbivore diet
+# Example parameters for a herbivore diet
 herbivore_food <- food_function(
   digestibility_of_food = 0.6,
   Carbohydrate_Content = 0.8,

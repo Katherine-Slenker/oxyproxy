@@ -19,19 +19,53 @@ describe("environment_function()", {
     expect_equal(out$MAT, 20 + 273)
   })
 
-  it("silently defaults relative_humidity to 0 instead of erroring", {
-    # BUG: the missing-argument guard is `length(relative_humidity) == 0`,
-    # which never trips for the default value 0 (length(0) is 1). Unlike
-    # digestibility_of_food/d18O_surface_water, an omitted relative_humidity
-    # doesn't error.
-    out <- environment_function(air_temperature = 20, d18O_surface_water = -5)
-    expect_equal(out$Humidity, 0)
+  it("errors when relative_humidity is omitted", {
+    expect_error(
+      environment_function(air_temperature = 20, d18O_surface_water = -5),
+      "Relative Humidity"
+    )
   })
 
-  it("errors when d18O_surface_water is left at its default of 0", {
+  it("errors when d18O_surface_water is omitted", {
     expect_error(
       environment_function(air_temperature = 20, relative_humidity = 0.5),
       "d18Osw"
     )
+  })
+
+  it("accepts an explicit d18O_surface_water of 0 (a valid VSMOW value)", {
+    out <- environment_function(air_temperature = 20, relative_humidity = 0.5, d18O_surface_water = 0)
+    expect_equal(out$d18Osw, 0)
+  })
+
+  it("accepts an explicit air_temperature of 0 C", {
+    out <- environment_function(air_temperature = 0, relative_humidity = 0.5, d18O_surface_water = -5)
+    expect_equal(out$airtemp, 0)
+    expect_equal(out$MAT, 273)
+  })
+
+  it("accepts seq() inputs whose values sum to zero", {
+    temps <- seq(-10, 10, by = 5)
+    expect_equal(sum(temps), 0) # the case the old sum()-based guard rejected
+
+    out <- environment_function(
+      air_temperature = temps, relative_humidity = 0.5, d18O_surface_water = seq(-8, 8, by = 4)
+    )
+    expect_equal(nrow(out), length(temps) * 1 * 5)
+  })
+
+  it("accepts relative_humidity at the upper boundary of 1", {
+    out <- environment_function(air_temperature = 20, relative_humidity = 1, d18O_surface_water = -5)
+    expect_equal(out$Humidity, 1)
+  })
+
+  it("silently accepts relative_humidity outside [0, 1] instead of erroring", {
+    out <- environment_function(air_temperature = 20, relative_humidity = 1.5, d18O_surface_water = -5)
+    expect_equal(out$Humidity, 1.5)
+  })
+
+  it("accepts negative air_temperature", {
+    out <- environment_function(air_temperature = -10, relative_humidity = 0.5, d18O_surface_water = -5)
+    expect_equal(out$MAT, -10 + 273)
   })
 })

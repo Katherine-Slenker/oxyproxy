@@ -19,7 +19,7 @@
 #'
 #' @export
 ##Set d18Oenamel function
-d18O_enamel <- function(d18O_carbonate = 0)
+d18O_enamel <- function(d18O_carbonate = numeric(0))
 {
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
@@ -30,7 +30,7 @@ d18O_enamel <- function(d18O_carbonate = 0)
 
   #FILLING DATAFRAME WITH ARGUMENTS VALUES
   # d18Ocarbonate
-  if(sum(d18O_carbonate)==0)
+  if(length(d18O_carbonate)==0)
   {
 
     stop("Enter d18Ocarbonate value")

@@ -4,15 +4,20 @@
 \alias{rh_estimation_environment_function}
 \title{Calculates water and oxygen fluxes as affected by environmental conditions.}
 \usage{
-rh_estimation_environment_function(air_temperature = 0, d18O_surface_water = 0)
+rh_estimation_environment_function(
+  air_temperature = numeric(0),
+  d18O_surface_water = numeric(0)
+)
 }
 \arguments{
 \item{air_temperature}{Numeric. Air temperature (°C) of environment. Must be
-non-zero value.}
+provided; 0 and negative values are valid.}
 
 \item{d18O_surface_water}{Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
-Must be provided and non-zero.
-#' @return A data frame with all combinations of input values and 12 columns:
+Must be provided; 0 and negative values are valid.}
+}
+\value{
+A data frame with all combinations of input values and 5 columns:
 \itemize{
 \item airtemp - Air temperature (°C)
 \item MAT - Mean annual temperature (°K)
@@ -20,18 +25,18 @@ Must be provided and non-zero.
 \item dairH2O - δ¹⁸O enirchment of inhaled air (‰)
 \item dairH2OSW - Difference between air and surface water δ¹⁸O enrichment (‰)
 }
-#' @examplesExample usage with vector inputs
-
-rh_estimation_environment_function(
-air_temperature = c(10, 20),
-d18O_surface_water = c(-2, -5)
-)
-
-#' @export}
 }
 \description{
 Given values air temperature and oxygen-18 enrichment of surface waters, and
 computes values for mean annual temperature (MAT), oxygen-18 enrichment
 of inhaled air (dairH2O), and the difference in oxygen-18 enrichment between
 air and source water (dairH2OSW).
+}
+\examples{
+# Example usage with vector inputs
+rh_estimation_environment_function(
+  air_temperature = c(10, 20),
+  d18O_surface_water = c(-2, -5)
+)
+
 }

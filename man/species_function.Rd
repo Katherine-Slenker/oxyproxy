@@ -5,8 +5,8 @@
 \title{Calculates water and oxygen fluxes as affected by species physiology.}
 \usage{
 species_function(
-  body_mass = 0,
-  water_economy_index = 0,
+  body_mass = numeric(0),
+  water_economy_index = numeric(0),
   changeConstant = FALSE
 )
 }

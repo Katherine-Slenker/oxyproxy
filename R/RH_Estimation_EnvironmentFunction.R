@@ -5,10 +5,11 @@
 #'of inhaled air (dairH2O), and the difference in oxygen-18 enrichment between
 #'air and source water (dairH2OSW).
 #' @param air_temperature Numeric. Air temperature (°C) of environment. Must be
-#' non-zero value.
+#' provided; 0 and negative values are valid.
 #' @param d18O_surface_water Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
-#'  Must be provided and non-zero.
-#'#' @return A data frame with all combinations of input values and 12 columns:
+#'  Must be provided; 0 and negative values are valid.
+#'
+#' @return A data frame with all combinations of input values and 5 columns:
 #' \itemize{
 #'   \item airtemp - Air temperature (°C)
 #'   \item MAT - Mean annual temperature (°K)
@@ -16,19 +17,30 @@
 #'   \item dairH2O - δ¹⁸O enirchment of inhaled air (‰)
 #'   \item dairH2OSW - Difference between air and surface water δ¹⁸O enrichment (‰)
 #'   }
-#'   #' @examples
+#'
+#' @examples
 #' # Example usage with vector inputs
 #' rh_estimation_environment_function(
 #'   air_temperature = c(10, 20),
 #'   d18O_surface_water = c(-2, -5)
 #' )
 #'
-#' #' @export
+#' @export
 ###SET FUNCTION FOR ENVIRONMENT
 
-rh_estimation_environment_function <- function(air_temperature=0, d18O_surface_water=0) {
+rh_estimation_environment_function <- function(air_temperature=numeric(0), d18O_surface_water=numeric(0)) {
 
-  ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
+  ## 0. VALIDATING ARGUMENTS =====================================================
+  if(length(air_temperature)==0)
+  {
+    stop("Enter Air Temperature value")
+  }
+  if(length(d18O_surface_water)==0)
+  {
+    stop("Enter d18Osw value")
+  }
+
+  ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results
   DF_outputs <- matrix(data = 0, nrow = length(air_temperature)*length(d18O_surface_water), ncol = 5)
@@ -39,10 +51,6 @@ rh_estimation_environment_function <- function(air_temperature=0, d18O_surface_w
   #FILLING DATAFRAME WITH ARGUMENTS VALUES
 
   # air temperature (C)
-  if(sum(air_temperature)==0)
-  {
-    stop("Enter Air Temperature value")
-  }
   airtemp <- air_temperature
   DF_outputs$airtemp <- airtemp
 
@@ -51,10 +59,6 @@ rh_estimation_environment_function <- function(air_temperature=0, d18O_surface_w
   DF_outputs$MAT <- MAT
 
   # d18Osurfacewater
-  if(sum(d18O_surface_water)==0)
-  {
-    stop("Enter d18Osw value")
-  }
   d18Osw <- d18O_surface_water
   DF_outputs_d18Osw_temp <- c()
   for(i in 1:length(d18Osw)){
