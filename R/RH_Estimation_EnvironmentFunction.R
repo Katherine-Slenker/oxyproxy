@@ -60,7 +60,7 @@ rh_estimation_environment_function <- function(air_temperature = numeric(0), d18
   # d18Osurfacewater
   d18Osw <- d18O_surface_water
   DF_outputs_d18Osw_temp <- c()
-  for (i in 1:length(d18Osw)) {
+  for (i in seq_along(d18Osw)) {
     DF_outputs_d18Osw_temp <- c(DF_outputs_d18Osw_temp, rep(d18Osw[i], nrow(DF_outputs) / length(d18Osw)))
   }
   DF_outputs$d18Osw <- DF_outputs_d18Osw_temp
@@ -69,12 +69,12 @@ rh_estimation_environment_function <- function(air_temperature = numeric(0), d18
   ### 1. ADDING D18O SURFACE WATER TO CALCULATION ===============================
 
   # dairH2O <- d18Osw - 2.644 + 3206/MAT - 1.534 * 10^6 / MAT^2
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dairH2O[i] <- DF_outputs$d18Osw[i] - 2.644 + 3206 / DF_outputs$MAT[i] - 1.534 * (10^6) / (DF_outputs$MAT[i]^2)
   }
 
   # dairH2OSW <- dairH2O -d18Osw
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dairH2OSW[i] <- DF_outputs$dairH2O[i] - DF_outputs$d18Osw[i]
   }
 

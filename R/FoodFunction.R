@@ -110,7 +110,7 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   DF_outputs$Digestibility <- Digestibility
 
   Col_Digestibility_temp <- c()
-  for (i in 1:length(Digestibility)) {
+  for (i in seq_along(Digestibility)) {
     Col_Digestibility_temp <- c(Col_Digestibility_temp, rep(Digestibility[i], nrow(DF_outputs) / length(Digestibility)))
   } ## the dataframe is split in X part for X values of Digestibility
   DF_outputs$Digestibility <- Col_Digestibility_temp
@@ -150,7 +150,7 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
 
 
   Col_foodcarbcontent_temp <- c()
-  for (i in 1:length(foodcarbcontent)) {
+  for (i in seq_along(foodcarbcontent)) {
     Col_foodcarbcontent_temp <- c(Col_foodcarbcontent_temp, rep(foodcarbcontent[i], nrow(DF_outputs) / length(Digestibility) / length(foodcarbcontent)))
   }
   Col_foodcarbcontent_temp <- rep(Col_foodcarbcontent_temp, length(Digestibility))
@@ -174,7 +174,7 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   }
 
   Col_foodproteincontent_temp <- c()
-  for (i in 1:length(foodproteincontent)) {
+  for (i in seq_along(foodproteincontent)) {
     Col_foodproteincontent_temp <- c(
       Col_foodproteincontent_temp,
       rep(foodproteincontent[i], nrow(DF_outputs) / length(Digestibility) / length(foodproteincontent) / length(foodcarbcontent))
@@ -201,7 +201,7 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   }
 
   Col_foodfatcontent_temp <- c()
-  for (i in 1:length(foodfatcontent)) {
+  for (i in seq_along(foodfatcontent)) {
     Col_foodfatcontent_temp <- c(
       Col_foodfatcontent_temp,
       rep(foodfatcontent[i], nrow(DF_outputs) / length(Digestibility) / length(foodproteincontent) / length(foodcarbcontent) / length(foodfatcontent))

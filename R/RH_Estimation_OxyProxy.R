@@ -64,29 +64,29 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
          oxyproxy package can try a wide range of simulated values for you. Enter 0 -zero- in the argument you want the model to inject simulated values")
 
   # Environment function modified from the base version to exclude any calculation based on Humidity
-  if (length(model_air_temperature) == 1 & model_air_temperature[1] == 0) {
+  if (length(model_air_temperature) == 1 && model_air_temperature[1] == 0) {
     model_air_temperature <- c(-40, -30, -20, -10, 0, 10, 20, 30.40)
   }
-  if (length(model_d18O_Surfacewater) == 1 & model_d18O_Surfacewater[1] == 0) {
+  if (length(model_d18O_Surfacewater) == 1 && model_d18O_Surfacewater[1] == 0) {
     model_d18O_Surfacewater <- c(-1, -3, -5, -7, -9, -11, -13, -15, -17, -19, -21, -23, -25)
   }
 
   OEM <- rh_estimation_environment_function(air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater)
 
   # Food function (unmodified from base function)
-  if (length(model_Digestibility_of_food) == 1 & model_Digestibility_of_food[1] == 0) {
+  if (length(model_Digestibility_of_food) == 1 && model_Digestibility_of_food[1] == 0) {
     model_Digestibility_of_food <- c(0.3, 0.4, 0.5, 0.6, 0.7)
   }
-  if (length(model_Carbohydrate_Content) == 1 & model_Carbohydrate_Content[1] == 0) {
+  if (length(model_Carbohydrate_Content) == 1 && model_Carbohydrate_Content[1] == 0) {
     model_Carbohydrate_Content <- c(0.7)
   }
-  if (length(model_Protein_Content) == 1 & model_Protein_Content[1] == 0) {
+  if (length(model_Protein_Content) == 1 && model_Protein_Content[1] == 0) {
     model_Protein_Content <- c(0.2)
   }
-  if (length(model_Fat_Content) == 1 & model_Fat_Content[1] == 0) {
+  if (length(model_Fat_Content) == 1 && model_Fat_Content[1] == 0) {
     model_Fat_Content <- c(0.1)
   }
-  if (length(model_Free_Water_Content_Food) == 1 & model_Free_Water_Content_Food[1] == 0) {
+  if (length(model_Free_Water_Content_Food) == 1 && model_Free_Water_Content_Food[1] == 0) {
     model_Free_Water_Content_Food <- c(0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
   }
 
@@ -97,10 +97,10 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
   )
 
   # Species function (unmofidied from base function)
-  if (length(model_Body_mass) == 1 & model_Body_mass[1] == 0) {
+  if (length(model_Body_mass) == 1 && model_Body_mass[1] == 0) {
     model_Body_mass <- c(10, 50, 100, 200, 500, 1000, 1500)
   }
-  if (length(model_WaterEconomyIndex) == 1 & model_WaterEconomyIndex[1] == 0) {
+  if (length(model_WaterEconomyIndex) == 1 && model_WaterEconomyIndex[1] == 0) {
     model_WaterEconomyIndex <- c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6)
   }
 
