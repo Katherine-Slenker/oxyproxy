@@ -9,11 +9,11 @@
 #' @param sampled_d18Ocarbonate Numeric. Measured d18O of enamel carbonate
 #'   (per mil VSMOW).
 #' @param model_air_temperature Numeric. Air temperature in deg C. Enter 0 to
-#'   have the model substitute a range of simulated values.
+#'   substitute the Herbivore Standard value.
 #' @param model_d18O_Surfacewater Numeric. d18O of local surface water
-#'   (per mil VSMOW). Enter 0 to substitute simulated values.
+#'   (per mil VSMOW). Enter 0 to substitute the Herbivore Standard value.
 #' @param model_Digestibility_of_food Numeric. Digestible organic matter as a
-#'   proportion of ingested matter. Enter 0 to substitute simulated values.
+#'   proportion of ingested matter. Enter 0 to substitute the Herbivore Standard value.
 #' @param model_Carbohydrate_Content Numeric. Proportion of carbohydrate in the diet.
 #' @param model_Protein_Content Numeric. Proportion of protein in the diet.
 #' @param model_Fat_Content Numeric. Proportion of fat in the diet.
@@ -26,6 +26,17 @@
 #' @param PlotRange Logical. If TRUE, plots relative humidity against any
 #'   argument given more than one value. Defaults to TRUE.
 #' @param printinfo Logical. If TRUE, prints the computed humidity values.
+#'
+#' @details
+#' Any argument left at 0 is replaced with the corresponding Herbivore Standard
+#' value, a self-consistent reference animal: body mass 30 kg, WEI 0.25,
+#' carbohydrate 0.85, protein 0.1, fat 0.05, digestibility 0.7, free water
+#' content of food 0.65, air temperature 15 deg C, d18Osw -3.25 per mil. The
+#' function reports which arguments it substituted.
+#'
+#' The standard also fixes a relative humidity of 0.75. Running
+#' [oxy_proxy_function()] on the same parameters and feeding the resulting
+#' d18Ocarb back through this function recovers that value.
 #'
 #' @return Plots of estimates of relative humidity versus d18Obodywater values
 #'  and user-input variables.
@@ -60,34 +71,44 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
   d18Result <- d18O_enamel(d18O_carbonate = sampled_d18Ocarbonate)
 
   #### Second layer : Species, Food and mod_environment ==========================
-  message("WARNING : If you are missing information about species, food or environment and you struggle to fill the arguments values,
-         oxyproxy package can try a wide range of simulated values for you. Enter 0 -zero- in the argument you want the model to inject simulated values")
+  message("NOTE : If you are missing information about species, food or environment, enter 0 -zero- for that argument
+         and oxyproxy will substitute the corresponding Herbivore Standard value.")
+
+  # Names of the arguments the model filled in for the caller, reported below.
+  substituted <- character(0)
 
   # Environment function modified from the base version to exclude any calculation based on Humidity
   if (length(model_air_temperature) == 1 && model_air_temperature[1] == 0) {
-    model_air_temperature <- c(-40, -30, -20, -10, 0, 10, 20, 30.40)
+    model_air_temperature <- 15
+    substituted <- c(substituted, "model_air_temperature")
   }
   if (length(model_d18O_Surfacewater) == 1 && model_d18O_Surfacewater[1] == 0) {
-    model_d18O_Surfacewater <- c(-1, -3, -5, -7, -9, -11, -13, -15, -17, -19, -21, -23, -25)
+    model_d18O_Surfacewater <- -3.25
+    substituted <- c(substituted, "model_d18O_Surfacewater")
   }
 
   OEM <- rh_estimation_environment_function(air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater)
 
   # Food function (unmodified from base function)
   if (length(model_Digestibility_of_food) == 1 && model_Digestibility_of_food[1] == 0) {
-    model_Digestibility_of_food <- c(0.3, 0.4, 0.5, 0.6, 0.7)
+    model_Digestibility_of_food <- 0.7
+    substituted <- c(substituted, "model_Digestibility_of_food")
   }
   if (length(model_Carbohydrate_Content) == 1 && model_Carbohydrate_Content[1] == 0) {
-    model_Carbohydrate_Content <- c(0.7)
+    model_Carbohydrate_Content <- 0.85
+    substituted <- c(substituted, "model_Carbohydrate_Content")
   }
   if (length(model_Protein_Content) == 1 && model_Protein_Content[1] == 0) {
-    model_Protein_Content <- c(0.2)
+    model_Protein_Content <- 0.1
+    substituted <- c(substituted, "model_Protein_Content")
   }
   if (length(model_Fat_Content) == 1 && model_Fat_Content[1] == 0) {
-    model_Fat_Content <- c(0.1)
+    model_Fat_Content <- 0.05
+    substituted <- c(substituted, "model_Fat_Content")
   }
   if (length(model_Free_Water_Content_Food) == 1 && model_Free_Water_Content_Food[1] == 0) {
-    model_Free_Water_Content_Food <- c(0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
+    model_Free_Water_Content_Food <- 0.65
+    substituted <- c(substituted, "model_Free_Water_Content_Food")
   }
 
   OF <- food_function(
@@ -98,10 +119,19 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
 
   # Species function (unmofidied from base function)
   if (length(model_Body_mass) == 1 && model_Body_mass[1] == 0) {
-    model_Body_mass <- c(10, 50, 100, 200, 500, 1000, 1500)
+    model_Body_mass <- 30
+    substituted <- c(substituted, "model_Body_mass")
   }
   if (length(model_WaterEconomyIndex) == 1 && model_WaterEconomyIndex[1] == 0) {
-    model_WaterEconomyIndex <- c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6)
+    model_WaterEconomyIndex <- 0.25
+    substituted <- c(substituted, "model_WaterEconomyIndex")
+  }
+
+  if (length(substituted) > 0) {
+    message(
+      "Herbivore Standard values substituted for ", length(substituted), " argument(s): ",
+      paste(substituted, collapse = ", ")
+    )
   }
 
   OS <- species_function(body_mass = model_Body_mass, water_economy_index = model_WaterEconomyIndex, changeConstant = FALSE)

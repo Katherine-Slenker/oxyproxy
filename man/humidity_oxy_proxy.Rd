@@ -27,13 +27,13 @@ humidity_oxy_proxy(
 (per mil VSMOW).}
 
 \item{model_air_temperature}{Numeric. Air temperature in deg C. Enter 0 to
-have the model substitute a range of simulated values.}
+substitute the Herbivore Standard value.}
 
 \item{model_d18O_Surfacewater}{Numeric. d18O of local surface water
-(per mil VSMOW). Enter 0 to substitute simulated values.}
+(per mil VSMOW). Enter 0 to substitute the Herbivore Standard value.}
 
 \item{model_Digestibility_of_food}{Numeric. Digestible organic matter as a
-proportion of ingested matter. Enter 0 to substitute simulated values.}
+proportion of ingested matter. Enter 0 to substitute the Herbivore Standard value.}
 
 \item{model_Carbohydrate_Content}{Numeric. Proportion of carbohydrate in the diet.}
 
@@ -66,6 +66,17 @@ This function combines the RH_Estimation_d18O, Species, Food,
 RH_Estimation_Environment, RH_Estimation_Inputs, and Outputs functions to
 generate plots of estimates of relative humidity against measurements of
 d18Oenamel-carbonate (converted to d18Obodywater) and variables input by user.
+}
+\details{
+Any argument left at 0 is replaced with the corresponding Herbivore Standard
+value, a self-consistent reference animal: body mass 30 kg, WEI 0.25,
+carbohydrate 0.85, protein 0.1, fat 0.05, digestibility 0.7, free water
+content of food 0.65, air temperature 15 deg C, d18Osw -3.25 per mil. The
+function reports which arguments it substituted.
+
+The standard also fixes a relative humidity of 0.75. Running
+\code{\link[=oxy_proxy_function]{oxy_proxy_function()}} on the same parameters and feeding the resulting
+d18Ocarb back through this function recovers that value.
 }
 \examples{
 # Estimate relative humidity from a measured enamel carbonate value
