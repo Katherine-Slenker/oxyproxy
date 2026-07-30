@@ -35,7 +35,7 @@ library(oxyproxy)
 
 ```{r}
 species_out <- species_function(
-  body_mass = 70,             # kg
+  body_mass = 70, # kg
   water_economy_index = 0.40, # typical range ~0.05-0.6
   changeConstant = FALSE
 )
@@ -52,8 +52,8 @@ str(species_out)
 food_out <- food_function(
   digestibility_of_food = 0.8,
   Carbohydrate_Content = 0.5,
-  Protein_Content      = 0.2,
-  Fat_Content          = 0.3,   # NOTE: must sum with carb+protein to 1.0
+  Protein_Content = 0.2,
+  Fat_Content = 0.3, # NOTE: must sum with carb+protein to 1.0
   Free_Water_Content_Food = 0.7,
   changeConstant = FALSE
 )
@@ -67,9 +67,9 @@ str(food_out)
 
 ```{r}
 env_out <- environment_function(
-  air_temperature = 20,       # Celsius
-  relative_humidity = 0.60,   # proportion in (0, 1]
-  d18O_surface_water = -5     # per mil (‰ VSMOW)
+  air_temperature = 20, # Celsius
+  relative_humidity = 0.60, # proportion in (0, 1]
+  d18O_surface_water = -5 # per mil (‰ VSMOW)
 )
 
 env_out
@@ -133,7 +133,7 @@ oxyproxy_out <- oxy_proxy_function(
   model_d18O_surfacewater = -5,
   changeConstant = FALSE,
   sweating_species = FALSE,
-  PlotRange = FALSE   # avoid plots in vignette by default
+  PlotRange = FALSE # avoid plots in vignette by default
 )
 
 head(oxyproxy_out[, c("d18Obw", "d18Ophos", "d18Ocarb")])

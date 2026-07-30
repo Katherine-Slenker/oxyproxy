@@ -145,4 +145,3 @@ calculate_drinking_water_ingested <- function(df) {
 calculate_drinking_water <- function(df) {
   df$DrinkingH2OIngested / 2
 }
-

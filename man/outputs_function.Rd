@@ -108,5 +108,4 @@ multi_animal_data <- data.frame(
 )
 multi_outputs <- outputs_function(multi_animal_data, sweating_species = FALSE)
 
-
 }

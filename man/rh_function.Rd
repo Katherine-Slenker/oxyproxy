@@ -35,6 +35,4 @@ to that of surface waters.
 \examples{
 # herbivore_d18OBW <- rh_function(df)
 
-
-
 }

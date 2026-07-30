@@ -98,7 +98,6 @@
 #' )
 #' multi_outputs <- outputs_function(multi_animal_data, sweating_species = FALSE)
 #'
-#'
 #' @export
 outputs_function <- function(inputs = 0, sweating_species = FALSE) {
   if (!sweating_species) {
@@ -108,8 +107,8 @@ outputs_function <- function(inputs = 0, sweating_species = FALSE) {
   validate_inputs(inputs)
 
   sweat_function <- ifelse(sweating_species,
-                           calculate_wv_sweating,
-                           calculate_wv_not_sweating
+    calculate_wv_sweating,
+    calculate_wv_not_sweating
   )
 
   prepare_outputs_dataframe(inputs) |>
@@ -238,10 +237,10 @@ calculate_wv_co2 <- function(df) {
     (df$dryHinflux * WATER_VAPOR_FRACTION - df$dryOinflux)
 }
 
-#'Calculate water loss from sweating
-#'@param df Calculated value(s) of WaterHeatLoss
-#'@return Numeric vector of sweating (moles H2O)
-#'@keywords internal
+#' Calculate water loss from sweating
+#' @param df Calculated value(s) of WaterHeatLoss
+#' @return Numeric vector of sweating (moles H2O)
+#' @keywords internal
 calculate_sweating <- function(df) {
   SWEAT_HEAT_FRACTION * df$WaterHeatLoss
 }
