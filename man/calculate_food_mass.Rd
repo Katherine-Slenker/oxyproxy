@@ -15,3 +15,4 @@ Numeric vector of food mass ingested (kg)
 \description{
 Calculate food mass ingested
 }
+\keyword{internal}

@@ -16,3 +16,4 @@ Numeric vector of exogenous water ingested (moles H2O)
 \description{
 Calculate drinking water ingested
 }
+\keyword{internal}

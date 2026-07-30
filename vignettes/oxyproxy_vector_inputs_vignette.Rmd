@@ -73,7 +73,7 @@ oxyproxy_many <- oxy_proxy_function(
   model_d18O_surfacewater = c(-2, -5),
   changeConstant = FALSE,
   sweating_species = FALSE,
-  PlotRange = FALSE   # set TRUE if you want a plot for visualization
+  PlotRange = FALSE # set TRUE if you want a plot for visualization
 )
 
 oxyproxy_many

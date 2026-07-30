@@ -1,2 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.github$
+^\.claude$
+^kohnmodel 2$
+^KohnModel\.R$
+^cran-comments\.md$
+^_pkgdown\.yml$
+^docs$
+^\.lintr$

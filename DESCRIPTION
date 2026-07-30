@@ -1,16 +1,19 @@
 Package: oxyproxy
 Type: Package
-Title: Steady-state mass balance model of oxygen flux in animal body
-        water
+Title: Steady-State Mass Balance Model of Oxygen Flux in Animal Body Water
 Version: 0.1.0
-Author: Katherine Slenker & Corentin Gibert Bret
-Maintainer: The package maintainer <kslenker3@gatech.edu>
-Description: The package generates a predicted value of oxygen-18 enrichment in animal bodywater and tooth enamel given all oxygen inputs (atmospheric oxygen, air water vapor, bound oxygen in food, free water in food, and drinking water), oxygen outputs (exhaled CO2, urea, fecal water, urine, respiratory water vapor, transcutaneous water vapor, and sweat), and species-specific values (body mass, water economy index) relative to environmental values (temperature, oxygen-18 enrichment of surface water, and relative humidity).
+Authors@R: c(
+    person("Katherine", "Slenker", email = "kslenker3@gatech.edu",
+           role = c("aut", "cre")),
+    person("Corentin", "Gibert Bret", role = "aut")
+  )
+Description: Generates a predicted value of oxygen-18 enrichment in animal bodywater and tooth enamel given all oxygen inputs (atmospheric oxygen, air water vapor, bound oxygen in food, free water in food, and drinking water), oxygen outputs (exhaled CO2, urea, fecal water, urine, respiratory water vapor, transcutaneous water vapor, and sweat), and species-specific values (body mass, water economy index) relative to environmental values (temperature, oxygen-18 enrichment of surface water, and relative humidity).
 License: MIT + file LICENSE
 Encoding: UTF-8
 NeedsCompilation: no
 Packaged: 2026-02-20 14:44:01 UTC; KatieSlenker
-URL: https://github.com/Katherine-Slenker/oxyproxy
+URL: https://katherine-slenker.github.io/oxyproxy/,
+        https://github.com/Katherine-Slenker/oxyproxy
 BugReports: https://github.com/Katherine-Slenker/oxyproxy/issues
 Roxygen: list(markdown = TRUE)
 Suggests:
