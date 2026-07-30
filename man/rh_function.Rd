@@ -6,10 +6,12 @@
 on values of relative humidity that are needed to calculate oxygen-18 enrichment
 of animal body water.}
 \usage{
-rh_function(rh_estimation_d18O = 0, outputs = 0)
+rh_function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE)
 }
 \arguments{
 \item{rh_estimation_d18O}{Data frame containing value of δ¹⁸Obodywater.}
+
+\item{printinfo}{Logical. If TRUE, prints the computed Humidity values.}
 
 \item{Species}{Data frame containing species physiological parameters.}
 
