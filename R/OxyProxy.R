@@ -2,25 +2,49 @@
 #' flux of oxygen input and outputs against variables input by user.
 #'
 #' This function combines the Species, Food, Environment, Inputs, and Ouputs,
-#' and δ¹⁸Obodywater functions to generate plots of estimates of oxygen-18
+#' and d18Obodywater functions to generate plots of estimates of oxygen-18
 #' enrichment of animal bodywater against variables input by user.
 #'
-#' @param Species Data frame containing species physiological parameters.
-#' @param Food Data frame containing dietary parameters.
-#' @param Environment Data frame containing environmental parameters.
-#' @param Inputs Data frame containing oxygen input data.
-#' @param Outputs Data frame containing oxygen output data.
-#' @param d18Obodywater Data frame containing δ¹⁸Obodywater estimate values.
+#' @param model_bodymass Numeric. Body mass in kg. Must be greater than 0.
+#' @param model_WaterEconomyIndex Numeric. Water economy index (ml/kJ).
+#' @param model_Digestibility_of_food Numeric. Digestible organic matter as a
+#'   proportion of ingested matter, between 0 and 1.
+#' @param model_Carbohydrate_Content Numeric. Proportion of carbohydrate in the
+#'   diet. Carbohydrate, protein, and fat content must sum to 1.
+#' @param model_Protein_Content Numeric. Proportion of protein in the diet.
+#' @param model_Fat_Content Numeric. Proportion of fat in the diet.
+#' @param model_Free_Water_Content_Food Numeric. Proportion of free water in food.
+#' @param model_air_temperature Numeric. Air temperature in deg C. Zero and
+#'   negative values are valid.
+#' @param model_Relative_Humidity Numeric. Relative humidity as a proportion
+#'   between 0 and 1.
+#' @param model_d18O_surfacewater Numeric. d18O of local surface water
+#'   (per mil VSMOW). Zero and negative values are valid.
+#' @param changeConstant Logical. If TRUE, prompts for values overriding the
+#'   model constants. Defaults to FALSE.
+#' @param sweating_species Logical. Whether the species sweats. Defaults to FALSE.
+#' @param PlotRange Logical. If TRUE, plots d18Obw against any argument given
+#'   more than one value. Defaults to TRUE.
 #'
-#' @return Plots of estimates of δ¹⁸Obodywater values versus user-input variables.
+#' @return Data frame of d18Obw, d18Ophos, and d18Ocarb estimates for every
+#'   combination of the supplied arguments.
 #'
 #' @examples
-#' # Example for a herbivore
-#'oxy_proxy_function <- function(model_bodymass = 600, model_WaterEconomyIndex = 0.4, model_Digestibility_of_food = 0.6,
-#'model_Carbohydrate_Content = 0.8, model_Protein_Content= 0.1,
-#'model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.55, model_air_temperature= 4,
-#'model_Relative_Humidity = 0.67, model_d18O_surfacewater= -10, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE)
-#'
+#' # Single set of parameters for a herbivore
+#' oxy_proxy_function(
+#'   model_bodymass = 600,
+#'   model_WaterEconomyIndex = 0.4,
+#'   model_Digestibility_of_food = 0.6,
+#'   model_Carbohydrate_Content = 0.8,
+#'   model_Protein_Content = 0.1,
+#'   model_Fat_Content = 0.1,
+#'   model_Free_Water_Content_Food = 0.55,
+#'   model_air_temperature = 4,
+#'   model_Relative_Humidity = 0.67,
+#'   model_d18O_surfacewater = -10,
+#'   sweating_species = FALSE,
+#'   PlotRange = FALSE
+#' )
 #'
 #' @export
 oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, model_Digestibility_of_food = 0,

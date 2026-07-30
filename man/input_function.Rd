@@ -7,15 +7,15 @@
 input_function(species = 0, food = 0, environment = 0)
 }
 \arguments{
-\item{Species}{Data frame containing species physiological parameters.
+\item{species}{Data frame containing species physiological parameters.
 Must include: EnergyExp, TotalH2OTurnover, WVinLungs}
 
-\item{Food}{Data frame containing food composition data.
+\item{food}{Data frame containing food composition data.
 Must include: Digestibility, EEE, foodcarbcontent, foodcarbenergy, Ocarb,
 Hcarb, foodproteincontent, foodproteinenergy, Oprotein, Hprotein,
 foodfatcontent, foodfatenergy, Ofat, Hfat,  and freeH20food.}
 
-\item{Environment}{Data frame containing environmental conditions
+\item{environment}{Data frame containing environmental conditions
 Must include: WVinLungs}
 }
 \value{
@@ -37,9 +37,17 @@ dry hydrogen influx from diet, free water content in food, water vapor in food,
 amount of exogenous water consumed, and water vapor from ingested waters.
 }
 \examples{
-result <- input_function(
-  species = species_data,
-  food = food_data,
-  environment = environment_data
+species_data <- species_function(body_mass = 600, water_economy_index = 0.4)
+food_data <- food_function(
+  digestibility_of_food = 0.6, Carbohydrate_Content = 0.8,
+  Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4
 )
+environment_data <- environment_function(
+  air_temperature = 20, relative_humidity = 0.6, d18O_surface_water = -5
+)
+
+input_function(
+  species = species_data, food = food_data, environment = environment_data
+)
+
 }

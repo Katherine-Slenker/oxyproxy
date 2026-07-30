@@ -36,7 +36,7 @@ Data frame with all calculated physiological variables:
 }
 }
 \description{
-Given an animal’s body mass and water economy index, computes values for
+Given an animal's body mass and water economy index, computes values for
 energy expenditure, transcutaneous water loss, water vapor loss via skin (WVSkin),
 moles of oxygen respired from air (MolesO2Air), oxygen flux through lungs (O2FluxLungs),
 water exhaled orally (H2OOral), water exhaled nasally (H2ONasal), water vapor loss via nose (WVNose),
@@ -44,7 +44,9 @@ total water turnover,urinary water loss, and water vapor loss via urine (WVUrine
 }
 \examples{
 # Example for a plains bison (Bison bison bison)
-  result <- species_function(body_mass = 600, water_economy_index = 0.45, changeConstant = FALSE)
-  str(out)
+result <- species_function(
+  body_mass = 600, water_economy_index = 0.45, changeConstant = FALSE
+)
+str(result)
 
 }

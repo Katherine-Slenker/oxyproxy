@@ -13,14 +13,10 @@
 #'calculations assume that the oxygen-18 enrichment of stem water is equivalent
 #'to that of surface waters.
 #'
-#' @param rh_estimation_d18O Data frame containing value of δ¹⁸Obodywater.
-#' @param Species Data frame containing species physiological parameters.
-#' @param Food Data frame containing species dietary parameters.
-#' @param RH_Estimation_Environment Data frame containing environmental parameters
-#' sans relative humidity and all variables that are dependent on relative humidity.
-#' @param RH_Estimation_Inputs Data frame containing oxygen input data sans all
-#' variables that are dependent on relative humidity.
-#' @param Outputs Data frame containing oxygen output data.
+#' @param rh_estimation_d18O Data frame containing d18Obodywater values, as
+#'   returned by [d18O_enamel()].
+#' @param outputs Data frame of oxygen output data, as returned by
+#'   [outputs_function()].
 #' @param printinfo Logical. If TRUE, prints the computed Humidity values.
 #'
 #' @return Data frame relative humidity estimates and values of dependent variables.
