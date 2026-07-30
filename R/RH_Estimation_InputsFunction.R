@@ -59,7 +59,12 @@ inverse_input_function <- function(species=0, food=0, environment=0)
   # Width = number of variables
   # Length = number of combination of results
   # Dataframe size is determined by Species x Food x Environment dataframe
-  DF_outputs <- matrix(data = 0, nrow = nrow(species)*nrow(food)*nrow(environment), ncol = ncol(species)+ncol(food)+ncol(environment)+5)
+  n_species <- nrow(species)
+  n_food    <- nrow(food)
+  n_env     <- nrow(environment)
+  n_rows    <- n_species * n_food * n_env
+
+  DF_outputs <- matrix(data = 0, nrow = n_rows, ncol = ncol(species)+ncol(food)+ncol(environment)+5)
   colnames(DF_outputs) <- c(colnames(species), colnames(food), colnames(environment),
                             "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood",
                             "WaterinFood")
@@ -67,52 +72,43 @@ inverse_input_function <- function(species=0, food=0, environment=0)
 
   ## 1. FILLING IT WITH PREVIOUS DATA COMING FROM FOOD SPECIES AND ENVIRONMENT FUNCTION
   ### THIS FOLLOWING ALGORITHM IS MADE TO FIND ALL COMBINATION OF VALUES TO COMPUTE THE INPUTS VALUES IN THE NEXT STEPS
-  DF_outputs[,colnames(species)] <- species
+  # Full factorial: species cycles fastest, food is blocked slowest, environment
+  # sits between the two. Indexing once per source frame keeps this linear in
+  # n_rows -- growing the frame a row at a time made large grids unusable.
+  DF_outputs[,colnames(species)] <- species[rep(seq_len(n_species), length.out = n_rows), , drop = FALSE]
+  DF_outputs[,colnames(food)]    <- food[rep(seq_len(n_food), each = n_rows/n_food), , drop = FALSE]
 
-  DF_outputs_Food_temp <- c()
-  for(i in 1:nrow(food)){
-    for(j in 1:(nrow(DF_outputs)/nrow(food))){
-      DF_outputs_Food_temp <- rbind(DF_outputs_Food_temp, food[i,])}} ## the dataframe is split in X part for X unique rows of Food
-  DF_outputs[,colnames(food)] <- DF_outputs_Food_temp
-
-  DF_outputs_Environment_temp <- c()
-  for(i in 1:nrow(environment)){
-    for(j in 1:(nrow(DF_outputs)/nrow(environment)/nrow(food))){
-      DF_outputs_Environment_temp <- rbind(DF_outputs_Environment_temp, environment[i,])}} ## the dataframe is split in X part for X unique rows of Environment divided by number of row of Food
-  if(nrow(food) > 1)
-  {
-    DF_outputs[,colnames(environment)] <- DF_outputs_Environment_temp[rep(1:nrow(DF_outputs_Environment_temp), times = (nrow(DF_outputs)/nrow(food))),] ## temporary dataframe is replicated based on Food/Species ratio
-  }
-  if(nrow(food) == 1)
-  {
-    DF_outputs[,colnames(environment)] <-  DF_outputs_Environment_temp
-  }
-
-
-  #Check if this step is working correctly
-  if(isTRUE(duplicated(DF_outputs)) == TRUE){stop}
-
+  env_block <- rep(seq_len(n_env), each = n_rows/n_env/n_food)
+  DF_outputs[,colnames(environment)] <-
+    environment[env_block[rep(seq_along(env_block), length.out = n_rows)], , drop = FALSE]
 
   ## 2. COMPUTATION OF INPUT VARIABLES
 
   #Food Mass Ingested = (Energy Exp)/ (Digestibility*EEE*(foodcarbcontent * foodcarbernergy + foodproteincontent * foodproteinenergy + foodfatcontent * foodfatenergy))
-  for(i in 1:nrow(DF_outputs)){
-    DF_outputs$FoodMassIngested[i] = (DF_outputs$EnergyExp[i]) / (DF_outputs$Digestibility[i]*DF_outputs$EEE[i]*(DF_outputs$foodcarbcontent[i] * DF_outputs$foodcarbenergy[i] + DF_outputs$foodproteincontent[i] * DF_outputs$foodproteinenergy[i] + DF_outputs$foodfatcontent[i] * DF_outputs$foodfatenergy[i]))
+  DF_outputs$FoodMassIngested <- DF_outputs$EnergyExp /
+    (DF_outputs$Digestibility * DF_outputs$EEE *
+       (DF_outputs$foodcarbcontent * DF_outputs$foodcarbenergy +
+          DF_outputs$foodproteincontent * DF_outputs$foodproteinenergy +
+          DF_outputs$foodfatcontent * DF_outputs$foodfatenergy))
 
-    # dry O influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Ocarb + foodproteincontent * Oprotein + foodfatcontent * Ofat)
-    DF_outputs$dryOinflux[i] = DF_outputs$Digestibility[i] * DF_outputs$EEE[i] * DF_outputs$FoodMassIngested[i] * (DF_outputs$foodcarbcontent[i] * DF_outputs$Ocarb[i] + DF_outputs$foodproteincontent[i] * DF_outputs$Oprotein[i] + DF_outputs$foodfatcontent[i] * DF_outputs$Ofat[i])
+  # dry O influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Ocarb + foodproteincontent * Oprotein + foodfatcontent * Ofat)
+  DF_outputs$dryOinflux <- DF_outputs$Digestibility * DF_outputs$EEE * DF_outputs$FoodMassIngested *
+    (DF_outputs$foodcarbcontent * DF_outputs$Ocarb +
+       DF_outputs$foodproteincontent * DF_outputs$Oprotein +
+       DF_outputs$foodfatcontent * DF_outputs$Ofat)
 
-    #dry H influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Hcarb + foodproteincontent * Hprotein + foodfatcontent * Hfat)
-    DF_outputs$dryHinflux[i] <- DF_outputs$Digestibility[i] * DF_outputs$EEE[i] * DF_outputs$FoodMassIngested[i] * (DF_outputs$foodcarbcontent[i] * DF_outputs$Hcarb[i] + DF_outputs$foodproteincontent[i] * DF_outputs$Hprotein[i] + DF_outputs$foodfatcontent[i] * DF_outputs$Hfat[i])
+  #dry H influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Hcarb + foodproteincontent * Hprotein + foodfatcontent * Hfat)
+  DF_outputs$dryHinflux <- DF_outputs$Digestibility * DF_outputs$EEE * DF_outputs$FoodMassIngested *
+    (DF_outputs$foodcarbcontent * DF_outputs$Hcarb +
+       DF_outputs$foodproteincontent * DF_outputs$Hprotein +
+       DF_outputs$foodfatcontent * DF_outputs$Hfat)
 
-    #Free H2O in food = Food Mass Ingested * 55.56 * (Free H2O of food/(1-free H20 of food))
-    DF_outputs$FreeH2Oinfood[i] <- DF_outputs$FoodMassIngested[i]*55.56*(DF_outputs$freeH20food[i]/(1-DF_outputs$freeH20food[i]))
+  #Free H2O in food = Food Mass Ingested * 55.56 * (Free H2O of food/(1-free H20 of food))
+  DF_outputs$FreeH2Oinfood <- DF_outputs$FoodMassIngested * 55.56 *
+    (DF_outputs$freeH20food / (1 - DF_outputs$freeH20food))
 
-    #Water in Food = Free Water in Food / 2
-    DF_outputs$WaterinFood[i] <- DF_outputs$FreeH2Oinfood[i]/2
-
-
-  }
+  #Water in Food = Free Water in Food / 2
+  DF_outputs$WaterinFood <- DF_outputs$FreeH2Oinfood / 2
 
   return(DF_outputs)
 }
