@@ -39,10 +39,6 @@ describe("humidity_oxy_proxy()", {
   })
 
   it("errors informatively when a model argument is NULL", {
-    # BUG: the sentinel checks use `length(x) == 1 & x[1] == 0`. For NULL,
-    # `x[1] == 0` is logical(0), and `&` doesn't short-circuit, so `if()` gets
-    # a zero-length condition and dies with "argument is of length zero"
-    # rather than the guard's own message.
     expect_error(
       humidity_oxy_proxy(
         sampled_d18Ocarbonate = 20, model_air_temperature = NULL, model_d18O_Surfacewater = -8,
@@ -55,9 +51,6 @@ describe("humidity_oxy_proxy()", {
   })
 
   it("treats a non-scalar PlotRange as FALSE instead of crashing", {
-    # BUG: `if (PlotRange == TRUE & nrow(RH) > 1)` computes a vector
-    # condition when PlotRange has length > 1 (& doesn't short-circuit), and
-    # `if()` errors on a condition of length > 1 instead of just not plotting.
     expect_no_error(
       humidity_oxy_proxy(
         sampled_d18Ocarbonate = 20, model_air_temperature = c(4, 10), model_d18O_Surfacewater = -8,
