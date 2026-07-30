@@ -79,7 +79,7 @@ environment_function <- function(air_temperature = numeric(0), relative_humidity
   # Humidity
   Humidity <- relative_humidity
   DF_outputs_Humidity_temp <- c()
-  for (i in 1:length(Humidity)) {
+  for (i in seq_along(Humidity)) {
     DF_outputs_Humidity_temp <- c(DF_outputs_Humidity_temp, rep(Humidity[i], nrow(DF_outputs) / length(Humidity)))
   } ## the dataframe is split in X part for X values of humidity
   DF_outputs$Humidity <- DF_outputs_Humidity_temp
@@ -87,7 +87,7 @@ environment_function <- function(air_temperature = numeric(0), relative_humidity
   # d18Osurfacewater
   d18Osw <- d18O_surface_water
   DF_outputs_d18Osw_temp <- c()
-  for (i in 1:length(d18Osw)) {
+  for (i in seq_along(d18Osw)) {
     DF_outputs_d18Osw_temp <- c(DF_outputs_d18Osw_temp, rep(d18Osw[i], nrow(DF_outputs) / length(Humidity) / length(d18Osw)))
   }
   DF_outputs_d18Osw_temp <- rep(DF_outputs_d18Osw_temp, length(Humidity))
@@ -97,45 +97,45 @@ environment_function <- function(air_temperature = numeric(0), relative_humidity
   ### 1. CALCULATION WITH HUMIDITY AND AIR TEMPERATURE =========================
 
   # Water Vapor Taken in Lungs <- Humidity * 10^(0.686+0.027*airtemp) * 12400/(760*22.4)
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$WVinLungs[i] <- DF_outputs$Humidity[i] * (10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * 12400 / (760 * 22.4)
   }
 
   # Water Vapor <- Water Vapor in Lungs / 2
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$WV[i] <- DF_outputs$WVinLungs[i] / 2
   }
 
   ### 2. ADDING D18 SURFACE WATER TO CALCULATION ===============================
 
   # dairH2O <- d18Osw - 2.644 + 3206/MAT - 1.534 * 10^6 / MAT^2
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dairH2O[i] <- DF_outputs$d18Osw[i] - 2.644 + 3206 / DF_outputs$MAT[i] - 1.534 * (10^6) / (DF_outputs$MAT[i]^2)
   }
 
   # dairH2OSW <- dairH2O -d18Osw
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dairH2OSW[i] <- DF_outputs$dairH2O[i] - DF_outputs$d18Osw[i]
   }
 
   # d18OleafH2O <-d18Osw + (1-Humidity) * (d18Osw - dairH2O + 16)
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$d18OleafH2O[i] <- DF_outputs$d18Osw[i] + (1 - DF_outputs$Humidity[i]) * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16)
   }
 
   # d18Oleafcellulose <- d18OleafH2O + 27
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$d18Oleafcellulose[i] <- DF_outputs$d18OleafH2O[i] + 27
   }
 
   # dfoodO2SW <-d18Oleafcellulose - d18Osw
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dfoodO2SW[i] <- DF_outputs$d18Oleafcellulose[i] - DF_outputs$d18Osw[i]
   }
 
   # dfoodH2Osw  <- (0.5 * d18OstemH2O + 0.5 * d18OleafH2O) -d18Osw
   # d18OstemH2O = d18Osw
-  for (i in 1:nrow(DF_outputs)) {
+  for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dfoodH2Osw[i] <- (0.5 * DF_outputs$d18Osw[i] + 0.5 * DF_outputs$d18OleafH2O[i]) - DF_outputs$d18Osw[i]
   }
 

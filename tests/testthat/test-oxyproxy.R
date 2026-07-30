@@ -14,9 +14,6 @@ describe("oxy_proxy_function()", {
   })
 
   it("treats a non-scalar PlotRange as FALSE instead of crashing", {
-    # BUG: `if (PlotRange == TRUE & nrow(d18O) > 1)` computes a vector
-    # condition when PlotRange has length > 1 (& doesn't short-circuit), and
-    # `if()` errors on a condition of length > 1 instead of just not plotting.
     expect_no_error(
       oxy_proxy_function(
         model_bodymass = 600, model_WaterEconomyIndex = c(0.3, 0.4),
