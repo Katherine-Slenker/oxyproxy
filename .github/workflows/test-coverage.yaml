@@ -1,0 +1,56 @@
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+name: test-coverage
+
+permissions:
+  contents: read
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr, any::devtools
+          needs: coverage
+
+      - name: Run tests
+        shell: Rscript {0}
+        run: |
+          devtools::load_all(".")
+          testthat::test_dir("tests/testthat", stop_on_failure = TRUE)
+
+      - name: Compute coverage
+        shell: Rscript {0}
+        run: |
+          cov <- covr::package_coverage(quiet = FALSE)
+          print(cov)
+
+          summary <- covr::coverage_to_list(cov)
+          lines <- c(
+            sprintf("### Test coverage: %.1f%%", summary$totalcoverage),
+            "",
+            "| File | Coverage |",
+            "|---|---|"
+          )
+          file_cov <- summary$filecoverage
+          for (f in names(file_cov)[order(file_cov)]) {
+            lines <- c(lines, sprintf("| %s | %.1f%% |", f, file_cov[[f]]))
+          }
+          writeLines(lines, Sys.getenv("GITHUB_STEP_SUMMARY"))

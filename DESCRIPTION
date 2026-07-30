@@ -13,4 +13,8 @@ Packaged: 2026-02-20 14:44:01 UTC; KatieSlenker
 URL: https://github.com/Katherine-Slenker/oxyproxy
 BugReports: https://github.com/Katherine-Slenker/oxyproxy/issues
 Roxygen: list(markdown = TRUE)
+Suggests:
+    testthat (>= 3.0.0),
+    covr
+Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
