@@ -20,10 +20,10 @@
 #'
 #' @examples
 #' # Example for a herbivore
-#' humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 20, model_Air_temperature = 4, model_d18O_Surfacewater = -8,
+#' humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
 #' model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.15,
 #' model_Fat_Content = 0.05, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
-#' model_WaterEconomyIndex = 0.4, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
+#' model_WaterEconomyIndex = 0.4, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE)
 #'
 #'
 #' @export
@@ -32,10 +32,10 @@
 ### as well as two originals functions dedicated to Humidity (last layer) and d180enamel (first layer) computation
 
 
-humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature = 0, model_d18O_Surfacewater = 0,
+humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature = 0, model_d18O_Surfacewater = 0,
                                model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_Body_mass = 0,
-                               model_WaterEconomyIndex = 0, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
+                               model_WaterEconomyIndex = 0, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE)
 {
 
   ### First layer : d180 Enamel ==================================================
@@ -45,7 +45,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   message("WARNING : If you are missing information about species, food or environment and you struggle to fill the arguments values,
          oxyproxy package can try a wide range of simulated values for you. Enter 0 -zero- in the argument you want the model to inject simulated values")
 
-  if(length(model_Air_temperature) == 1 & model_Air_temperature[1] == 0){BOOL_air_temp <- TRUE}
+  if(length(model_air_temperature) == 1 & model_air_temperature[1] == 0){BOOL_air_temp <- TRUE}
   if(length(model_d18O_Surfacewater) == 1 & model_d18O_Surfacewater[1] == 0){BOOL_d18O_Surfacewater <- TRUE}
   if(length(model_Digestibility_of_food) == 1 & model_Digestibility_of_food[1] == 0){BOOL_Digestibility_of_food <- TRUE}
   if(length(model_Carbohydrate_Content) == 1 & model_Carbohydrate_Content[1] == 0){BOOL_Carbohydrate_Content <- TRUE}
@@ -56,10 +56,10 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   if(length(model_WaterEconomyIndex) == 1 & model_WaterEconomyIndex[1] == 0){BOOL_WaterEconomyIndex <- TRUE}
 
   #Environment function modified from the base version to exclude any calculation based on Humidity
-  if(length(model_Air_temperature) == 1 & model_Air_temperature[1] == 0){model_Air_temperature <- c(-40, -30,-20,-10,0,10, 20,30.40)}
+  if(length(model_air_temperature) == 1 & model_air_temperature[1] == 0){model_air_temperature <- c(-40, -30,-20,-10,0,10, 20,30.40)}
   if(length(model_d18O_Surfacewater) == 1 & model_d18O_Surfacewater[1] == 0){model_d18O_Surfacewater <- c(-1, -3, -5, -7, -9, -11,-13,-15, -17, -19,-21,-23,-25)}
 
-  OEM <- rh_estimation_environment_function(air_temperature = model_Air_temperature, d18O_surface_water = model_d18O_Surfacewater)
+  OEM <- rh_estimation_environment_function(air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater)
 
   #Food function (unmodified from base function)
   if(length(model_Digestibility_of_food) == 1 & model_Digestibility_of_food[1] == 0){model_Digestibility_of_food <- c(0.3, 0.4, 0.5, 0.6, 0.7)}
@@ -83,7 +83,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
   OI <- inverse_input_function(species = OS, food = OF, environment = OEM)
 
   #What is going out (e.g. feces, pee, sweat, etc...)
-  OOM <- outputs_function(inputs = OI, sweating_species = SweatingSpecies)
+  OOM <- outputs_function(inputs = OI, sweating_species = sweating_species)
 
   ### Final layer : Computation of the relative humidity =========================
   RH <- rh_function(rh_estimation_d18O = d18Result, outputs = OOM, printinfo = printinfo)
@@ -120,7 +120,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_Air_temperature 
     {
       plot(RH$Humidity*100~RH$freeH20food, xlab = "Free water content in food", ylab = "Relative Humidity (%)", pch = 16)
     }
-    if(length(model_Air_temperature) > 1)
+    if(length(model_air_temperature) > 1)
     {
       plot(RH$Humidity*100~RH$airtemp, xlab = "Air temperature", ylab = "Relative Humidity (%)", pch = 16)
     }

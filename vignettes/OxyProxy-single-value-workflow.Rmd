@@ -1,0 +1,153 @@
+---
+title: "OxyProxy: Single-Value Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{OxyProxy: Single-Value Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Overview
+
+This vignette demonstrates a **single-run** workflow for predicting oxygen isotope ratios (δ18O) using oxyproxy, both step by step through the individual pipeline functions and via the `oxy_proxy_function()` wrapper.
+
+## Load the package
+
+```{r}
+library(oxyproxy)
+
+# If you're developing locally and not installed:
+# devtools::load_all()
+```
+
+## Step 1 — Species physiology (single value)
+
+`species_function()` expects `body_mass` and `water_economy_index` (plus optional `changeConstant`).
+
+```{r}
+species_out <- species_function(
+  body_mass = 70,             # kg
+  water_economy_index = 0.40, # typical range ~0.05-0.6
+  changeConstant = FALSE
+)
+
+str(species_out)
+```
+
+## Step 2 — Diet composition (single value)
+
+`food_function()` expects:
+`digestibility_of_food`, `Carbohydrate_Content`, `Protein_Content`, `Fat_Content`, and `Free_Water_Content_Food`.
+
+```{r}
+food_out <- food_function(
+  digestibility_of_food = 0.8,
+  Carbohydrate_Content = 0.5,
+  Protein_Content      = 0.2,
+  Fat_Content          = 0.3,   # NOTE: must sum with carb+protein to 1.0
+  Free_Water_Content_Food = 0.7,
+  changeConstant = FALSE
+)
+
+str(food_out)
+```
+
+## Step 3 — Environment (single value)
+
+`environment_function()` expects `air_temperature`, `relative_humidity`, and `d18O_surface_water`.
+
+```{r}
+env_out <- environment_function(
+  air_temperature = 20,       # Celsius
+  relative_humidity = 0.60,   # proportion in (0, 1]
+  d18O_surface_water = -5     # per mil (‰ VSMOW)
+)
+
+env_out
+```
+
+## Step 4 — Inputs -> Outputs -> d18O body water
+
+### 4A) Oxygen inputs
+
+`input_function()` combines species, food, and environment into oxygen input variables:
+
+```{r}
+inputs_out <- input_function(
+  species = species_out,
+  food = food_out,
+  environment = env_out
+)
+
+str(inputs_out)
+```
+
+### 4B) Oxygen outputs
+
+`outputs_function()` computes the oxygen output variables:
+
+```{r}
+outputs_out <- outputs_function(
+  inputs = inputs_out,
+  sweating_species = FALSE
+)
+
+str(outputs_out)
+```
+
+### 4C) Final isotope estimates
+
+`d18_obw_function()` computes the final body water, phosphate, and carbonate isotope estimates:
+
+```{r}
+d18o_out <- d18_obw_function(outputs = outputs_out)
+
+head(d18o_out[, c("d18Obw", "d18Ophos", "d18Ocarb")])
+```
+
+## Alternative — Call the wrapper `oxy_proxy_function()`
+
+`oxy_proxy_function()` runs the full pipeline in one call. It does **not** accept `species=`, `food=`, `environment=`;
+instead it accepts a set of `model_*` scalar inputs:
+
+```{r}
+oxyproxy_out <- oxy_proxy_function(
+  model_bodymass = 70,
+  model_WaterEconomyIndex = 0.40,
+  model_Digestibility_of_food = 0.8,
+  model_Carbohydrate_Content = 0.5,
+  model_Protein_Content = 0.2,
+  model_Fat_Content = 0.3,
+  model_Free_Water_Content_Food = 0.7,
+  model_air_temperature = 20,
+  model_Relative_Humidity = 0.60,
+  model_d18O_surfacewater = -5,
+  changeConstant = FALSE,
+  sweating_species = FALSE,
+  PlotRange = FALSE   # avoid plots in vignette by default
+)
+
+head(oxyproxy_out[, c("d18Obw", "d18Ophos", "d18Ocarb")])
+```
+
+## Inspecting results
+
+```{r}
+names(d18o_out)
+str(d18o_out, max.level = 1)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```

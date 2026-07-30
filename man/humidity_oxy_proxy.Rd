@@ -7,7 +7,7 @@
 \usage{
 humidity_oxy_proxy(
   sampled_d18Ocarbonate = 0,
-  model_Air_temperature = 0,
+  model_air_temperature = 0,
   model_d18O_Surfacewater = 0,
   model_Digestibility_of_food = 0,
   model_Carbohydrate_Content = 0,
@@ -17,7 +17,7 @@ humidity_oxy_proxy(
   model_Body_mass = 0,
   model_WaterEconomyIndex = 0,
   changeConstant = FALSE,
-  SweatingSpecies = FALSE,
+  sweating_species = FALSE,
   PlotRange = TRUE,
   printinfo = FALSE
 )
@@ -49,10 +49,10 @@ generate plots of estimates of relative humidity against measurements of
 }
 \examples{
 # Example for a herbivore
-humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 20, model_Air_temperature = 4, model_d18O_Surfacewater = -8,
+humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
 model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.15,
 model_Fat_Content = 0.05, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
-model_WaterEconomyIndex = 0.4, changeConstant = FALSE, SweatingSpecies = FALSE, PlotRange = TRUE, printinfo = FALSE)
+model_WaterEconomyIndex = 0.4, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE)
 
 
 }
