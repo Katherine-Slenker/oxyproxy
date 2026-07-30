@@ -1,5 +1,12 @@
 # Package index
 
+## Overview
+
+- [`oxyproxy`](https://katherine-slenker.github.io/oxyproxy/reference/oxyproxy-package.md)
+  [`oxyproxy-package`](https://katherine-slenker.github.io/oxyproxy/reference/oxyproxy-package.md)
+  : oxyproxy: Steady-State Mass Balance Model of Oxygen Flux in Animal
+  Body Water
+
 ## d18O body water model
 
 Estimate oxygen-18 enrichment of animal body water from oxygen inputs

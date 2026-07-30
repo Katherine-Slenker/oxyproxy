@@ -1,3 +1,5 @@
+# oxyproxy
+
 Generates a predicted value of oxygen-18 enrichment in animal bodywater
 and tooth enamel given all oxygen inputs (atmospheric oxygen, air water
 vapor, bound oxygen in food, free water in food, and drinking water),
@@ -8,6 +10,13 @@ values (body mass, water economy index) relative to environmental values
 humidity).
 
 # Package index
+
+## Overview
+
+- [`oxyproxy`](https://katherine-slenker.github.io/oxyproxy/reference/oxyproxy-package.md)
+  [`oxyproxy-package`](https://katherine-slenker.github.io/oxyproxy/reference/oxyproxy-package.md)
+  : oxyproxy: Steady-State Mass Balance Model of Oxygen Flux in Animal
+  Body Water
 
 ## d18O body water model
 

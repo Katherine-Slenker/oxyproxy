@@ -27,6 +27,7 @@ d18Oenamel-carbonate (converted to d18Obodywater) and variables input by user.">
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/oxyproxy_vector_inputs_vignette.html">OxyProxy: Vectorized Inputs Workflow</a></li>
     <li><a class="dropdown-item" href="../articles/OxyProxy-single-value-workflow.html">OxyProxy: Single-Value Workflow</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/Katherine-Slenker/oxyproxy/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -81,17 +82,17 @@ d18Oenamel-carbonate (converted to d18Obodywater) and variables input by user.</
 
 <dt id="arg-model-air-temperature">model_air_temperature<a class="anchor" aria-label="anchor" href="#arg-model-air-temperature"></a></dt>
 <dd><p>Numeric. Air temperature in deg C. Enter 0 to
-have the model substitute a range of simulated values.</p></dd>
+substitute the Herbivore Standard value.</p></dd>
 
 
 <dt id="arg-model-d-o-surfacewater">model_d18O_Surfacewater<a class="anchor" aria-label="anchor" href="#arg-model-d-o-surfacewater"></a></dt>
 <dd><p>Numeric. d18O of local surface water
-(per mil VSMOW). Enter 0 to substitute simulated values.</p></dd>
+(per mil VSMOW). Enter 0 to substitute the Herbivore Standard value.</p></dd>
 
 
 <dt id="arg-model-digestibility-of-food">model_Digestibility_of_food<a class="anchor" aria-label="anchor" href="#arg-model-digestibility-of-food"></a></dt>
 <dd><p>Numeric. Digestible organic matter as a
-proportion of ingested matter. Enter 0 to substitute simulated values.</p></dd>
+proportion of ingested matter. Enter 0 to substitute the Herbivore Standard value.</p></dd>
 
 
 <dt id="arg-model-carbohydrate-content">model_Carbohydrate_Content<a class="anchor" aria-label="anchor" href="#arg-model-carbohydrate-content"></a></dt>
@@ -141,6 +142,17 @@ argument given more than one value. Defaults to TRUE.</p></dd>
     <p>Plots of estimates of relative humidity versus d18Obodywater values
 and user-input variables.</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Any argument left at 0 is replaced with the corresponding Herbivore Standard
+value, a self-consistent reference animal: body mass 30 kg, WEI 0.25,
+carbohydrate 0.85, protein 0.1, fat 0.05, digestibility 0.7, free water
+content of food 0.65, air temperature 15 deg C, d18Osw -3.25 per mil. The
+function reports which arguments it substituted.</p>
+<p>The standard also fixes a relative humidity of 0.75. Running
+<code><a href="oxy_proxy_function.html">oxy_proxy_function()</a></code> on the same parameters and feeding the resulting
+d18Ocarb back through this function recovers that value.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -158,8 +170,8 @@ and user-input variables.</p>
 <span class="r-in"><span>  model_WaterEconomyIndex <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
 <span class="r-in"><span>  PlotRange <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> WARNING : If you are missing information about species, food or environment and you struggle to fill the arguments values,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>          oxyproxy package can try a wide range of simulated values for you. Enter 0 -zero- in the argument you want the model to inject simulated values</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> NOTE : If you are missing information about species, food or environment, enter 0 -zero- for that argument</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>          and oxyproxy will substitute the corresponding Herbivore Standard value.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CAUTION !!! Carbohydrate_Content, Protein_Content and Fat_Content arguments must sum to 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Energy Extraction Efficiency, fractions (O, H, energy) of carbohydrate, protein and fat are standardized constants extracted from Kohn models and litterature,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>          but it can be modified by user by modifying the argument changeConstant to TRUE</span>

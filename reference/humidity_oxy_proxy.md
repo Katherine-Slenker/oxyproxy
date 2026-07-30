@@ -35,18 +35,18 @@ humidity_oxy_proxy(
 
 - model_air_temperature:
 
-  Numeric. Air temperature in deg C. Enter 0 to have the model
-  substitute a range of simulated values.
+  Numeric. Air temperature in deg C. Enter 0 to substitute the Herbivore
+  Standard value.
 
 - model_d18O_Surfacewater:
 
   Numeric. d18O of local surface water (per mil VSMOW). Enter 0 to
-  substitute simulated values.
+  substitute the Herbivore Standard value.
 
 - model_Digestibility_of_food:
 
   Numeric. Digestible organic matter as a proportion of ingested matter.
-  Enter 0 to substitute simulated values.
+  Enter 0 to substitute the Herbivore Standard value.
 
 - model_Carbohydrate_Content:
 
@@ -95,6 +95,19 @@ humidity_oxy_proxy(
 Plots of estimates of relative humidity versus d18Obodywater values and
 user-input variables.
 
+## Details
+
+Any argument left at 0 is replaced with the corresponding Herbivore
+Standard value, a self-consistent reference animal: body mass 30 kg, WEI
+0.25, carbohydrate 0.85, protein 0.1, fat 0.05, digestibility 0.7, free
+water content of food 0.65, air temperature 15 deg C, d18Osw -3.25 per
+mil. The function reports which arguments it substituted.
+
+The standard also fixes a relative humidity of 0.75. Running
+[`oxy_proxy_function()`](https://katherine-slenker.github.io/oxyproxy/reference/oxy_proxy_function.md)
+on the same parameters and feeding the resulting d18Ocarb back through
+this function recovers that value.
+
 ## Examples
 
 ``` r
@@ -112,8 +125,8 @@ humidity_oxy_proxy(
   model_WaterEconomyIndex = 0.4,
   PlotRange = FALSE
 )
-#> WARNING : If you are missing information about species, food or environment and you struggle to fill the arguments values,
-#>          oxyproxy package can try a wide range of simulated values for you. Enter 0 -zero- in the argument you want the model to inject simulated values
+#> NOTE : If you are missing information about species, food or environment, enter 0 -zero- for that argument
+#>          and oxyproxy will substitute the corresponding Herbivore Standard value.
 #> CAUTION !!! Carbohydrate_Content, Protein_Content and Fat_Content arguments must sum to 1
 #> Energy Extraction Efficiency, fractions (O, H, energy) of carbohydrate, protein and fat are standardized constants extracted from Kohn models and litterature,
 #>          but it can be modified by user by modifying the argument changeConstant to TRUE
