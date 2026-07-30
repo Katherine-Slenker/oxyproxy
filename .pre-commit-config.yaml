@@ -1,0 +1,28 @@
+# Local pre-commit hooks. Opt in once per clone with:
+#   install.packages("precommit"); precommit::use_precommit()
+#
+# These give fast local feedback. The docs-current GitHub Action is the actual
+# guarantee, since hooks are per-clone and can be skipped with --no-verify.
+repos:
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9030
+    hooks:
+      - id: roxygenize
+        additional_dependencies:
+          - r-lib/pkgapi
+          - roxygen2
+      - id: style-files
+      - id: lintr
+      - id: parsable-R
+      - id: no-browser-statement
+      - id: deps-in-desc
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+        exclude: '\.Rd$'
+      - id: trailing-whitespace
+        exclude: '\.Rd$'
+      - id: check-yaml
+      - id: check-merge-conflict

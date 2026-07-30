@@ -1,0 +1,44 @@
+# Fails if man/ or NAMESPACE are out of date with the roxygen comments in R/.
+# R CMD check does not catch this: it validates the .Rd files that exist, but
+# never checks they were regenerated after a roxygen block changed.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
+
+name: docs-current
+
+permissions: read-all
+
+jobs:
+  docs-current:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::roxygen2
+          needs: roxygen2
+
+      - name: Regenerate documentation
+        run: roxygen2::roxygenise()
+        shell: Rscript {0}
+
+      - name: Check man/ and NAMESPACE are current
+        run: |
+          if ! git diff --exit-code --stat -- man NAMESPACE; then
+            echo "::error::man/ or NAMESPACE is stale. Run roxygen2::roxygenise() and commit the result."
+            git diff -- man NAMESPACE
+            exit 1
+          fi
+          echo "Documentation is up to date."
