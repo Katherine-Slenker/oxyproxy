@@ -1,0 +1,29 @@
+url: https://katherine-slenker.github.io/oxyproxy/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: d18O body water model
+  desc: >
+    Estimate oxygen-18 enrichment of animal body water from oxygen inputs
+    and outputs.
+  contents:
+  - species_function
+  - food_function
+  - environment_function
+  - input_function
+  - outputs_function
+  - d18_obw_function
+  - oxy_proxy_function
+
+- title: Relative humidity estimation
+  desc: >
+    Invert the model to estimate relative humidity from a measured
+    d18O enamel carbonate value.
+  contents:
+  - d18O_enamel
+  - rh_estimation_environment_function
+  - inverse_input_function
+  - rh_function
+  - humidity_oxy_proxy
