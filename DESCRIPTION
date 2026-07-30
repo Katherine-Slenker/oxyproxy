@@ -12,7 +12,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 NeedsCompilation: no
 Packaged: 2026-02-20 14:44:01 UTC; KatieSlenker
-URL: https://github.com/Katherine-Slenker/oxyproxy
+URL: https://katherine-slenker.github.io/oxyproxy/,
+        https://github.com/Katherine-Slenker/oxyproxy
 BugReports: https://github.com/Katherine-Slenker/oxyproxy/issues
 Roxygen: list(markdown = TRUE)
 Suggests:
