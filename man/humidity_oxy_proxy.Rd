@@ -67,6 +67,11 @@ RH_Estimation_Environment, RH_Estimation_Inputs, and Outputs functions to
 generate plots of estimates of relative humidity against measurements of
 d18Oenamel-carbonate (converted to d18Obodywater) and variables input by user.
 }
+\details{
+Any argument left at 0 is replaced with a range of simulated values. When
+that happens the function reports which arguments were substituted, since
+each one multiplies the number of rows in the result.
+}
 \examples{
 # Estimate relative humidity from a measured enamel carbonate value
 humidity_oxy_proxy(
