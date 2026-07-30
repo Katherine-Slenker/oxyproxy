@@ -15,3 +15,4 @@ Numeric vector of dry hydrogen influx (moles H2)
 \description{
 Calculate dry hydrogen influx
 }
+\keyword{internal}
