@@ -35,14 +35,24 @@ describe("outputs_function()", {
     expect_equal(out$WVSweat, 0)
   })
 
-  it("errors for sweating species instead of computing WVSweat", {
-    # BUG: prepare_outputs_dataframe() never creates a Sweating column, so
-    # calculate_wv_sweating() reads df$Sweating as NULL and with_column()
-    # fails. The non-sweating path survives because it returns a constant 0.
-    expect_error(
-      outputs_function(mock_inputs(), sweating_species = TRUE),
-      "replacement has 0 rows"
-    )
+  it("computes WVSweat as half of Sweating for sweating species", {
+    out <- outputs_function(mock_inputs(), sweating_species = TRUE)
+    expect_equal(out$WVSweat, out$Sweating / 2)
+  })
+
+  it("computes Sweating for both species types, but only applies it when sweating", {
+    # Sweating (the water budget) is always computed; sweating_species only
+    # controls whether it becomes vapor loss (WVSweat).
+    sweating <- outputs_function(mock_inputs(), sweating_species = TRUE)
+    non_sweating <- outputs_function(mock_inputs(), sweating_species = FALSE)
+
+    expect_equal(sweating$Sweating, non_sweating$Sweating)
+    expect_equal(non_sweating$WVSweat, 0)
+  })
+
+  it("computes Sweating as 75% of WaterHeatLoss", {
+    out <- outputs_function(mock_inputs(), sweating_species = TRUE)
+    expect_equal(out$Sweating, 0.75 * out$WaterHeatLoss)
   })
 
   it("computes DryFecalOutput as FoodMassIngested * (1 - Digestibility)", {
@@ -52,5 +62,19 @@ describe("outputs_function()", {
 
   it("warns when a value that should be non-negative is negative", {
     expect_warning(outputs_function(mock_inputs(H2OOral = -1)), "Negative values")
+  })
+
+  it("doesn't warn for Digestibility at the boundaries of 0 or 1", {
+    expect_no_warning(outputs_function(mock_inputs(Digestibility = 0)))
+    expect_no_warning(outputs_function(mock_inputs(Digestibility = 1)))
+  })
+
+  it("warns when Digestibility is outside [0, 1]", {
+    expect_warning(outputs_function(mock_inputs(Digestibility = 1.5)), "Digestibility")
+    expect_warning(outputs_function(mock_inputs(Digestibility = -0.1)), "Digestibility")
+  })
+
+  it("errors on an explicit zero-row data frame", {
+    expect_error(outputs_function(mock_inputs()[0, ]), "empty")
   })
 })

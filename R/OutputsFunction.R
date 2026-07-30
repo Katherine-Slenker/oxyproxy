@@ -32,6 +32,7 @@
 #'     \item{FecalH20Loss}{Numeric. Water loss through feces (moles H2O)}
 #'     \item{WVFecal}{Numeric. Water vapor from fecal loss (moles H2O)}
 #'     \item{WaterHeatLoss}{Numeric. Water used for thermoregulation (moles H2O)}
+#'     \item{Sweating}{Numeric. Water loss through sweat (moles H2O)}
 #'     \item{WVSweat}{Numeric. Water vapor from sweating (moles H2O, species-dependent)}
 #'     \item{Panting}{Numeric. Water loss through panting (moles H2O)}
 #'     \item{WVMouth}{Numeric. Water vapor from oral routes (moles H2O)}
@@ -116,6 +117,7 @@ outputs_function <- function(inputs = 0, sweating_species = FALSE) {
     with_column("FecalH20Loss", calculate_fecal_water_loss) |>
     with_column("WVFecal", calculate_wv_fecal) |>
     with_column("WaterHeatLoss", calculate_water_heat_loss) |>
+    with_column("Sweating", calculate_sweating) |>
     with_column("WVSweat", sweat_function) |>
     with_column("Panting", calculate_panting) |>
     with_column("WVMouth", calculate_wv_mouth) |>
@@ -273,6 +275,7 @@ prepare_outputs_dataframe <- function(inputs) {
     FecalH20Loss = 0,
     WVFecal = 0,
     WaterHeatLoss = 0,
+    Sweating = 0,
     WVSweat = 0,
     Panting = 0,
     WVMouth = 0,
