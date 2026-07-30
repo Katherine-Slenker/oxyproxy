@@ -7,7 +7,6 @@
 #' @param func Function that takes a data frame and returns calculated values
 #' @return Data frame with new column added
 #' @keywords internal
-#' @export
 with_column <- function(df, column_name, func) {
   df[[column_name]] <- func(df)
   return(df)
@@ -20,7 +19,6 @@ with_column <- function(df, column_name, func) {
 #' @param environment Data frame with environmental conditions
 #' @return Data frame with all input combinations
 #' @keywords internal
-#' @export
 combine_inputs <- function(species, food, environment) {
   stopifnot(is.data.frame(species), is.data.frame(food), is.data.frame(environment))
 
