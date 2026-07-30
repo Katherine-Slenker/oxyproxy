@@ -42,4 +42,12 @@ describe("d18_obw_function()", {
     incomplete$MolesO2Air <- NULL
     expect_error(d18_obw_function(outputs = incomplete), "replacement has length zero")
   })
+
+  it("errors clearly on a zero-row outputs frame instead of crashing on 1:0", {
+    # BUG: the loop is `for (i in 1:nrow(DF_outputs))`. With 0 rows,
+    # 1:nrow() is 1:0 == c(1, 0), so the loop tries to assign into row 1 of a
+    # 0-row frame and fails with "replacement has 1 row, data has 0" instead
+    # of a message that explains the actual problem.
+    expect_error(d18_obw_function(outputs = mock_outputs()[0, ]), "cannot be empty")
+  })
 })

@@ -58,4 +58,15 @@ describe("rh_function()", {
     out <- rh_function(rh_estimation_d18O = two_d18O, outputs = two_outputs)
     expect_equal(nrow(out), 2 * 2)
   })
+
+  it("errors clearly when the merged result is empty instead of crashing on 1:0", {
+    # BUG: the loop is `for (i in 1:nrow(DF_outputs))`. With 0 rows,
+    # 1:nrow() is 1:0 == c(1, 0), so the loop tries to assign into row 1 of a
+    # 0-row frame and fails with "replacement has 1 row, data has 0" instead
+    # of a message that explains the actual problem.
+    expect_error(
+      rh_function(rh_estimation_d18O = mock_rh_d18O()[0, ], outputs = mock_outputs()),
+      "cannot be empty"
+    )
+  })
 })
