@@ -8,11 +8,8 @@ flux of oxygen input and outputs.}
 d18_obw_function(outputs = 0)
 }
 \arguments{
-\item{Species}{Data frame containing species physiological parameters.}
-
-\item{Inputs}{Data frame containing oxygen input data.}
-
-\item{Outputs}{Data frame containing oxygen output data.
+\item{outputs}{Data frame of oxygen output data, as returned by
+\code{\link[=outputs_function]{outputs_function()}}. Must carry the columns listed below.
 \describe{
 \item{MolesO2Air}{Numeric. Moles of oxygen from air}
 \item{d18Oairtakenup}{Numeric. }
@@ -35,37 +32,22 @@ d18_obw_function(outputs = 0)
 }}
 }
 \value{
-Data frame with estimated δ¹⁸Obw, δ¹⁸Oenamel-phosphate, and δ¹⁸Oenamel-carbonate.
+Data frame with estimated d18Obw, d18Oenamel-phosphate, and d18Oenamel-carbonate.
 }
 \description{
 This function combines the Species, Inputs, and Outputs functions to generate estimates of oxygen-18 enrichment of animal bodywater, enamel-phosphate,
 and enamel-carbonate.
 }
 \examples{
-# Example for a herbivore
+# One row of oxygen fluxes, as outputs_function() would return
 herbivore_data <- data.frame(
-  MolesO2Air =
-  d18Oairtakenup =
-  WV =
-  dairH2OSW =
-  dfoodO2SW =
-  dryOinflux =
-  dfoodH2Osw =
-  WaterinFood =
-  DrinkingWater =
-  WVCO2 =
-  WVNose =
-  WVMouth =
-  WVSkin =
-  WVSweat =
-  WVUrine =
-  WVFecal =
-  Urea =
-  d18Osw =
+  MolesO2Air = 0.42, d18Oairtakenup = 12, WV = 3, dairH2OSW = 2,
+  dfoodO2SW = 10, dryOinflux = 0.08, dfoodH2Osw = 5, WaterinFood = 1,
+  DrinkingWater = 2, WVCO2 = 0.1, WVNose = 0.3, WVMouth = 0.5,
+  WVSkin = 1.5, WVSweat = 0, WVUrine = 1.6, WVFecal = 0.4,
+  Urea = 0.2, d18Osw = -8
 )
 
-# Calculate outputs for non-sweating species (default)
-herbivore_d18OBW <- d18_obw_functionn(herbivore_data)
-
+d18_obw_function(outputs = herbivore_data)
 
 }

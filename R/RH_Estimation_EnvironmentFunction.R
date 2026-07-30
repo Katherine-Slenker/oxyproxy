@@ -4,18 +4,18 @@
 #'computes values for mean annual temperature (MAT), oxygen-18 enrichment
 #'of inhaled air (dairH2O), and the difference in oxygen-18 enrichment between
 #'air and source water (dairH2OSW).
-#' @param air_temperature Numeric. Air temperature (°C) of environment. Must be
+#' @param air_temperature Numeric. Air temperature ( deg C) of environment. Must be
 #' provided; 0 and negative values are valid.
-#' @param d18O_surface_water Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
+#' @param d18O_surface_water Numeric. d18O values of local surface water (per mil VSMOW).
 #'  Must be provided; 0 and negative values are valid.
 #'
 #' @return A data frame with all combinations of input values and 5 columns:
 #' \itemize{
-#'   \item airtemp - Air temperature (°C)
-#'   \item MAT - Mean annual temperature (°K)
-#'   \item d18Osw - δ¹⁸O enrichment of surface water (‰)
-#'   \item dairH2O - δ¹⁸O enirchment of inhaled air (‰)
-#'   \item dairH2OSW - Difference between air and surface water δ¹⁸O enrichment (‰)
+#'   \item airtemp - Air temperature ( deg C)
+#'   \item MAT - Mean annual temperature ( deg K)
+#'   \item d18Osw - d18O enrichment of surface water (per mil)
+#'   \item dairH2O - d18O enirchment of inhaled air (per mil)
+#'   \item dairH2OSW - Difference between air and surface water d18O enrichment (per mil)
 #'   }
 #'
 #' @examples

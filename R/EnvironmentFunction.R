@@ -9,27 +9,27 @@
 #'calculations assume that the oxygen-18 enrichment of stem water is equivalent
 #'to that of surface waters.
 #'
-#' @param air_temperature Numeric. Air temperature (°C) of environment. Must be
+#' @param air_temperature Numeric. Air temperature ( deg C) of environment. Must be
 #' provided; 0 and negative values are valid.
 #' @param relative_humidity Numeric. Relative humidity of environment. Must be
 #' between 0 and 1.
-#' @param d18O_surface_water Numeric. δ¹⁸O values of local surface water (‰ VSMOW).
+#' @param d18O_surface_water Numeric. d18O values of local surface water (per mil VSMOW).
 #'  Must be provided.
 #'
 #' @return A data frame with all combinations of input values and 12 columns:
 #' \itemize{
-#'   \item airtemp - Air temperature (°C)
-#'   \item MAT - Mean annual temperature (°K)
-#'   \item Humidity - Relative humidity (proportion, 0–1)
+#'   \item airtemp - Air temperature ( deg C)
+#'   \item MAT - Mean annual temperature ( deg K)
+#'   \item Humidity - Relative humidity (proportion, 0-1)
 #'   \item WVinLungs - Water vapor taken in lungs via respiration (mol)
 #'   \item WV - Atmospheric water vapor (mol)
-#'   \item d18Osw - δ¹⁸O enrichment of surface water (‰)
-#'   \item dairH2O - δ¹⁸O enirchment of inhaled air (‰)
-#'   \item dairH2OSW - Difference between air and surface water δ¹⁸O enrichment (‰)
-#'   \item d18OleafH2O - δ¹⁸O enrichment of leaf water (‰)
-#'   \item d18Oleafcellulose - δ¹⁸O enrichment of leaf cellulose (‰)
-#'   \item dfoodO2SW - δ¹⁸O enrichment of food oxygen relative to surface water (‰)
-#'   \item dfoodH2Osw - δ¹⁸O enrichment of food water relative to surface water (‰)
+#'   \item d18Osw - d18O enrichment of surface water (per mil)
+#'   \item dairH2O - d18O enirchment of inhaled air (per mil)
+#'   \item dairH2OSW - Difference between air and surface water d18O enrichment (per mil)
+#'   \item d18OleafH2O - d18O enrichment of leaf water (per mil)
+#'   \item d18Oleafcellulose - d18O enrichment of leaf cellulose (per mil)
+#'   \item dfoodO2SW - d18O enrichment of food oxygen relative to surface water (per mil)
+#'   \item dfoodH2Osw - d18O enrichment of food water relative to surface water (per mil)
 #' }
 #'
 #' @examples
@@ -49,7 +49,7 @@ environment_function <- function(air_temperature=numeric(0), relative_humidity=n
   ## 0. VALIDATING ARGUMENTS =====================================================
   if(length(air_temperature)==0)
   {
-    stop("Enter Air Temperature value (in °C)")
+    stop("Enter Air Temperature value (in  deg C)")
   }
   if(length(relative_humidity)==0)
   {

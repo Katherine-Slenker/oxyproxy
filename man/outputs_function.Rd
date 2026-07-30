@@ -7,12 +7,7 @@
 outputs_function(inputs = 0, sweating_species = FALSE)
 }
 \arguments{
-\item{sweating_species}{Logical. Indicates whether the species is capable of
-sweating. If TRUE, water vapor loss from sweating is calculated as 75\% of
-water heat loss. If FALSE (default), sweating water vapor loss is set to
-zero.}
-
-\item{Inputs}{A data frame containing the following required columns:
+\item{inputs}{A data frame containing the following required columns:
 \describe{
 \item{FoodMassIngested}{Numeric. Mass of food consumed (kg)}
 \item{Digestibility}{Numeric. Fraction of food digested (0-1)}
@@ -28,6 +23,11 @@ zero.}
 \item{dryHinflux}{Numeric. Dry hydrogen influx (moles H2)}
 \item{dryOinflux}{Numeric. Dry oxygen influx (moles O2)}
 }}
+
+\item{sweating_species}{Logical. Indicates whether the species is capable of
+sweating. If TRUE, water vapor loss from sweating is calculated as 75\% of
+water heat loss. If FALSE (default), sweating water vapor loss is set to
+zero.}
 }
 \value{
 A data frame containing all original input columns plus the following
@@ -87,8 +87,8 @@ mouse_data <- data.frame(
 # Calculate outputs for non-sweating species (default)
 mouse_outputs <- outputs_function(mouse_data)
 
-# Calculate outputs for sweating species with debug info
-human_outputs <- outputs_function(human_data, sweating_species = TRUE)
+# Calculate outputs for a sweating species
+sweating_outputs <- outputs_function(mouse_data, sweating_species = TRUE)
 
 # Multiple animals
 multi_animal_data <- data.frame(

@@ -4,7 +4,7 @@
 #' such as dry fecal mass, water loss from feces, water vapor losses through feces,sweat, respiration (CO2), and panting,
 #' and losses through metabolic functions, like urea production.
 #'
-#' @param Inputs A data frame containing the following required columns:
+#' @param inputs A data frame containing the following required columns:
 #'   \describe{
 #'     \item{FoodMassIngested}{Numeric. Mass of food consumed (kg)}
 #'     \item{Digestibility}{Numeric. Fraction of food digested (0-1)}
@@ -77,8 +77,8 @@
 #' # Calculate outputs for non-sweating species (default)
 #' mouse_outputs <- outputs_function(mouse_data)
 #'
-#' # Calculate outputs for sweating species with debug info
-#' human_outputs <- outputs_function(human_data, sweating_species = TRUE)
+#' # Calculate outputs for a sweating species
+#' sweating_outputs <- outputs_function(mouse_data, sweating_species = TRUE)
 #'
 #' # Multiple animals
 #' multi_animal_data <- data.frame(

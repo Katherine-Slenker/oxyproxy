@@ -32,6 +32,9 @@ content to equal 1.}
 
 \item{Free_Water_Content_Food}{The percentage of free water of food.
 Must be between 0 and 1.}
+
+\item{changeConstant}{Logical. If TRUE, prompts for values overriding the
+model constants. Defaults to FALSE.}
 }
 \value{
 Data frame with all calculated dietary variables:
