@@ -73,7 +73,7 @@ oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, 
   d18O <- d18_obw_function(outputs = OO)
 
   ### Priting default plots if arguments are ranges of values (i.e. more than 1 value in any argument) ==========
-  if (PlotRange == TRUE & nrow(d18O) > 1) {
+  if (isTRUE(PlotRange) && nrow(d18O) > 1) {
     if (length(model_bodymass) > 1) {
       plot(d18O$d18Obw ~ d18O$Bodymass, xlab = "Body mass (in Kg)", ylab = "d18O body water", pch = 16)
     }

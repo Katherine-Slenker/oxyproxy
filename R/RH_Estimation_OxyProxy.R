@@ -117,7 +117,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
   RH <- rh_function(rh_estimation_d18O = d18Result, outputs = OOM, printinfo = printinfo)
 
   ### Potential plots if PlotRange == TRUE =======================================
-  if (PlotRange == TRUE & nrow(RH) > 1) {
+  if (isTRUE(PlotRange) && nrow(RH) > 1) {
     message("Variables with more than one values are compared to relative humidity, all plots can be redone and improved from function outputs")
     if (length(model_Body_mass) > 1) {
       plot(RH$Humidity * 100 ~ RH$Bodymass, xlab = "Body mass (in Kg)", ylab = "Relative Humidity (%)", pch = 16)
