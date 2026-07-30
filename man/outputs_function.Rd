@@ -37,6 +37,7 @@ calculated output columns:
 \item{FecalH20Loss}{Numeric. Water loss through feces (moles H2O)}
 \item{WVFecal}{Numeric. Water vapor from fecal loss (moles H2O)}
 \item{WaterHeatLoss}{Numeric. Water used for thermoregulation (moles H2O)}
+\item{Sweating}{Numeric. Water loss through sweat (moles H2O)}
 \item{WVSweat}{Numeric. Water vapor from sweating (moles H2O, species-dependent)}
 \item{Panting}{Numeric. Water loss through panting (moles H2O)}
 \item{WVMouth}{Numeric. Water vapor from oral routes (moles H2O)}
