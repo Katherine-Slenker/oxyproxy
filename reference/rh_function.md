@@ -1,0 +1,46 @@
+# Calculates estimates of relative humidity and variables that are dependent on values of relative humidity that are needed to calculate oxygen-18 enrichment of animal body water.
+
+This function combines the rh_estimation_d18O, Species, Food,
+RH_Estimation_Environment, RH_Estimation_Inputs, and Outputs functions
+to calculate estimates of relative humidity and variables that are
+dependent upon relative humidity values, including water vapor in the
+lungs, water vapor in the atmosphere, oxygen-18 enrichment of leaf water
+and cellulose, the difference in oxygen-18 enrichment between oxygen in
+food and surface waters (dfoodO2SW), water in food and surface waters
+(dfoodH2Osw), and drinking water ingested (DrinkingH2OIngested) and
+drinking water vapor (DrinkingWater) These calculations assume that the
+oxygen-18 enrichment of stem water is equivalent to that of surface
+waters.
+
+## Usage
+
+``` r
+rh_function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE)
+```
+
+## Arguments
+
+- rh_estimation_d18O:
+
+  Data frame containing d18Obodywater values, as returned by
+  [`d18O_enamel()`](https://katherine-slenker.github.io/oxyproxy/reference/d18O_enamel.md).
+
+- outputs:
+
+  Data frame of oxygen output data, as returned by
+  [`outputs_function()`](https://katherine-slenker.github.io/oxyproxy/reference/outputs_function.md).
+
+- printinfo:
+
+  Logical. If TRUE, prints the computed Humidity values.
+
+## Value
+
+Data frame relative humidity estimates and values of dependent
+variables.
+
+## Examples
+
+``` r
+# herbivore_d18OBW <- rh_function(df)
+```

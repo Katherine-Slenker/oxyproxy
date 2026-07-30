@@ -1,0 +1,79 @@
+# Calculate all variables of oxygen input from physiology, diet, and environment.
+
+This function combines the Species, Food, and RH_Estimation Environment
+functions to calculate oxygen inputs to generate estimates of relative
+humidity.
+
+## Usage
+
+``` r
+inverse_input_function(species = 0, food = 0, environment = 0)
+```
+
+## Arguments
+
+- species:
+
+  Data frame containing species physiological parameters. Must include:
+  EnergyExp, TotalH2OTurnover
+
+- food:
+
+  Data frame containing food composition data. Must include:
+  Digestibility, EEE, foodcarbcontent, foodcarbenergy, Ocarb, Hcarb,
+  foodproteincontent, foodproteinenergy, Oprotein, Hprotein,
+  foodfatcontent, foodfatenergy, Ofat, Hfat, and freeH20food.
+
+- environment:
+
+  Data frame from rh_estimation_environment_function(), i.e.
+  environmental parameters excluding relative humidity and everything
+  derived from it.
+
+## Value
+
+Data frame with all input combinations and calculated physiological
+variables:
+
+- FoodMassIngested - Mass of food consumed (kg)
+
+- dryOinflux - Dry oxygen influx from food (moles O2)
+
+- dryHinflux - Dry hydrogen influx from food (moles H2)
+
+- FreeH2Oinfood - Free water content in food (moles H2O)
+
+- WaterinFood - Water vapor from food (half of free water) (moles H2O)
+
+## Examples
+
+``` r
+# Create example data
+species_data <- data.frame(
+  EnergyExp = 5000,
+  TotalH2OTurnover = 1000
+)
+
+food_data <- data.frame(
+  Digestibility = 0.85,
+  EEE = 0.95,
+  foodcarbcontent = 0.6, foodcarbenergy = 17,
+  foodproteincontent = 0.25, foodproteinenergy = 23,
+  foodfatcontent = 0.05, foodfatenergy = 39,
+  Ocarb = 1.33, Oprotein = 1.41, Ofat = 2.9,
+  Hcarb = 1.51, Hprotein = 1.29, Hfat = 1.94,
+  freeH20food = 0.75
+)
+
+# As returned by rh_estimation_environment_function()
+environment_data <- rh_estimation_environment_function(
+  air_temperature = 25,
+  d18O_surface_water = -5
+)
+
+result <- inverse_input_function(
+  species = species_data,
+  food = food_data,
+  environment = environment_data
+)
+```
