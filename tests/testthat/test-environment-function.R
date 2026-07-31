@@ -84,13 +84,16 @@ describe("environment_function() humidity bounds", {
     # The manuscript's Step 2 example uses seq(0, 1, 0.1), so both endpoints
     # have to remain valid.
     expect_no_error(suppressMessages(
-      environment_function(air_temperature = 20, relative_humidity = 0, d18O_surface_water = -5)))
+      environment_function(air_temperature = 20, relative_humidity = 0, d18O_surface_water = -5)
+    ))
     expect_no_error(suppressMessages(
-      environment_function(air_temperature = 20, relative_humidity = 1, d18O_surface_water = -5)))
+      environment_function(air_temperature = 20, relative_humidity = 1, d18O_surface_water = -5)
+    ))
   })
 
   it("still accepts negative air temperature and surface water", {
     expect_no_error(suppressMessages(
-      environment_function(air_temperature = -15, relative_humidity = 0.5, d18O_surface_water = -9.9)))
+      environment_function(air_temperature = -15, relative_humidity = 0.5, d18O_surface_water = -9.9)
+    ))
   })
 })

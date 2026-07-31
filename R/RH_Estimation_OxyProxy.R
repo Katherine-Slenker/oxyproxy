@@ -64,19 +64,13 @@
 #' )
 #'
 #' @export
-### Wrapper and final function for the "inverse function" dedicated to the computation of humidity from d18C
-### This function wrap the modified (Environment, Inputs, Outputs) and base functions (Food, Species)
-### as well as two originals functions dedicated to Humidity (last layer) and d180enamel (first layer) computation
-
 
 humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature = 0, model_d18O_Surfacewater = 0,
                                model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_Body_mass = 0,
                                model_WaterEconomyIndex = 0, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE) {
-  ### First layer : d180 Enamel ==================================================
   d18Result <- d18O_enamel(d18O_carbonate = sampled_d18Ocarbonate)
 
-  #### Second layer : Species, Food and mod_environment ==========================
   message("NOTE : If you are missing information about species, food or environment, enter 0 -zero- for that argument
          and oxyproxy will substitute the corresponding Herbivore Standard value.")
 
@@ -94,7 +88,6 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
 
   OEM <- rh_estimation_environment_function(air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater)
 
-  # Food function (unmodified from base function)
   if (length(model_Digestibility_of_food) == 1 && model_Digestibility_of_food[1] == 0) {
     model_Digestibility_of_food <- 0.7
     substituted <- c(substituted, "model_Digestibility_of_food")
@@ -122,7 +115,6 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
     changeConstant = FALSE
   )
 
-  # Species function (unmofidied from base function)
   if (length(model_Body_mass) == 1 && model_Body_mass[1] == 0) {
     model_Body_mass <- 30
     substituted <- c(substituted, "model_Body_mass")
@@ -141,17 +133,12 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
 
   OS <- species_function(body_mass = model_Body_mass, water_economy_index = model_WaterEconomyIndex, changeConstant = FALSE)
 
-  ### Third layer : Inputs fed with first layer values then Inputs results are used in Outputs function ========
-  # What is going in (e.g. drinking water, food, leaf water content, etc...)
   OI <- inverse_input_function(species = OS, food = OF, environment = OEM)
 
-  # What is going out (e.g. feces, pee, sweat, etc...)
   OOM <- outputs_function(inputs = OI, sweating_species = sweating_species)
 
-  ### Final layer : Computation of the relative humidity =========================
   RH <- rh_function(rh_estimation_d18O = d18Result, outputs = OOM, printinfo = printinfo)
 
-  ### Potential plots if PlotRange == TRUE =======================================
   if (isTRUE(PlotRange) && nrow(RH) > 1) {
     message("Variables with more than one values are compared to relative humidity, all plots can be redone and improved from function outputs")
     if (length(model_Body_mass) > 1) {
@@ -186,6 +173,5 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
     }
   }
 
-  # Return of the wrapper function, large dataset could be returned ===============
   return(RH)
 }
