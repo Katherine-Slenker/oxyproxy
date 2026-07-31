@@ -55,28 +55,21 @@ oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, 
                                model_Carbohydrate_Content = 0, model_Protein_Content = 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_air_temperature = 0,
                                model_Relative_Humidity = 0, model_d18O_surfacewater = 0, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE) {
-  ## Species
   OS <- species_function(body_mass = model_bodymass, water_economy_index = model_WaterEconomyIndex, changeConstant = changeConstant)
 
-  ## Food
   OF <- food_function(
     digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content, Protein_Content = model_Protein_Content,
     Fat_Content = model_Fat_Content, Free_Water_Content_Food = model_Free_Water_Content_Food, changeConstant = changeConstant
   )
 
-  ## Environment
   OE <- environment_function(air_temperature = model_air_temperature, relative_humidity = model_Relative_Humidity, d18O_surface_water = model_d18O_surfacewater)
 
-  ## Oxygen Inputs
   OI <- input_function(species = OS, food = OF, environment = OE)
 
-  ## Oxygen Outputs
   OO <- outputs_function(inputs = OI, sweating_species = sweating_species)
 
-  ## d18O values
   d18O <- d18_obw_function(outputs = OO)
 
-  ### Priting default plots if arguments are ranges of values (i.e. more than 1 value in any argument) ==========
   if (isTRUE(PlotRange) && nrow(d18O) > 1) {
     if (length(model_bodymass) > 1) {
       plot(d18O$d18Obw ~ d18O$Bodymass, xlab = "Body mass (in Kg)", ylab = "d18O body water", pch = 16)
@@ -110,6 +103,5 @@ oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, 
     }
   }
 
-  # Output of Oxy Proxy Function ========
   return(d18O)
 }

@@ -52,12 +52,7 @@
 #' )
 #'
 #' @export
-### SET INPUT FUNCTION
 inverse_input_function <- function(species = 0, food = 0, environment = 0) {
-  ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables
-  # Length = number of combination of results
-  # Dataframe size is determined by Species x Food x Environment dataframe
   n_species <- nrow(species)
   n_food <- nrow(food)
   n_env <- nrow(environment)
@@ -71,8 +66,6 @@ inverse_input_function <- function(species = 0, food = 0, environment = 0) {
   )
   DF_outputs <- as.data.frame(DF_outputs)
 
-  ## 1. FILLING IT WITH PREVIOUS DATA COMING FROM FOOD SPECIES AND ENVIRONMENT FUNCTION
-  ### THIS FOLLOWING ALGORITHM IS MADE TO FIND ALL COMBINATION OF VALUES TO COMPUTE THE INPUTS VALUES IN THE NEXT STEPS
   # Species cycles fastest, food is blocked slowest, environment sits between.
   DF_outputs[, colnames(species)] <- species[rep(seq_len(n_species), length.out = n_rows), , drop = FALSE]
   DF_outputs[, colnames(food)] <- food[rep(seq_len(n_food), each = n_rows / n_food), , drop = FALSE]
@@ -81,32 +74,25 @@ inverse_input_function <- function(species = 0, food = 0, environment = 0) {
   DF_outputs[, colnames(environment)] <-
     environment[env_block[rep(seq_along(env_block), length.out = n_rows)], , drop = FALSE]
 
-  ## 2. COMPUTATION OF INPUT VARIABLES
-
-  # Food Mass Ingested = (Energy Exp)/ (Digestibility*EEE*(foodcarbcontent * foodcarbernergy + foodproteincontent * foodproteinenergy + foodfatcontent * foodfatenergy))
   DF_outputs$FoodMassIngested <- DF_outputs$EnergyExp /
     (DF_outputs$Digestibility * DF_outputs$EEE *
       (DF_outputs$foodcarbcontent * DF_outputs$foodcarbenergy +
         DF_outputs$foodproteincontent * DF_outputs$foodproteinenergy +
         DF_outputs$foodfatcontent * DF_outputs$foodfatenergy))
 
-  # dry O influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Ocarb + foodproteincontent * Oprotein + foodfatcontent * Ofat)
   DF_outputs$dryOinflux <- DF_outputs$Digestibility * DF_outputs$EEE * DF_outputs$FoodMassIngested *
     (DF_outputs$foodcarbcontent * DF_outputs$Ocarb +
       DF_outputs$foodproteincontent * DF_outputs$Oprotein +
       DF_outputs$foodfatcontent * DF_outputs$Ofat)
 
-  # dry H influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Hcarb + foodproteincontent * Hprotein + foodfatcontent * Hfat)
   DF_outputs$dryHinflux <- DF_outputs$Digestibility * DF_outputs$EEE * DF_outputs$FoodMassIngested *
     (DF_outputs$foodcarbcontent * DF_outputs$Hcarb +
       DF_outputs$foodproteincontent * DF_outputs$Hprotein +
       DF_outputs$foodfatcontent * DF_outputs$Hfat)
 
-  # Free H2O in food = Food Mass Ingested * 55.56 * (Free H2O of food/(1-free H20 of food))
   DF_outputs$FreeH2Oinfood <- DF_outputs$FoodMassIngested * 55.56 *
     (DF_outputs$freeH20food / (1 - DF_outputs$freeH20food))
 
-  # Water in Food = Free Water in Food / 2
   DF_outputs$WaterinFood <- DF_outputs$FreeH2Oinfood / 2
 
   return(DF_outputs)

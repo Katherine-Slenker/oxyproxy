@@ -54,11 +54,9 @@
 
 #' @export
 
-## SET FUNCTION FOR FOOD
 food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Content = numeric(0),
                           Protein_Content = numeric(0), Fat_Content = numeric(0),
                           Free_Water_Content_Food = numeric(0), changeConstant = FALSE) {
-  ## 0. VALIDATING ARGUMENTS =====================================================
   if (length(Free_Water_Content_Food) == 0) {
     stop("Enter Free Water Content of Food as Proportion Value (ex: 0.4)")
   }
@@ -91,9 +89,6 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
     stop("Enter Free Water Content of Food as Proportion Value between 0 and 1 (ex: 0.4)")
   }
 
-  ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables
-  # Length = number of combination of results
   DF_outputs <- matrix(
     data = 0, nrow = length(digestibility_of_food) * length(Carbohydrate_Content) * length(Protein_Content) * length(Fat_Content) * length(Free_Water_Content_Food),
     ncol = 15
@@ -106,19 +101,15 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   )
   DF_outputs <- as.data.frame(DF_outputs)
 
-  # FILLING DATAFRAME WITH ARGUMENTS VALUES AND CONSTANTS
-
   message("CAUTION !!! Carbohydrate_Content, Protein_Content and Fat_Content arguments must sum to 1")
 
   message("Energy Extraction Efficiency, fractions (O, H, energy) of carbohydrate, protein and fat are standardized constants extracted from Kohn models and litterature,
          but it can be modified by user by modifying the argument changeConstant to TRUE")
 
-  # free H2O content of food ===================================================
   freeH20food <- Free_Water_Content_Food
 
   DF_outputs$freeH20food <- freeH20food
 
-  # Digestibility ===============================================================
   Digestibility <- digestibility_of_food
   DF_outputs$Digestibility <- Digestibility
 
@@ -128,13 +119,10 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   } ## the dataframe is split in X part for X values of Digestibility
   DF_outputs$Digestibility <- Col_Digestibility_temp
 
-  # Macronutrient Content ===============================================================
   foodcarbcontent <- Carbohydrate_Content
   foodproteincontent <- Protein_Content
   foodfatcontent <- Fat_Content
 
-  ## 1. CONSTANTS ================================================================
-  # energy extraction efficiency
   DF_outputs$EEE <- 0.9
   if (changeConstant == FALSE) {
     message("Energy Extraction Efficiency standardized to EEE = 0.9 (%)")
@@ -145,7 +133,6 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
     DF_outputs$EEE <- as.numeric(EEE_temp)
   }
 
-  # food carbohydrate ==========================================================
   DF_outputs$foodcarbenergy <- 17300
   DF_outputs$Ocarb <- 15.4
   DF_outputs$Hcarb <- 30.9
@@ -161,7 +148,6 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
     DF_outputs$Hcarb <- as.numeric(Hcarb_temp)
   }
 
-
   Col_foodcarbcontent_temp <- c()
   for (i in seq_along(foodcarbcontent)) {
     Col_foodcarbcontent_temp <- c(Col_foodcarbcontent_temp, rep(foodcarbcontent[i], nrow(DF_outputs) / length(Digestibility) / length(foodcarbcontent)))
@@ -169,8 +155,6 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   Col_foodcarbcontent_temp <- rep(Col_foodcarbcontent_temp, length(Digestibility))
   DF_outputs$foodcarbcontent <- Col_foodcarbcontent_temp
 
-
-  # food protein ===============================================================
   DF_outputs$foodproteinenergy <- 20100
   DF_outputs$Oprotein <- 3
   DF_outputs$Hprotein <- 11
@@ -196,8 +180,6 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   Col_foodproteincontent_temp <- rep(Col_foodproteincontent_temp, (length(Digestibility) * length(foodcarbcontent)))
   DF_outputs$foodproteincontent <- Col_foodproteincontent_temp
 
-
-  # e. food fat ================================================================
   DF_outputs$foodfatenergy <- 39700
   DF_outputs$Ofat <- 2
   DF_outputs$Hfat <- 60
@@ -222,7 +204,6 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   }
   Col_foodfatcontent_temp <- rep(Col_foodfatcontent_temp, (length(Digestibility) * length(foodcarbcontent) * length(foodproteincontent)))
   DF_outputs$foodfatcontent <- Col_foodfatcontent_temp
-
 
   return(DF_outputs)
 }
