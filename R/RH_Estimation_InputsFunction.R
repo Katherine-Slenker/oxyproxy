@@ -73,9 +73,7 @@ inverse_input_function <- function(species = 0, food = 0, environment = 0) {
 
   ## 1. FILLING IT WITH PREVIOUS DATA COMING FROM FOOD SPECIES AND ENVIRONMENT FUNCTION
   ### THIS FOLLOWING ALGORITHM IS MADE TO FIND ALL COMBINATION OF VALUES TO COMPUTE THE INPUTS VALUES IN THE NEXT STEPS
-  # Full factorial: species cycles fastest, food is blocked slowest, environment
-  # sits between the two. Indexing once per source frame keeps this linear in
-  # n_rows -- growing the frame a row at a time made large grids unusable.
+  # Species cycles fastest, food is blocked slowest, environment sits between.
   DF_outputs[, colnames(species)] <- species[rep(seq_len(n_species), length.out = n_rows), , drop = FALSE]
   DF_outputs[, colnames(food)] <- food[rep(seq_len(n_food), each = n_rows / n_food), , drop = FALSE]
 

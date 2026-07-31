@@ -56,8 +56,6 @@ environment_function <- function(air_temperature = numeric(0), relative_humidity
     stop("Enter d18Osw value per mil")
   }
 
-  # Air temperature and d18Osw are routinely negative, so only humidity is
-  # bounded. 0 and 1 are both valid, as in the seq(0, 1, 0.1) documented usage.
   if (any(relative_humidity < 0) || any(relative_humidity > 1)) {
     stop("Enter Relative Humidity value between 0 and 1 (%)")
   }

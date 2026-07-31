@@ -80,7 +80,6 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
   message("NOTE : If you are missing information about species, food or environment, enter 0 -zero- for that argument
          and oxyproxy will substitute the corresponding Herbivore Standard value.")
 
-  # Names of the arguments the model filled in for the caller, reported below.
   substituted <- character(0)
 
   # Environment function modified from the base version to exclude any calculation based on Humidity

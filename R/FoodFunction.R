@@ -78,8 +78,6 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
     stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
   }
 
-  # Proportions may be 0 (a zero-fat diet, or completely dry food) but never
-  # negative, and never above 1.
   if (any(Carbohydrate_Content < 0) || any(Carbohydrate_Content > 1)) {
     stop("Enter Carbohydrate Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
   }
