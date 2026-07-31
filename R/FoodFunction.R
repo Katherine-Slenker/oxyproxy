@@ -65,7 +65,7 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   if (length(digestibility_of_food) == 0) {
     stop("Enter Digestibility value as % (0-1)")
   }
-  if (any(digestibility_of_food <= 0)) {
+  if (any(digestibility_of_food <= 0) || any(digestibility_of_food > 1)) {
     stop("Enter Digestibility value as % (0-1) greater than 0")
   }
   if (length(Carbohydrate_Content) == 0) {
@@ -76,6 +76,21 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   }
   if (length(Fat_Content) == 0) {
     stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+
+  # Proportions may be 0 (a zero-fat diet, or completely dry food) but never
+  # negative, and never above 1.
+  if (any(Carbohydrate_Content < 0) || any(Carbohydrate_Content > 1)) {
+    stop("Enter Carbohydrate Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if (any(Protein_Content < 0) || any(Protein_Content > 1)) {
+    stop("Enter Protein Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if (any(Fat_Content < 0) || any(Fat_Content > 1)) {
+    stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if (any(Free_Water_Content_Food < 0) || any(Free_Water_Content_Food > 1)) {
+    stop("Enter Free Water Content of Food as Proportion Value between 0 and 1 (ex: 0.4)")
   }
 
   ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================

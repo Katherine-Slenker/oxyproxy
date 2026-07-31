@@ -79,8 +79,36 @@ describe("food_function()", {
     expect_equal(out$EEE, 0.9)
   })
 
-  it("silently accepts a negative Fat_Content instead of erroring", {
-    out <- food_function(digestibility_of_food = 0.6, Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = -0.1, Free_Water_Content_Food = 0.4)
-    expect_equal(out$foodfatcontent, -0.1)
+})
+
+describe("food_function() proportion bounds", {
+  valid <- function(...) {
+    utils::modifyList(
+      list(
+        digestibility_of_food = 0.6, Carbohydrate_Content = 0.8,
+        Protein_Content = 0.1, Fat_Content = 0.1,
+        Free_Water_Content_Food = 0.4, changeConstant = FALSE
+      ),
+      list(...)
+    )
+  }
+
+  it("rejects negative macronutrient and water contents", {
+    expect_error(do.call(food_function, valid(Carbohydrate_Content = -0.5)), "between 0 and 1")
+    expect_error(do.call(food_function, valid(Protein_Content = -0.1)), "between 0 and 1")
+    expect_error(do.call(food_function, valid(Fat_Content = -0.1)), "between 0 and 1")
+    expect_error(do.call(food_function, valid(Free_Water_Content_Food = -0.5)), "between 0 and 1")
+  })
+
+  it("rejects proportions above 1", {
+    expect_error(do.call(food_function, valid(Carbohydrate_Content = 1.5)), "between 0 and 1")
+    expect_error(do.call(food_function, valid(Free_Water_Content_Food = 1.5)), "between 0 and 1")
+    expect_error(do.call(food_function, valid(digestibility_of_food = 1.5)), "0-1")
+  })
+
+  it("still accepts zero for macronutrients and free water", {
+    # A zero-fat diet and completely dry food are both physically real.
+    expect_no_error(suppressMessages(do.call(food_function, valid(Fat_Content = 0))))
+    expect_no_error(suppressMessages(do.call(food_function, valid(Free_Water_Content_Food = 0))))
   })
 })
