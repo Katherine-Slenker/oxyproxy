@@ -4,18 +4,18 @@
 #' computes values for food-related parameters (energy, oxygen, and hydrogen content).
 #'
 #' @param digestibility_of_food Numeric. Digestible organic matter as a
-#' percentage of total ingested matter. High values indicate that large
-#' amounts of nutrients are extracted. Must be between 0 and 1.
-#' @param Carbohydrate_Content The percentage of carbohydrates in the diet.
-#'   Must be between 0 and 1. This value should sum with protein and fat
+#' proportion of total ingested matter. High values indicate that large
+#' amounts of nutrients are extracted. Must be greater than 0 and at most 1.
+#' @param Carbohydrate_Content Numeric. Proportion of carbohydrate in the diet.
+#'   Must be between 0 and 1, and should sum with protein and fat content
+#'   to equal 1.
+#' @param Protein_Content Numeric. Proportion of protein in the diet.
+#'   Must be between 0 and 1, and should sum with carbohydrate and fat content
+#'   to equal 1.
+#' @param Fat_Content Numeric. Proportion of fat in the diet.
+#'   Must be between 0 and 1, and should sum with carbohydrate and protein
 #'   content to equal 1.
-#' @param Protein_Content The percentage of proteins in the diet.
-#'   Must be between 0 and 1. This value should sum with protein and fat
-#'   content to equal 1.
-#' @param Fat_Content The percentage of fats in the diet.
-#'   Must be between 0 and 1. This value should sum with protein and fat
-#'   content to equal 1.
-#' @param Free_Water_Content_Food The percentage of free water of food.
+#' @param Free_Water_Content_Food Numeric. Proportion of free water in food.
 #' Must be between 0 and 1.
 #' @param changeConstant Logical. If TRUE, prompts for values overriding the
 #'   model constants. Defaults to FALSE.
@@ -65,7 +65,7 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   if (length(digestibility_of_food) == 0) {
     stop("Enter Digestibility value as % (0-1)")
   }
-  if (any(digestibility_of_food <= 0)) {
+  if (any(digestibility_of_food <= 0) || any(digestibility_of_food > 1)) {
     stop("Enter Digestibility value as % (0-1) greater than 0")
   }
   if (length(Carbohydrate_Content) == 0) {
@@ -76,6 +76,19 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
   }
   if (length(Fat_Content) == 0) {
     stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+
+  if (any(Carbohydrate_Content < 0) || any(Carbohydrate_Content > 1)) {
+    stop("Enter Carbohydrate Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if (any(Protein_Content < 0) || any(Protein_Content > 1)) {
+    stop("Enter Protein Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if (any(Fat_Content < 0) || any(Fat_Content > 1)) {
+    stop("Enter Fat Content of Food as Proportion Value between 0 and 1 (ex: 0.8)")
+  }
+  if (any(Free_Water_Content_Food < 0) || any(Free_Water_Content_Food > 1)) {
+    stop("Enter Free Water Content of Food as Proportion Value between 0 and 1 (ex: 0.4)")
   }
 
   ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================

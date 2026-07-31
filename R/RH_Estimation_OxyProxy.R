@@ -13,13 +13,19 @@
 #' @param model_d18O_Surfacewater Numeric. d18O of local surface water
 #'   (per mil VSMOW). Enter 0 to substitute the Herbivore Standard value.
 #' @param model_Digestibility_of_food Numeric. Digestible organic matter as a
-#'   proportion of ingested matter. Enter 0 to substitute the Herbivore Standard value.
-#' @param model_Carbohydrate_Content Numeric. Proportion of carbohydrate in the diet.
-#' @param model_Protein_Content Numeric. Proportion of protein in the diet.
-#' @param model_Fat_Content Numeric. Proportion of fat in the diet.
-#' @param model_Free_Water_Content_Food Numeric. Proportion of free water in food.
-#' @param model_Body_mass Numeric. Body mass in kg.
-#' @param model_WaterEconomyIndex Numeric. Water economy index (ml/kJ).
+#'   proportion of ingested matter, greater than 0 and at most 1. Enter 0 to
+#'   substitute the Herbivore Standard value.
+#' @param model_Carbohydrate_Content Numeric. Proportion of carbohydrate in the
+#'   diet, between 0 and 1.
+#' @param model_Protein_Content Numeric. Proportion of protein in the diet,
+#'   between 0 and 1.
+#' @param model_Fat_Content Numeric. Proportion of fat in the diet, between
+#'   0 and 1.
+#' @param model_Free_Water_Content_Food Numeric. Proportion of free water in
+#'   food, between 0 and 1.
+#' @param model_Body_mass Numeric. Body mass in kg. Must be greater than 0.
+#' @param model_WaterEconomyIndex Numeric. Water economy index (ml/kJ). Must be
+#'   greater than 0; values between 0.05 and 0.6 are typical.
 #' @param changeConstant Logical. If TRUE, prompts for values overriding the
 #'   model constants. Defaults to FALSE.
 #' @param sweating_species Logical. Whether the species sweats. Defaults to FALSE.
@@ -74,7 +80,6 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
   message("NOTE : If you are missing information about species, food or environment, enter 0 -zero- for that argument
          and oxyproxy will substitute the corresponding Herbivore Standard value.")
 
-  # Names of the arguments the model filled in for the caller, reported below.
   substituted <- character(0)
 
   # Environment function modified from the base version to exclude any calculation based on Humidity

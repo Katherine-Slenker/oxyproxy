@@ -14,7 +14,7 @@
 #' @param relative_humidity Numeric. Relative humidity of environment. Must be
 #' between 0 and 1.
 #' @param d18O_surface_water Numeric. d18O values of local surface water (per mil VSMOW).
-#'  Must be provided.
+#'  Must be provided; 0 and negative values are valid and typical.
 #'
 #' @return A data frame with all combinations of input values and 12 columns:
 #' \itemize{
@@ -54,6 +54,10 @@ environment_function <- function(air_temperature = numeric(0), relative_humidity
   }
   if (length(d18O_surface_water) == 0) {
     stop("Enter d18Osw value per mil")
+  }
+
+  if (any(relative_humidity < 0) || any(relative_humidity > 1)) {
+    stop("Enter Relative Humidity value between 0 and 1 (%)")
   }
 
   ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================

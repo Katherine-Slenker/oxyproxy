@@ -59,13 +59,38 @@ describe("environment_function()", {
     expect_equal(out$Humidity, 1)
   })
 
-  it("silently accepts relative_humidity outside [0, 1] instead of erroring", {
-    out <- environment_function(air_temperature = 20, relative_humidity = 1.5, d18O_surface_water = -5)
-    expect_equal(out$Humidity, 1.5)
-  })
-
   it("accepts negative air_temperature", {
     out <- environment_function(air_temperature = -10, relative_humidity = 0.5, d18O_surface_water = -5)
     expect_equal(out$MAT, -10 + 273)
+  })
+})
+
+describe("environment_function() humidity bounds", {
+  it("rejects negative relative humidity", {
+    expect_error(
+      environment_function(air_temperature = 20, relative_humidity = -0.5, d18O_surface_water = -5),
+      "between 0 and 1"
+    )
+  })
+
+  it("rejects relative humidity above 1", {
+    expect_error(
+      environment_function(air_temperature = 20, relative_humidity = 1.5, d18O_surface_water = -5),
+      "between 0 and 1"
+    )
+  })
+
+  it("still accepts humidity of exactly 0 and 1", {
+    # The manuscript's Step 2 example uses seq(0, 1, 0.1), so both endpoints
+    # have to remain valid.
+    expect_no_error(suppressMessages(
+      environment_function(air_temperature = 20, relative_humidity = 0, d18O_surface_water = -5)))
+    expect_no_error(suppressMessages(
+      environment_function(air_temperature = 20, relative_humidity = 1, d18O_surface_water = -5)))
+  })
+
+  it("still accepts negative air temperature and surface water", {
+    expect_no_error(suppressMessages(
+      environment_function(air_temperature = -15, relative_humidity = 0.5, d18O_surface_water = -9.9)))
   })
 })
