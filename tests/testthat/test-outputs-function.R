@@ -55,6 +55,11 @@ describe("outputs_function()", {
     expect_equal(out$Sweating, 0.75 * out$WaterHeatLoss)
   })
 
+  it("computes WVSweat as 37.5% of WaterHeatLoss", {
+    out <- outputs_function(mock_inputs(), sweating_species = TRUE)
+    expect_equal(out$WVSweat, 0.375 * out$WaterHeatLoss)
+  })
+
   it("computes DryFecalOutput as FoodMassIngested * (1 - Digestibility)", {
     out <- outputs_function(mock_inputs(), sweating_species = FALSE)
     expect_equal(out$DryFecalOutput, 5.2 * (1 - 0.85))
