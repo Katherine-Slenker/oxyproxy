@@ -18,7 +18,7 @@ provided; 0 and negative values are valid.}
 between 0 and 1.}
 
 \item{d18O_surface_water}{Numeric. d18O values of local surface water (per mil VSMOW).
-Must be provided.}
+Must be provided; 0 and negative values are valid and typical.}
 }
 \value{
 A data frame with all combinations of input values and 12 columns:

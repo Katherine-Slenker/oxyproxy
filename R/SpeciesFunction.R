@@ -9,7 +9,7 @@
 #' @param body_mass Numeric. Animal body mass (kg). Must be >0
 #' @param water_economy_index Numeric. Mass-independent measurement of water flux.
 #' Ratio of water (ml) per day to energy metabolized (kJ) per day.
-#'   Must be between 0.05 and 0.6.
+#' Must be greater than 0; values between 0.05 and 0.6 are typical.
 #' @return Data frame with all calculated physiological variables:
 #'   \itemize{
 #'     \item EnergyExpenditure - Energy utilized for physiological functions, scaled to body mass (kJ)

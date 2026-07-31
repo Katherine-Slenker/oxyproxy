@@ -4,18 +4,18 @@
 #' computes values for food-related parameters (energy, oxygen, and hydrogen content).
 #'
 #' @param digestibility_of_food Numeric. Digestible organic matter as a
-#' percentage of total ingested matter. High values indicate that large
-#' amounts of nutrients are extracted. Must be between 0 and 1.
-#' @param Carbohydrate_Content The percentage of carbohydrates in the diet.
-#'   Must be between 0 and 1. This value should sum with protein and fat
+#' proportion of total ingested matter. High values indicate that large
+#' amounts of nutrients are extracted. Must be greater than 0 and at most 1.
+#' @param Carbohydrate_Content Numeric. Proportion of carbohydrate in the diet.
+#'   Must be between 0 and 1, and should sum with protein and fat content
+#'   to equal 1.
+#' @param Protein_Content Numeric. Proportion of protein in the diet.
+#'   Must be between 0 and 1, and should sum with carbohydrate and fat content
+#'   to equal 1.
+#' @param Fat_Content Numeric. Proportion of fat in the diet.
+#'   Must be between 0 and 1, and should sum with carbohydrate and protein
 #'   content to equal 1.
-#' @param Protein_Content The percentage of proteins in the diet.
-#'   Must be between 0 and 1. This value should sum with protein and fat
-#'   content to equal 1.
-#' @param Fat_Content The percentage of fats in the diet.
-#'   Must be between 0 and 1. This value should sum with protein and fat
-#'   content to equal 1.
-#' @param Free_Water_Content_Food The percentage of free water of food.
+#' @param Free_Water_Content_Food Numeric. Proportion of free water in food.
 #' Must be between 0 and 1.
 #' @param changeConstant Logical. If TRUE, prompts for values overriding the
 #'   model constants. Defaults to FALSE.

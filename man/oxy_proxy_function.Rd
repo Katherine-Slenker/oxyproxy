@@ -24,19 +24,23 @@ oxy_proxy_function(
 \arguments{
 \item{model_bodymass}{Numeric. Body mass in kg. Must be greater than 0.}
 
-\item{model_WaterEconomyIndex}{Numeric. Water economy index (ml/kJ).}
+\item{model_WaterEconomyIndex}{Numeric. Water economy index (ml/kJ). Must be
+greater than 0; values between 0.05 and 0.6 are typical.}
 
 \item{model_Digestibility_of_food}{Numeric. Digestible organic matter as a
-proportion of ingested matter, between 0 and 1.}
+proportion of ingested matter. Must be greater than 0 and at most 1.}
 
 \item{model_Carbohydrate_Content}{Numeric. Proportion of carbohydrate in the
-diet. Carbohydrate, protein, and fat content must sum to 1.}
+diet, between 0 and 1. Carbohydrate, protein, and fat content must sum to 1.}
 
-\item{model_Protein_Content}{Numeric. Proportion of protein in the diet.}
+\item{model_Protein_Content}{Numeric. Proportion of protein in the diet,
+between 0 and 1.}
 
-\item{model_Fat_Content}{Numeric. Proportion of fat in the diet.}
+\item{model_Fat_Content}{Numeric. Proportion of fat in the diet, between
+0 and 1.}
 
-\item{model_Free_Water_Content_Food}{Numeric. Proportion of free water in food.}
+\item{model_Free_Water_Content_Food}{Numeric. Proportion of free water in
+food, between 0 and 1.}
 
 \item{model_air_temperature}{Numeric. Air temperature in deg C. Zero and
 negative values are valid.}

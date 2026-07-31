@@ -33,19 +33,25 @@ substitute the Herbivore Standard value.}
 (per mil VSMOW). Enter 0 to substitute the Herbivore Standard value.}
 
 \item{model_Digestibility_of_food}{Numeric. Digestible organic matter as a
-proportion of ingested matter. Enter 0 to substitute the Herbivore Standard value.}
+proportion of ingested matter, greater than 0 and at most 1. Enter 0 to
+substitute the Herbivore Standard value.}
 
-\item{model_Carbohydrate_Content}{Numeric. Proportion of carbohydrate in the diet.}
+\item{model_Carbohydrate_Content}{Numeric. Proportion of carbohydrate in the
+diet, between 0 and 1.}
 
-\item{model_Protein_Content}{Numeric. Proportion of protein in the diet.}
+\item{model_Protein_Content}{Numeric. Proportion of protein in the diet,
+between 0 and 1.}
 
-\item{model_Fat_Content}{Numeric. Proportion of fat in the diet.}
+\item{model_Fat_Content}{Numeric. Proportion of fat in the diet, between
+0 and 1.}
 
-\item{model_Free_Water_Content_Food}{Numeric. Proportion of free water in food.}
+\item{model_Free_Water_Content_Food}{Numeric. Proportion of free water in
+food, between 0 and 1.}
 
-\item{model_Body_mass}{Numeric. Body mass in kg.}
+\item{model_Body_mass}{Numeric. Body mass in kg. Must be greater than 0.}
 
-\item{model_WaterEconomyIndex}{Numeric. Water economy index (ml/kJ).}
+\item{model_WaterEconomyIndex}{Numeric. Water economy index (ml/kJ). Must be
+greater than 0; values between 0.05 and 0.6 are typical.}
 
 \item{changeConstant}{Logical. If TRUE, prompts for values overriding the
 model constants. Defaults to FALSE.}

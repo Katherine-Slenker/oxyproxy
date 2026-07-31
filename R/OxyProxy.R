@@ -6,14 +6,18 @@
 #' enrichment of animal bodywater against variables input by user.
 #'
 #' @param model_bodymass Numeric. Body mass in kg. Must be greater than 0.
-#' @param model_WaterEconomyIndex Numeric. Water economy index (ml/kJ).
+#' @param model_WaterEconomyIndex Numeric. Water economy index (ml/kJ). Must be
+#'   greater than 0; values between 0.05 and 0.6 are typical.
 #' @param model_Digestibility_of_food Numeric. Digestible organic matter as a
-#'   proportion of ingested matter, between 0 and 1.
+#'   proportion of ingested matter. Must be greater than 0 and at most 1.
 #' @param model_Carbohydrate_Content Numeric. Proportion of carbohydrate in the
-#'   diet. Carbohydrate, protein, and fat content must sum to 1.
-#' @param model_Protein_Content Numeric. Proportion of protein in the diet.
-#' @param model_Fat_Content Numeric. Proportion of fat in the diet.
-#' @param model_Free_Water_Content_Food Numeric. Proportion of free water in food.
+#'   diet, between 0 and 1. Carbohydrate, protein, and fat content must sum to 1.
+#' @param model_Protein_Content Numeric. Proportion of protein in the diet,
+#'   between 0 and 1.
+#' @param model_Fat_Content Numeric. Proportion of fat in the diet, between
+#'   0 and 1.
+#' @param model_Free_Water_Content_Food Numeric. Proportion of free water in
+#'   food, between 0 and 1.
 #' @param model_air_temperature Numeric. Air temperature in deg C. Zero and
 #'   negative values are valid.
 #' @param model_Relative_Humidity Numeric. Relative humidity as a proportion
