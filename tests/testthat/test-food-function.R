@@ -78,7 +78,6 @@ describe("food_function()", {
     out <- food_function(digestibility_of_food = 0.6, Carbohydrate_Content = 0.9, Protein_Content = 0.9, Fat_Content = 0.9, Free_Water_Content_Food = 0.4)
     expect_equal(out$EEE, 0.9)
   })
-
 })
 
 describe("food_function() proportion bounds", {

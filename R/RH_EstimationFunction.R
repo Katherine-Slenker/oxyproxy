@@ -25,9 +25,7 @@
 #' # herbivore_d18OBW <- rh_function(df)
 #'
 #' @export
-### SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
 rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) {
-  ### PREPPING DATASET =========================================================
   DF_outputs <- merge(outputs, rh_estimation_d18O)
   if (nrow(DF_outputs) == 0) {
     stop("rh_estimation_d18O and outputs cannot be empty")
@@ -41,8 +39,6 @@ rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) 
   DF_outputs_temp <- as.data.frame(DF_outputs_temp)
   DF_outputs <- cbind(DF_outputs, DF_outputs_temp)
 
-
-  ### HUMIDITY COMPUTATION FROM Outputs
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$Humidity[i] <- (DF_outputs$d18Obodywater[i] * (DF_outputs$WVCO2[i] + DF_outputs$WVMouth[i] + DF_outputs$WVNose[i] +
       DF_outputs$WVSkin[i] + DF_outputs$WVSweat[i] + DF_outputs$WVUrine[i] +
@@ -56,38 +52,30 @@ rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) 
       (((10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * (12400 / (760 * 22.4)) * (DF_outputs$dairH2OSW[i] / 2)) - ((DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$dryOinflux[i]) - (0.5 * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$WaterinFood[i]))
   }
 
-  # Water Vapor Taken in Lungs <- Humidity * 10^(0.686+0.027*airtemp) * 12400/(760*22.4)
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$WVinLungs[i] <- DF_outputs$Humidity[i] * (10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * 12400 / (760 * 22.4)
   }
 
-  # Water Vapor <- Water Vapor in Lungs / 2
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$WV[i] <- DF_outputs$WVinLungs[i] / 2
   }
 
-  # d18OleafH2O <-d18Osw + (1-Humidity) * (d18Osw - dairH2O + 16)
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$d18OleafH2O[i] <- DF_outputs$d18Osw[i] + (1 - DF_outputs$Humidity[i]) * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16)
   }
 
-  # d18Oleafcellulose <- d18OleafH2O + 27
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$d18Oleafcellulose[i] <- DF_outputs$d18OleafH2O[i] + 27
   }
 
-  # dfoodO2SW <-d18Oleafcellulose - d18Osw
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dfoodO2SW[i] <- DF_outputs$d18Oleafcellulose[i] - DF_outputs$d18Osw[i]
   }
 
-  # dfoodH2Osw  <- (0.5 * d18OstemH2O + 0.5 * d18OleafH2O) -d18Osw
-  # d18OstemH2O = d18Osw
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dfoodH2Osw[i] <- (0.5 * DF_outputs$d18Osw[i] + 0.5 * DF_outputs$d18OleafH2O[i]) - DF_outputs$d18Osw[i]
   }
 
-  # Drinking H2O Ingested = Total H2O Turnover - free H2O in food - dry food H influx - water vapor in lungs
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$DrinkingH2OIngested[i] <- DF_outputs$TotalH2OTurnover[i] - DF_outputs$FreeH2Oinfood[i] - DF_outputs$dryHinflux[i] - DF_outputs$WVinLungs[i]
   }

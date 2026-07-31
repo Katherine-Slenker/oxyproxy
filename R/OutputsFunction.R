@@ -144,7 +144,6 @@ validate_inputs <- function(inputs) {
     stop("Input data frame is empty")
   }
 
-  # Check for negative values where they don't make biological sense
   non_negative_cols <- c(
     "FoodMassIngested", "TotalH2OTurnover", "H2OOral",
     "H2ONasal", "TranscutaneousH2OLoss", "UrinaryH2OLoss"
@@ -156,7 +155,6 @@ validate_inputs <- function(inputs) {
     }
   }
 
-  # Check digestibility is between 0 and 1
   if (any(inputs$Digestibility < 0 | inputs$Digestibility > 1, na.rm = TRUE)) {
     warning("Digestibility values should be between 0 and 1")
   }
@@ -260,7 +258,6 @@ calculate_wv_sweating <- function(df) {
 calculate_wv_not_sweating <- function(df) {
   rep(0, nrow(df))
 }
-
 
 #' Prepare outputs dataframe with initialized calculation columns
 #'
