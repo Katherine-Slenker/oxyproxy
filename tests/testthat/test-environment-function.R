@@ -94,3 +94,35 @@ describe("environment_function() humidity bounds", {
       environment_function(air_temperature = -15, relative_humidity = 0.5, d18O_surface_water = -9.9)))
   })
 })
+
+describe("environment_function() refactor guards", {
+  air <- c(0, 10, 20)
+  rh <- c(0.5, 0.75)
+  sw <- c(-2, -5, -8, -11)
+
+  it("lays out the grid with airtemp fastest, then d18Osw, then Humidity", {
+    out <- environment_function(air_temperature = air, relative_humidity = rh, d18O_surface_water = sw)
+
+    expect_equal(out$airtemp, rep(air, times = 8))
+    expect_equal(out$d18Osw, rep(rep(sw, each = 3), times = 2))
+    expect_equal(out$Humidity, rep(rh, each = 12))
+    expect_equal(names(out), c(
+      "airtemp", "MAT", "Humidity", "WVinLungs", "WV", "d18Osw", "dairH2O",
+      "dairH2OSW", "d18OleafH2O", "d18Oleafcellulose", "dfoodO2SW", "dfoodH2Osw"
+    ))
+  })
+
+  it("computes every derived column from that row's inputs", {
+    out <- environment_function(air_temperature = air, relative_humidity = rh, d18O_surface_water = sw)
+
+    expect_equal(out$MAT, out$airtemp + 273)
+    expect_equal(out$WVinLungs, out$Humidity * (10^(0.686 + 0.027 * out$airtemp)) * 12400 / (760 * 22.4))
+    expect_equal(out$WV, out$WVinLungs / 2)
+    expect_equal(out$dairH2O, out$d18Osw - 2.644 + 3206 / out$MAT - 1.534 * (10^6) / (out$MAT^2))
+    expect_equal(out$dairH2OSW, out$dairH2O - out$d18Osw)
+    expect_equal(out$d18OleafH2O, out$d18Osw + (1 - out$Humidity) * (out$d18Osw - out$dairH2O + 16))
+    expect_equal(out$d18Oleafcellulose, out$d18OleafH2O + 27)
+    expect_equal(out$dfoodO2SW, out$d18Oleafcellulose - out$d18Osw)
+    expect_equal(out$dfoodH2Osw, (0.5 * out$d18Osw + 0.5 * out$d18OleafH2O) - out$d18Osw)
+  })
+})
