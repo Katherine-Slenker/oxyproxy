@@ -5,12 +5,16 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened, edited]
   release:
     types: [published]
   workflow_dispatch:
 
 name: pkgdown
+
+# A new push to a PR cancels that PR's in-flight run. Runs on main always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read

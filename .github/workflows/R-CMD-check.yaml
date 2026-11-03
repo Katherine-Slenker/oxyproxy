@@ -1,12 +1,18 @@
 # Standard multi-platform check, per r-lib/actions and R Packages (2e).
+# Pull requests check ubuntu-latest (release) only; pushes to main and manual
+# runs check the full five-platform matrix.
 on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 name: R-CMD-check
+
+# A new push to a PR cancels that PR's in-flight run. Runs on main always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions: read-all
 
@@ -18,12 +24,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {os: macos-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-latest,  r: 'oldrel-1'}
+        config: >-
+          ${{ fromJSON(github.event_name == 'pull_request'
+          && '[{"os": "ubuntu-latest", "r": "release"}]'
+          || '[{"os": "macos-latest", "r": "release"},
+          {"os": "windows-latest", "r": "release"},
+          {"os": "ubuntu-latest", "r": "devel", "http-user-agent": "release"},
+          {"os": "ubuntu-latest", "r": "release"},
+          {"os": "ubuntu-latest", "r": "oldrel-1"}]') }}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
