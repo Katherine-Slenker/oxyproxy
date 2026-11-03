@@ -35,12 +35,10 @@ describe("d18_obw_function()", {
     expect_false(out$d18Obw[1] == out$d18Obw[2])
   })
 
-  it("errors with an uninformative message when a required column is missing", {
-    # No column validation exists; missing MolesO2Air surfaces only as a
-    # generic "replacement has length zero" error from the [<- assignment.
+  it("errors naming the missing column", {
     incomplete <- mock_outputs()
     incomplete$MolesO2Air <- NULL
-    expect_error(d18_obw_function(outputs = incomplete), "replacement has length zero")
+    expect_error(d18_obw_function(outputs = incomplete), "Missing required columns: MolesO2Air")
   })
 
   it("errors clearly on a zero-row outputs frame instead of crashing on 1:0", {

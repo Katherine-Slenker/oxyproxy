@@ -46,6 +46,16 @@
 #' @export
 ### SET d18OBODYWATER FUNCTION
 d18_obw_function <- function(outputs = 0) {
+  required_cols <- c(
+    "MolesO2Air", "d18Oairtakenup", "WV", "dairH2OSW", "dfoodO2SW", "dryOinflux",
+    "dfoodH2Osw", "WaterinFood", "DrinkingWater", "WVCO2", "WVMouth", "WVNose",
+    "WVSkin", "WVSweat", "WVUrine", "WVFecal", "Urea", "d18Osw"
+  )
+  missing_cols <- setdiff(required_cols, names(outputs))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
+  }
+
   if (nrow(outputs) == 0) {
     stop("outputs cannot be empty")
   }
