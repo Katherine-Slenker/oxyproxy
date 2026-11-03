@@ -82,9 +82,7 @@ describe("outputs_function()", {
   it("errors on an explicit zero-row data frame", {
     expect_error(outputs_function(mock_inputs()[0, ]), "empty")
   })
-})
 
-describe("outputs_function() refactor guards", {
   it("appends calculated columns after the inputs, in pipeline order", {
     out <- outputs_function(mock_inputs())
     expect_equal(names(out), c(

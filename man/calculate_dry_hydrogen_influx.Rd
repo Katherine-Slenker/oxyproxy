@@ -7,7 +7,8 @@
 calculate_dry_hydrogen_influx(df)
 }
 \arguments{
-\item{df}{Data frame containing values from Food  function (Digestibility, EEE, hydrogen composition per macronutrient unit)}
+\item{df}{Data frame containing values from Food  function (Digestibility, EEE,
+hydrogen composition per macronutrient unit)}
 }
 \value{
 Numeric vector of dry hydrogen influx (moles H2)

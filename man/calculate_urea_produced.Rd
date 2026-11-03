@@ -7,7 +7,8 @@
 calculate_urea_produced(df)
 }
 \arguments{
-\item{df}{Data frame containing values from Food (Oprotein, foodproteincontent, EEE, Digestibility) and Inputs function (FoodMassIngested)}
+\item{df}{Data frame containing values from Food (Oprotein,
+foodproteincontent, EEE, Digestibility) and Inputs function (FoodMassIngested)}
 }
 \value{
 Numeric vector of urea production values

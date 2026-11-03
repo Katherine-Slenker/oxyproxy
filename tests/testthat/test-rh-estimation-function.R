@@ -17,14 +17,16 @@ mock_rh_d18O <- function() {
 }
 
 describe("rh_function()", {
+  derived <- c(
+    "Humidity", "WVinLungs", "WV", "d18OleafH2O", "d18Oleafcellulose",
+    "dfoodO2SW", "dfoodH2Osw", "DrinkingH2OIngested", "DrinkingWater"
+  )
+
   it("returns the documented calculated columns", {
     out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
 
     expect_s3_class(out, "data.frame")
-    expect_true(all(c(
-      "Humidity", "WVinLungs", "WV", "d18OleafH2O", "d18Oleafcellulose",
-      "dfoodO2SW", "dfoodH2Osw", "DrinkingH2OIngested", "DrinkingWater"
-    ) %in% names(out)))
+    expect_true(all(derived %in% names(out)))
   })
 
   it("computes WV as half of WVinLungs", {
@@ -65,13 +67,6 @@ describe("rh_function()", {
       "cannot be empty"
     )
   })
-})
-
-describe("rh_function() refactor guards", {
-  derived <- c(
-    "Humidity", "WVinLungs", "WV", "d18OleafH2O", "d18Oleafcellulose",
-    "dfoodO2SW", "dfoodH2Osw", "DrinkingH2OIngested", "DrinkingWater"
-  )
 
   it("gives each row the same derived values it would get on its own", {
     outputs <- mock_outputs()[rep(1, 3), ]

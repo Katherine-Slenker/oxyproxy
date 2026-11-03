@@ -17,7 +17,8 @@ species_function(
 Ratio of water (ml) per day to energy metabolized (kJ) per day.
 Must be greater than 0; values between 0.05 and 0.6 are typical.}
 
-\item{changeConstant}{Boolean. Default is FALSE. If changed to TRUE, user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)}
+\item{changeConstant}{Boolean. Default is FALSE. If changed to TRUE,
+user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)}
 }
 \value{
 Data frame with all calculated physiological variables:

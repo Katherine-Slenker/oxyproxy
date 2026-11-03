@@ -66,9 +66,7 @@ describe("input_function()", {
     out <- input_function(species = two_species, food = mock_food(), environment = mock_environment())
     expect_equal(nrow(out), 2)
   })
-})
 
-describe("input_function() refactor guards", {
   it("appends calculated columns after the inputs, in pipeline order", {
     out <- input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
     expect_equal(names(out), c(

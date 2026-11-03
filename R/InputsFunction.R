@@ -71,7 +71,8 @@ calculate_effective_food_mass <- function(df) {
 }
 
 #' Calculate energy density of food
-#' @param df Data frame containing values from Food function (macronutrient content in diet, energy content of macronutrient)
+#' @param df Data frame containing values from Food function (macronutrient content in diet,
+#' energy content of macronutrient)
 #' @return Numeric vector of energy densities (kJ/kg)
 #' @keywords internal
 calculate_energy_density <- function(df) {
@@ -89,7 +90,8 @@ calculate_food_mass <- function(df) {
 }
 
 #' Calculate dry oxygen influx
-#' @param df Data frame containing values from Food function (Digestibility, EEE, oxygen composition per macronutrient unit)
+#' @param df Data frame containing values from Food function (Digestibility, EEE,
+#' oxygen composition per macronutrient unit)
 #' and
 #' @return Numeric vector of dry oxygen influx (moles O2)
 #' @keywords internal
@@ -101,7 +103,8 @@ calculate_dry_oxygen_influx <- function(df) {
 }
 
 #' Calculate dry hydrogen influx
-#' @param df Data frame containing values from Food  function (Digestibility, EEE, hydrogen composition per macronutrient unit)
+#' @param df Data frame containing values from Food  function (Digestibility, EEE,
+#' hydrogen composition per macronutrient unit)
 #' @return Numeric vector of dry hydrogen influx (moles H2)
 #' @keywords internal
 calculate_dry_hydrogen_influx <- function(df) {

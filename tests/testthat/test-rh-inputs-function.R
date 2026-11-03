@@ -69,9 +69,7 @@ describe("inverse_input_function()", {
     combos <- paste(out$EnergyExp, out$Digestibility, out$airtemp)
     expect_equal(sort(combos), sort(unique(combos)))
   })
-})
 
-describe("inverse_input_function() refactor guards", {
   it("orders rows species fastest, then environment, then food", {
     two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
     three_food <- mock_food()[rep(1, 3), , drop = FALSE]
