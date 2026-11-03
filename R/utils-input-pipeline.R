@@ -21,6 +21,9 @@ with_column <- function(df, column_name, func) {
 #' @keywords internal
 combine_inputs <- function(species, food, environment) {
   stopifnot(is.data.frame(species), is.data.frame(food), is.data.frame(environment))
+  if (nrow(species) == 0 || nrow(food) == 0 || nrow(environment) == 0) {
+    stop("species, food, and environment cannot be empty")
+  }
 
   combinations <- expand.grid(
     species_row     = seq_len(nrow(species)),
@@ -32,13 +35,6 @@ combine_inputs <- function(species, food, environment) {
     species[combinations$species_row, , drop = FALSE],
     food[combinations$food_row, , drop = FALSE],
     environment[combinations$environment_row, , drop = FALSE],
-    FoodMassIngested = 0,
-    dryOinflux = 0,
-    dryHinflux = 0,
-    FreeH2Oinfood = 0,
-    WaterinFood = 0,
-    DrinkingH2OIngested = 0,
-    DrinkingWater = 0,
     row.names = NULL
   )
 }

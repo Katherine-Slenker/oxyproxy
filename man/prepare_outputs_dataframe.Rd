@@ -2,7 +2,7 @@
 % Please edit documentation in R/OutputsFunction.R
 \name{prepare_outputs_dataframe}
 \alias{prepare_outputs_dataframe}
-\title{Prepare outputs dataframe with initialized calculation columns}
+\title{Prepare outputs dataframe for the calculation pipeline}
 \usage{
 prepare_outputs_dataframe(inputs)
 }
@@ -10,9 +10,9 @@ prepare_outputs_dataframe(inputs)
 \item{inputs}{A dataframe containing inputs for calculations}
 }
 \value{
-A dataframe with original inputs and new columns. Initialized to 0
+The inputs dataframe with its row names reset
 }
 \description{
-Prepare outputs dataframe with initialized calculation columns
+Prepare outputs dataframe for the calculation pipeline
 }
 \keyword{internal}

@@ -83,3 +83,19 @@ describe("outputs_function()", {
     expect_error(outputs_function(mock_inputs()[0, ]), "empty")
   })
 })
+
+describe("outputs_function() refactor guards", {
+  it("appends calculated columns after the inputs, in pipeline order", {
+    out <- outputs_function(mock_inputs())
+    expect_equal(names(out), c(
+      names(mock_inputs()),
+      "DryFecalOutput", "FecalH20Loss", "WVFecal", "WaterHeatLoss", "Sweating",
+      "WVSweat", "Panting", "WVMouth", "UreaProduced", "WVCO2"
+    ))
+  })
+
+  it("resets row names on the returned frame", {
+    inputs <- mock_inputs()[c(1, 1), ]
+    expect_equal(rownames(outputs_function(inputs)), c("1", "2"))
+  })
+})

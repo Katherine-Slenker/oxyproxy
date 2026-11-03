@@ -262,24 +262,12 @@ calculate_wv_not_sweating <- function(df) {
 }
 
 
-#' Prepare outputs dataframe with initialized calculation columns
+#' Prepare outputs dataframe for the calculation pipeline
 #'
 #' @param inputs A dataframe containing inputs for calculations
-#' @return A dataframe with original inputs and new columns. Initialized to 0
+#' @return The inputs dataframe with its row names reset
 #' @keywords internal
 prepare_outputs_dataframe <- function(inputs) {
-  data.frame(
-    inputs,
-    DryFecalOutput = 0,
-    FecalH20Loss = 0,
-    WVFecal = 0,
-    WaterHeatLoss = 0,
-    Sweating = 0,
-    WVSweat = 0,
-    Panting = 0,
-    WVMouth = 0,
-    UreaProduced = 0,
-    WVCO2 = 0,
-    row.names = NULL
-  )
+  row.names(inputs) <- NULL
+  inputs
 }
