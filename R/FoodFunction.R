@@ -55,7 +55,8 @@
 #' @export
 
 ## SET FUNCTION FOR FOOD
-food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Content = numeric(0),
+food_function <- function(digestibility_of_food = numeric(0),
+                          Carbohydrate_Content = numeric(0),
                           Protein_Content = numeric(0), Fat_Content = numeric(0),
                           Free_Water_Content_Food = numeric(0), changeConstant = FALSE) {
   ## 0. VALIDATING ARGUMENTS =====================================================
@@ -91,138 +92,115 @@ food_function <- function(digestibility_of_food = numeric(0), Carbohydrate_Conte
     stop("Enter Free Water Content of Food as Proportion Value between 0 and 1 (ex: 0.4)")
   }
 
-  ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables
-  # Length = number of combination of results
-  DF_outputs <- matrix(
-    data = 0, nrow = length(digestibility_of_food) * length(Carbohydrate_Content) * length(Protein_Content) * length(Fat_Content) * length(Free_Water_Content_Food),
-    ncol = 15
-  )
-  colnames(DF_outputs) <- c(
-    "Digestibility", "EEE", "foodcarbenergy", "foodcarbcontent",
-    "Ocarb", "Hcarb", "foodproteinenergy",
-    "Oprotein", "Hprotein", "foodfatenergy",
-    "Ofat", "Hfat", "foodproteincontent", "foodfatcontent", "freeH20food"
-  )
-  DF_outputs <- as.data.frame(DF_outputs)
+  n_dig <- length(digestibility_of_food)
+  n_carb <- length(Carbohydrate_Content)
+  n_prot <- length(Protein_Content)
+  n_fat <- length(Fat_Content)
+  n_water <- length(Free_Water_Content_Food)
 
   # FILLING DATAFRAME WITH ARGUMENTS VALUES AND CONSTANTS
+  # One row per combination: freeH20food varies fastest, then fat, protein, carbohydrate,and Digestibility
 
-  message("CAUTION !!! Carbohydrate_Content, Protein_Content and Fat_Content arguments must sum to 1")
+  message("CAUTION !!! Carbohydrate_Content, Protein_Content and Fat_Content arguments must
+  sum to 1")
 
-  message("Energy Extraction Efficiency, fractions (O, H, energy) of carbohydrate, protein and fat are standardized constants extracted from Kohn models and litterature,
-         but it can be modified by user by modifying the argument changeConstant to TRUE")
+  message("Energy Extraction Efficiency, fractions (O, H, energy) of carbohydrate, protein
+  and fat are standardized constants extracted from Kohn models and litterature,
+           but it can be modified by user by modifying the argument changeConstant to TRUE")
 
   # free H2O content of food ===================================================
-  freeH20food <- Free_Water_Content_Food
-
-  DF_outputs$freeH20food <- freeH20food
+  freeH20food <- rep(Free_Water_Content_Food, times = n_dig * n_carb * n_prot * n_fat)
 
   # Digestibility ===============================================================
-  Digestibility <- digestibility_of_food
-  DF_outputs$Digestibility <- Digestibility
-
-  Col_Digestibility_temp <- c()
-  for (i in seq_along(Digestibility)) {
-    Col_Digestibility_temp <- c(Col_Digestibility_temp, rep(Digestibility[i], nrow(DF_outputs) / length(Digestibility)))
-  } ## the dataframe is split in X part for X values of Digestibility
-  DF_outputs$Digestibility <- Col_Digestibility_temp
-
-  # Macronutrient Content ===============================================================
-  foodcarbcontent <- Carbohydrate_Content
-  foodproteincontent <- Protein_Content
-  foodfatcontent <- Fat_Content
+  ## the dataframe is split in X part for X values of Digestibility
+  Digestibility <- rep(digestibility_of_food, each = n_carb * n_prot * n_fat * n_water)
 
   ## 1. CONSTANTS ================================================================
   # energy extraction efficiency
-  DF_outputs$EEE <- 0.9
+  EEE <- 0.9
   if (changeConstant == FALSE) {
     message("Energy Extraction Efficiency standardized to EEE = 0.9 (%)")
   }
 
   if (changeConstant == TRUE) {
-    EEE_temp <- readline("Please enter a SINGLE value for Energy Extraction Efficiency between 0 and 1 (%), 0.9 is the default value : ")
-    DF_outputs$EEE <- as.numeric(EEE_temp)
+    EEE_temp <- readline("Please enter a SINGLE value for Energy Extraction Efficiency
+  between 0 and 1 (%), 0.9 is the default value : ")
+    EEE <- as.numeric(EEE_temp)
   }
 
   # food carbohydrate ==========================================================
-  DF_outputs$foodcarbenergy <- 17300
-  DF_outputs$Ocarb <- 15.4
-  DF_outputs$Hcarb <- 30.9
+  foodcarbenergy <- 17300
+  Ocarb <- 15.4
+  Hcarb <- 30.9
 
   if (changeConstant == TRUE) {
-    foodcarbenergy_temp <- readline("Please enter a SINGLE value for the energy coming from carbohydrate, 17300 J is the default value : ")
-    DF_outputs$foodcarbenergy <- as.numeric(foodcarbenergy_temp)
+    foodcarbenergy_temp <- readline("Please enter a SINGLE value for the energy coming from
+  carbohydrate, 17300 J is the default value : ")
+    foodcarbenergy <- as.numeric(foodcarbenergy_temp)
 
-    Ocarb_temp <- readline("Please enter a SINGLE value for the oxygen coming from carbohydrate, 15.4 is the default value : ")
-    DF_outputs$Ocarb <- as.numeric(Ocarb_temp)
+    Ocarb_temp <- readline("Please enter a SINGLE value for the oxygen coming from
+  carbohydrate, 15.4 is the default value : ")
+    Ocarb <- as.numeric(Ocarb_temp)
 
-    Hcarb_temp <- readline("Please enter a SINGLE value for the hydrogen coming from carbohydrate, 30.9 is the default value : ")
-    DF_outputs$Hcarb <- as.numeric(Hcarb_temp)
+    Hcarb_temp <- readline("Please enter a SINGLE value for the hydrogen coming from
+  carbohydrate, 30.9 is the default value : ")
+    Hcarb <- as.numeric(Hcarb_temp)
   }
 
-
-  Col_foodcarbcontent_temp <- c()
-  for (i in seq_along(foodcarbcontent)) {
-    Col_foodcarbcontent_temp <- c(Col_foodcarbcontent_temp, rep(foodcarbcontent[i], nrow(DF_outputs) / length(Digestibility) / length(foodcarbcontent)))
-  }
-  Col_foodcarbcontent_temp <- rep(Col_foodcarbcontent_temp, length(Digestibility))
-  DF_outputs$foodcarbcontent <- Col_foodcarbcontent_temp
+  foodcarbcontent <- rep(Carbohydrate_Content,
+    each = n_prot * n_fat * n_water, times =
+      n_dig
+  )
 
 
   # food protein ===============================================================
-  DF_outputs$foodproteinenergy <- 20100
-  DF_outputs$Oprotein <- 3
-  DF_outputs$Hprotein <- 11
+  foodproteinenergy <- 20100
+  Oprotein <- 3
+  Hprotein <- 11
 
   if (changeConstant == TRUE) {
-    foodproteinenergy_temp <- readline("Please enter a SINGLE value for the energy coming from protein, 20100 J is the default value : ")
-    DF_outputs$foodproteinenergy <- as.numeric(foodproteinenergy_temp)
+    foodproteinenergy_temp <- readline("Please enter a SINGLE value for the energy coming
+  from protein, 20100 J is the default value : ")
+    foodproteinenergy <- as.numeric(foodproteinenergy_temp)
 
-    Opro_temp <- readline("Please enter a SINGLE value for the oxygen coming from protein, 3 is the default value : ")
-    DF_outputs$Oprotein <- as.numeric(Opro_temp)
+    Opro_temp <- readline("Please enter a SINGLE value for the oxygen coming from protein, 3
+  is the default value : ")
+    Oprotein <- as.numeric(Opro_temp)
 
-    Hpro_temp <- readline("Please enter a SINGLE value for the hydrogen coming from protein, 11 is the default value : ")
-    DF_outputs$Hprotein <- as.numeric(Hpro_temp)
+    Hpro_temp <- readline("Please enter a SINGLE value for the hydrogen coming from protein,
+  11 is the default value : ")
+    Hprotein <- as.numeric(Hpro_temp)
   }
 
-  Col_foodproteincontent_temp <- c()
-  for (i in seq_along(foodproteincontent)) {
-    Col_foodproteincontent_temp <- c(
-      Col_foodproteincontent_temp,
-      rep(foodproteincontent[i], nrow(DF_outputs) / length(Digestibility) / length(foodproteincontent) / length(foodcarbcontent))
-    )
-  }
-  Col_foodproteincontent_temp <- rep(Col_foodproteincontent_temp, (length(Digestibility) * length(foodcarbcontent)))
-  DF_outputs$foodproteincontent <- Col_foodproteincontent_temp
+  foodproteincontent <- rep(Protein_Content, each = n_fat * n_water, times = n_dig * n_carb)
 
 
   # e. food fat ================================================================
-  DF_outputs$foodfatenergy <- 39700
-  DF_outputs$Ofat <- 2
-  DF_outputs$Hfat <- 60
+  foodfatenergy <- 39700
+  Ofat <- 2
+  Hfat <- 60
 
   if (changeConstant == TRUE) {
-    foodfatenergy_temp <- readline("Please enter a SINGLE value for the energy coming from fat, 39700 J is the default value : ")
-    DF_outputs$foodfatenergy <- as.numeric(foodfatenergy_temp)
+    foodfatenergy_temp <- readline("Please enter a SINGLE value for the energy coming from
+  fat, 39700 J is the default value : ")
+    foodfatenergy <- as.numeric(foodfatenergy_temp)
 
-    Ofat_temp <- readline("Please enter a SINGLE value for the oxygen coming from fat, 2 is the default value : ")
-    DF_outputs$Ofat <- as.numeric(Ofat_temp)
+    Ofat_temp <- readline("Please enter a SINGLE value for the oxygen coming from fat, 2 is
+  the default value : ")
+    Ofat <- as.numeric(Ofat_temp)
 
-    Hfat_temp <- readline("Please enter a SINGLE value for the hydrogen coming from fat, 6 is the default value : ")
-    DF_outputs$Hfat <- as.numeric(Hfat_temp)
+    Hfat_temp <- readline("Please enter a SINGLE value for the hydrogen coming from fat, 6
+  is the default value : ")
+    Hfat <- as.numeric(Hfat_temp)
   }
 
-  Col_foodfatcontent_temp <- c()
-  for (i in seq_along(foodfatcontent)) {
-    Col_foodfatcontent_temp <- c(
-      Col_foodfatcontent_temp,
-      rep(foodfatcontent[i], nrow(DF_outputs) / length(Digestibility) / length(foodproteincontent) / length(foodcarbcontent) / length(foodfatcontent))
-    )
-  }
-  Col_foodfatcontent_temp <- rep(Col_foodfatcontent_temp, (length(Digestibility) * length(foodcarbcontent) * length(foodproteincontent)))
-  DF_outputs$foodfatcontent <- Col_foodfatcontent_temp
+  foodfatcontent <- rep(Fat_Content, each = n_water, times = n_dig * n_carb * n_prot)
 
 
-  return(DF_outputs)
+  data.frame(
+    Digestibility, EEE, foodcarbenergy, foodcarbcontent,
+    Ocarb, Hcarb, foodproteinenergy,
+    Oprotein, Hprotein, foodfatenergy,
+    Ofat, Hfat, foodproteincontent, foodfatcontent, freeH20food
+  )
 }

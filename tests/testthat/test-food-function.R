@@ -112,3 +112,30 @@ describe("food_function() proportion bounds", {
     expect_no_error(suppressMessages(do.call(food_function, valid(Free_Water_Content_Food = 0))))
   })
 })
+
+describe("food_function() refactor guards", {
+  it("lays out the grid freeH20food fastest through Digestibility slowest", {
+    dig <- c(0.5, 0.6)
+    carb <- c(0.6, 0.7, 0.8)
+    prot <- c(0.1, 0.2, 0.3, 0.4)
+    fat <- c(0, 0.1)
+    fw <- c(0.3, 0.4, 0.5)
+
+    out <- food_function(
+      digestibility_of_food = dig, Carbohydrate_Content = carb, Protein_Content = prot,
+      Fat_Content = fat, Free_Water_Content_Food = fw
+    )
+    grid <- expand.grid(
+      freeH20food = fw, foodfatcontent = fat, foodproteincontent = prot,
+      foodcarbcontent = carb, Digestibility = dig
+    )
+
+    expect_equal(nrow(out), nrow(grid))
+    for (col in names(grid)) expect_equal(out[[col]], grid[[col]], label = col)
+    expect_equal(names(out), c(
+      "Digestibility", "EEE", "foodcarbenergy", "foodcarbcontent", "Ocarb", "Hcarb",
+      "foodproteinenergy", "Oprotein", "Hprotein", "foodfatenergy", "Ofat", "Hfat",
+      "foodproteincontent", "foodfatcontent", "freeH20food"
+    ))
+  })
+})
