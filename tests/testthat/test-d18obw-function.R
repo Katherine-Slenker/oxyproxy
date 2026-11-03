@@ -40,4 +40,9 @@ describe("d18_obw_function()", {
     out <- d18_obw_function(outputs = mock_outputs())
     expect_equal(names(out), c(names(mock_outputs()), "d18Obw", "d18Ophos", "d18Ocarb"))
   })
+
+  it("returns a plain data frame for a data frame subclass input", {
+    outputs <- structure(mock_outputs(), class = c("custom_df", "data.frame"))
+    expect_identical(class(d18_obw_function(outputs = outputs)), "data.frame")
+  })
 })

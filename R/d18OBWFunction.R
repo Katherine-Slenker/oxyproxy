@@ -57,6 +57,9 @@ d18_obw_function <- function(outputs = 0) {
     stop("outputs cannot be empty")
   }
 
+  # Always return a plain data frame, whatever data frame class came in
+  outputs <- as.data.frame(outputs)
+
   enriched_inputs <- outputs$MolesO2Air * outputs$d18Oairtakenup +
     outputs$WV * outputs$dairH2OSW +
     outputs$dfoodO2SW * outputs$dryOinflux +
