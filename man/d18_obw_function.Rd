@@ -35,7 +35,8 @@ d18_obw_function(outputs = 0)
 Data frame with estimated d18Obw, d18Oenamel-phosphate, and d18Oenamel-carbonate.
 }
 \description{
-This function combines the Species, Inputs, and Outputs functions to generate estimates of oxygen-18 enrichment of animal bodywater, enamel-phosphate,
+This function combines the Species, Inputs, and Outputs functions
+to generate estimates of oxygen-18 enrichment of animal bodywater, enamel-phosphate,
 and enamel-carbonate.
 }
 \examples{

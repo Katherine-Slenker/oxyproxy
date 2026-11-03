@@ -41,3 +41,14 @@ describe("d18O_enamel()", {
     expect_equal(out$d18Ocarbonate, c(20, 26, 30))
   })
 })
+
+describe("d18O_enamel() refactor guards", {
+  it("derives phosphate and body water for every row of a vector input", {
+    vals <- c(20, 26, 30)
+    out <- d18O_enamel(d18O_carbonate = vals)
+
+    expect_equal(out$d18Ophosphate, vals - 8.5)
+    expect_equal(out$d18Obodywater, vals - 8.5 + (37 / 4.38) - 25.9)
+    expect_equal(names(out), c("d18Ocarbonate", "d18Ophosphate", "d18Obodywater"))
+  })
+})
