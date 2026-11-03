@@ -114,6 +114,7 @@ environment_function <- function(
 
   data.frame(
     airtemp, MAT, Humidity, WVinLungs, WV, d18Osw, dairH2O,
-    dairH2OSW, d18OleafH2O, d18Oleafcellulose, dfoodO2SW, dfoodH2Osw
+    dairH2OSW, d18OleafH2O, d18Oleafcellulose, dfoodO2SW, dfoodH2Osw,
+    row.names = NULL
   )
 }

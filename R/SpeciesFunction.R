@@ -122,6 +122,7 @@ species_function <- function(body_mass = numeric(0), water_economy_index = numer
   data.frame(
     Bodymass, EnergyExp, WEI, TranscutaneousH2OLoss, WVSkin, MolesO2Air, O2FluxLungs,
     H2OOral, H2ONasal, WVNose, TotalH2OTurnover, UrinaryH2OLoss, WVUrine, Urea,
-    d18Oairtakenup
+    d18Oairtakenup,
+    row.names = NULL
   )
 }
