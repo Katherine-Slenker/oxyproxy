@@ -46,4 +46,25 @@ describe("d18_obw_function()", {
   it("errors clearly on a zero-row outputs frame instead of crashing on 1:0", {
     expect_error(d18_obw_function(outputs = mock_outputs()[0, ]), "cannot be empty")
   })
+
+  it("gives each row the same result it would get on its own", {
+    rows <- mock_outputs()[rep(1, 3), ]
+    rows$MolesO2Air <- c(0.42, 0.5, 0.61)
+    rows$WV <- c(3, 1, 4)
+    rows$WVSweat <- c(0, 0.2, 0.4)
+    rows$d18Osw <- c(-8, -3, 0)
+
+    out <- d18_obw_function(outputs = rows)
+    for (i in seq_len(nrow(rows))) {
+      one <- d18_obw_function(outputs = rows[i, ])
+      expect_equal(out$d18Obw[i], one$d18Obw)
+      expect_equal(out$d18Ophos[i], one$d18Ophos)
+      expect_equal(out$d18Ocarb[i], one$d18Ocarb)
+    }
+  })
+
+  it("appends d18Obw, d18Ophos, d18Ocarb after the input columns", {
+    out <- d18_obw_function(outputs = mock_outputs())
+    expect_equal(names(out), c(names(mock_outputs()), "d18Obw", "d18Ophos", "d18Ocarb"))
+  })
 })
