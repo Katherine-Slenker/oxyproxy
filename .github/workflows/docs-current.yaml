@@ -5,10 +5,16 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 name: docs-current
+
+# Runs for a PR share one group, so a new push cancels that PR's in-flight run.
+# Every other run is grouped by its commit, so no run on main is cancelled or
+# dropped from the queue by a later push.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions: read-all
 

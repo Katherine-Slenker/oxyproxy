@@ -25,7 +25,8 @@
 #'     \item WVUrine - Water vapor loss via urine (moles H2O)
 #'     }
 
-#' @param changeConstant Boolean. Default is FALSE. If changed to TRUE, user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)
+#' @param changeConstant Boolean. Default is FALSE. If changed to TRUE,
+#' user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)
 #' @examples
 #' # Example for a plains bison (Bison bison bison)
 #' result <- species_function(
@@ -53,24 +54,10 @@ species_function <- function(body_mass = numeric(0), water_economy_index = numer
   }
 
   ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables
-  # Length = number of combination of results
-  DF_outputs <- matrix(data = 0, nrow = length(body_mass) * length(water_economy_index), ncol = 15)
-  colnames(DF_outputs) <- c(
-    "Bodymass", "EnergyExp", "WEI", "TranscutaneousH2OLoss", "WVSkin", "MolesO2Air", "O2FluxLungs",
-    "H2OOral", "H2ONasal", "WVNose", "TotalH2OTurnover", "UrinaryH2OLoss", "WVUrine", "Urea", "d18Oairtakenup"
-  )
-  DF_outputs <- as.data.frame(DF_outputs)
-
   # FILLING DATAFRAME WITH ARGUMENTS VALUES
-  DF_outputs$Bodymass <- body_mass
-
-  WEI <- water_economy_index
-  DF_outputs_WEI_temp <- c()
-  for (i in seq_along(WEI)) {
-    DF_outputs_WEI_temp <- c(DF_outputs_WEI_temp, rep(WEI[i], nrow(DF_outputs) / length(WEI)))
-  }
-  DF_outputs$WEI <- DF_outputs_WEI_temp
+  # One row per combination: Bodymass varies fastest, then WEI
+  Bodymass <- rep(body_mass, times = length(water_economy_index))
+  WEI <- rep(water_economy_index, each = length(body_mass))
 
   ## 1. CONSTANTS ================================================================
   # oxygen utilization factor
@@ -79,8 +66,10 @@ species_function <- function(body_mass = numeric(0), water_economy_index = numer
   Zfactor <- 10.5
   # Urea
   Urea <- 0.2
-  message("OCF, Zfactor, d18Oairtakenup, and Urea are standardized constants,
-         but can be modified by user by inputing changeConstant == TRUE")
+  message(
+    "OCF, Zfactor, d18Oairtakenup, and Urea are standardized constants,\n",
+    "         but can be modified by user by inputing changeConstant == TRUE"
+  )
 
   if (changeConstant == TRUE) {
     ocf_temp <- readline("Please enter a SINGLE value for oxygen utilization factor, 0.2 is the default value : ")
@@ -93,67 +82,50 @@ species_function <- function(body_mass = numeric(0), water_economy_index = numer
 
   # d18Oairtakenup = 23.2 - Zfactor * (1-oxygen utilization factor)
   d18Oairtakenup <- 23.2 - Zfactor * (1 - ocf)
-  DF_outputs$d18Oairtakenup <- d18Oairtakenup
-  DF_outputs$Urea <- Urea
 
   # 2. BODY MASS (kg) ============================================================
 
   # Energy Expenditure = 900 x BodyMass^0.73
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$EnergyExp[i] <- 900 * (DF_outputs$Bodymass[i]^0.73)
-  }
+  EnergyExp <- 900 * (Bodymass^0.73)
 
   # TranscutaneousH2OLoss <- 1.44 * bodymass * 0.667
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$TranscutaneousH2OLoss[i] <- 1.44 * (DF_outputs$Bodymass[i]^0.667)
-  }
+  TranscutaneousH2OLoss <- 1.44 * (Bodymass^0.667)
 
   # Skin = Transcutaneous Water Loss /2
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$WVSkin[i] <- DF_outputs$TranscutaneousH2OLoss[i] / 2
-  }
+  WVSkin <- TranscutaneousH2OLoss / 2
 
   # MolesO2Air <- EnergyExp * 0.00216
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$MolesO2Air[i] <- DF_outputs$EnergyExp[i] * 0.00216
-  }
+  MolesO2Air <- EnergyExp * 0.00216
 
   # O2FluxLungs <- (22.4 * MolesO2Air)/(0.2*0.21)
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$O2FluxLungs[i] <- (22.4 * DF_outputs$MolesO2Air[i]) / (0.2 * 0.21)
-  }
+  O2FluxLungs <- (22.4 * MolesO2Air) / (0.2 * 0.21)
 
   # H2O exhaled Orally <- O2FluxLungs * 0.5 * 0.003
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$H2OOral[i] <- (DF_outputs$O2FluxLungs[i] * 0.5 * 0.003)
-  }
+  H2OOral <- O2FluxLungs * 0.5 * 0.003
 
   # H2O exhaled nasally <- O2FluxLungs * 0.5 * 0.5 * 0.003
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$H2ONasal[i] <- (DF_outputs$O2FluxLungs[i] * 0.5 * 0.5 * 0.003)
-  }
+  H2ONasal <- O2FluxLungs * 0.5 * 0.5 * 0.003
 
   # Nose = Water Exhaled Nasally/2
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$WVNose[i] <- (DF_outputs$H2ONasal[i] / 2)
-  }
+  WVNose <- H2ONasal / 2
 
   # 3. WATER ECONOMY INDEX (WEI) ====================================================
 
   # TotalH2OTurnover = WEI * (EnergyExp/18)
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$TotalH2OTurnover[i] <- (DF_outputs$WEI[i] * (DF_outputs$EnergyExp[i] / 18))
-  }
+  TotalH2OTurnover <- WEI * (EnergyExp / 18)
+
 
   # Urinary H2O Loss <- WEI loss as urine (0.25) * TotalH2OTurnover
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$UrinaryH2OLoss[i] <- ((0.25) * DF_outputs$TotalH2OTurnover[i])
-  }
+  UrinaryH2OLoss <- 0.25 * TotalH2OTurnover
+
 
   # Urine = Urinary H2O loss /2
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$WVUrine[i] <- (DF_outputs$UrinaryH2OLoss[i] / 2)
-  }
+  WVUrine <- UrinaryH2OLoss / 2
 
-  return(DF_outputs)
+  data.frame(
+    Bodymass, EnergyExp, WEI, TranscutaneousH2OLoss, WVSkin, MolesO2Air, O2FluxLungs,
+    H2OOral, H2ONasal, WVNose, TotalH2OTurnover, UrinaryH2OLoss, WVUrine, Urea,
+    d18Oairtakenup,
+    row.names = NULL
+  )
 }

@@ -54,18 +54,25 @@
 oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, model_Digestibility_of_food = 0,
                                model_Carbohydrate_Content = 0, model_Protein_Content = 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_air_temperature = 0,
-                               model_Relative_Humidity = 0, model_d18O_surfacewater = 0, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE) {
+                               model_Relative_Humidity = 0, model_d18O_surfacewater = 0, changeConstant = FALSE,
+                               sweating_species = FALSE, PlotRange = TRUE) {
   ## Species
-  OS <- species_function(body_mass = model_bodymass, water_economy_index = model_WaterEconomyIndex, changeConstant = changeConstant)
+  OS <- species_function(
+    body_mass = model_bodymass, water_economy_index = model_WaterEconomyIndex, changeConstant = changeConstant
+  )
 
   ## Food
   OF <- food_function(
-    digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content, Protein_Content = model_Protein_Content,
-    Fat_Content = model_Fat_Content, Free_Water_Content_Food = model_Free_Water_Content_Food, changeConstant = changeConstant
+    digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content,
+    Protein_Content = model_Protein_Content, Fat_Content = model_Fat_Content,
+    Free_Water_Content_Food = model_Free_Water_Content_Food, changeConstant = changeConstant
   )
 
   ## Environment
-  OE <- environment_function(air_temperature = model_air_temperature, relative_humidity = model_Relative_Humidity, d18O_surface_water = model_d18O_surfacewater)
+  OE <- environment_function(
+    air_temperature = model_air_temperature, relative_humidity = model_Relative_Humidity,
+    d18O_surface_water = model_d18O_surfacewater
+  )
 
   ## Oxygen Inputs
   OI <- input_function(species = OS, food = OF, environment = OE)
@@ -78,38 +85,20 @@ oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, 
 
   ### Priting default plots if arguments are ranges of values (i.e. more than 1 value in any argument) ==========
   if (isTRUE(PlotRange) && nrow(d18O) > 1) {
-    if (length(model_bodymass) > 1) {
-      plot(d18O$d18Obw ~ d18O$Bodymass, xlab = "Body mass (in Kg)", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_WaterEconomyIndex) > 1) {
-      plot(d18O$d18Obw ~ d18O$WEI, xlab = "Water Economy Index", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_Digestibility_of_food) > 1) {
-      plot(d18O$d18Obw ~ d18O$Digestibility, xlab = "Digestibility", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_Carbohydrate_Content) > 1) {
-      plot(d18O$d18Obw ~ d18O$foodcarbcontent, xlab = "Carbohydrate content in food", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_Protein_Content) > 1) {
-      plot(d18O$d18Obw ~ d18O$foodproteincontent, xlab = "Protein content in food", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_Fat_Content) > 1) {
-      plot(d18O$d18Obw ~ d18O$foodfatcontent, xlab = "Fat content in food", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_Free_Water_Content_Food) > 1) {
-      plot(d18O$d18Obw ~ d18O$freeH20food, xlab = "Free water content in food", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_air_temperature) > 1) {
-      plot(d18O$d18Obw ~ d18O$airtemp, xlab = "Air temperature", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_Relative_Humidity) > 1) {
-      plot(d18O$d18Obw ~ d18O$Humidity, xlab = "Humidity", ylab = "d18O body water", pch = 16)
-    }
-    if (length(model_d18O_surfacewater) > 1) {
-      plot(d18O$d18Obw ~ d18O$d18Osw, xlab = "d18 O surface water", ylab = "d18O body water", pch = 16)
-    }
+    plot_varied_arguments(d18O, d18O$d18Obw, "d18O body water", list(
+      Bodymass = model_bodymass,
+      WEI = model_WaterEconomyIndex,
+      Digestibility = model_Digestibility_of_food,
+      foodcarbcontent = model_Carbohydrate_Content,
+      foodproteincontent = model_Protein_Content,
+      foodfatcontent = model_Fat_Content,
+      freeH20food = model_Free_Water_Content_Food,
+      airtemp = model_air_temperature,
+      Humidity = model_Relative_Humidity,
+      d18Osw = model_d18O_surfacewater
+    ))
   }
 
   # Output of Oxy Proxy Function ========
-  return(d18O)
+  d18O
 }

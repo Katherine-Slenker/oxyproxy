@@ -7,7 +7,8 @@
 calculate_water_heat_loss(df)
 }
 \arguments{
-\item{df}{Data frame containing values from Species function (TotalH2OTurnover, TranscutaneousH2OLoss, H2OOral, H2ONasal, UrinaryH2O) and calculated FecalH2OLoss}
+\item{df}{Data frame containing values from Species function
+(TotalH2OTurnover, TranscutaneousH2OLoss, H2OOral, H2ONasal, UrinaryH2O) and calculated FecalH2OLoss}
 }
 \value{
 Numeric vector of water heat loss values (moles H2O)

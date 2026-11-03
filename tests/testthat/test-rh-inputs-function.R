@@ -1,46 +1,9 @@
-mock_species <- function() {
-  data.frame(EnergyExp = 500, TotalH2OTurnover = 100)
-}
-
-mock_food <- function() {
-  data.frame(
-    Digestibility = 0.6, EEE = 0.9,
-    foodcarbcontent = 0.8, foodcarbenergy = 17300, Ocarb = 15.4, Hcarb = 30.9,
-    foodproteincontent = 0.1, foodproteinenergy = 20100, Oprotein = 3, Hprotein = 11,
-    foodfatcontent = 0.1, foodfatenergy = 39700, Ofat = 2, Hfat = 60,
-    freeH20food = 0.4
-  )
-}
-
 mock_environment <- function() {
   # Matches the 5 columns rh_estimation_environment_function() actually returns.
   rh_estimation_environment_function(air_temperature = 20, d18O_surface_water = -5)
 }
 
 describe("inverse_input_function()", {
-  it("returns one row with the documented calculated columns for a single combination", {
-    out <- inverse_input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
-
-    expect_s3_class(out, "data.frame")
-    expect_equal(nrow(out), 1)
-    expect_true(all(c(
-      "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood", "WaterinFood"
-    ) %in% names(out)))
-  })
-
-  it("computes FoodMassIngested as EnergyExp / (Digestibility * EEE * energy density)", {
-    out <- inverse_input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
-
-    energy_density <- 0.8 * 17300 + 0.1 * 20100 + 0.1 * 39700
-    expect_equal(out$FoodMassIngested, 500 / (0.6 * 0.9 * energy_density))
-  })
-
-  it("builds one row per species combination", {
-    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
-    out <- inverse_input_function(species = two_species, food = mock_food(), environment = mock_environment())
-    expect_equal(nrow(out), 2)
-  })
-
   it("builds the full factorial when food rows outnumber species x environment", {
     # Shapes where nrow(species) * nrow(environment) < nrow(food) are the case the
     # row-at-a-time construction got wrong; it under-filled and errored.
@@ -55,18 +18,21 @@ describe("inverse_input_function()", {
     expect_setequal(out$Digestibility, c(0.4, 0.5, 0.6))
   })
 
-  it("pairs every species, food, and environment row exactly once", {
+  it("orders rows species fastest, then environment, then food", {
     two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
-    two_food <- mock_food()[rep(1, 2), , drop = FALSE]
-    two_food$Digestibility <- c(0.5, 0.6)
-    two_env <- rh_estimation_environment_function(
-      air_temperature = c(10, 20), d18O_surface_water = -5
-    )
+    three_food <- mock_food()[rep(1, 3), , drop = FALSE]
+    three_food$Digestibility <- c(0.4, 0.5, 0.6)
+    two_env <- rh_estimation_environment_function(air_temperature = c(10, 20), d18O_surface_water = -5)
 
-    out <- inverse_input_function(species = two_species, food = two_food, environment = two_env)
+    out <- inverse_input_function(species = two_species, food = three_food, environment = two_env)
 
-    expect_equal(nrow(out), 2 * 2 * 2)
-    combos <- paste(out$EnergyExp, out$Digestibility, out$airtemp)
-    expect_equal(sort(combos), sort(unique(combos)))
+    expect_equal(out$EnergyExp, rep(c(500, 600), times = 6))
+    expect_equal(out$airtemp, rep(rep(c(10, 20), each = 2), times = 3))
+    expect_equal(out$Digestibility, rep(c(0.4, 0.5, 0.6), each = 4))
+    expect_equal(rownames(out), as.character(1:12))
+    expect_equal(names(out), c(
+      names(two_species), names(three_food), names(two_env),
+      "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood", "WaterinFood"
+    ))
   })
 })

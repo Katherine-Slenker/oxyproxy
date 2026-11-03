@@ -3,10 +3,16 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 name: test-coverage
+
+# Runs for a PR share one group, so a new push cancels that PR's in-flight run.
+# Every other run is grouped by its commit, so no run on main is cancelled or
+# dropped from the queue by a later push.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -28,15 +34,11 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::devtools
+          extra-packages: any::covr
           needs: coverage
 
-      - name: Run tests
-        shell: Rscript {0}
-        run: |
-          devtools::load_all(".")
-          testthat::test_dir("tests/testthat", stop_on_failure = TRUE)
-
+      # package_coverage() runs the test suite and errors if any test fails,
+      # so this step is also the test gate.
       - name: Compute coverage
         shell: Rscript {0}
         run: |

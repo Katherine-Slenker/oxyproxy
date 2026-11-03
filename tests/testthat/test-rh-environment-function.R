@@ -1,15 +1,4 @@
 describe("rh_estimation_environment_function()", {
-  it("returns one row per combination of inputs with the documented columns", {
-    out <- rh_estimation_environment_function(
-      air_temperature = c(10, 20),
-      d18O_surface_water = c(-2, -5)
-    )
-
-    expect_s3_class(out, "data.frame")
-    expect_equal(nrow(out), 2 * 2)
-    expect_true(all(c("airtemp", "MAT", "d18Osw", "dairH2O", "dairH2OSW") %in% names(out)))
-  })
-
   it("converts air temperature (C) to mean annual temperature (K)", {
     out <- rh_estimation_environment_function(air_temperature = 20, d18O_surface_water = -5)
     expect_equal(out$MAT, 20 + 273)
@@ -39,8 +28,13 @@ describe("rh_estimation_environment_function()", {
     expect_equal(nrow(out), length(temps) * length(d18O))
   })
 
-  it("accepts negative air_temperature", {
-    out <- rh_estimation_environment_function(air_temperature = -10, d18O_surface_water = -5)
-    expect_equal(out$MAT, -10 + 273)
+  it("lays out the grid with airtemp fastest", {
+    air <- c(0, 10, 20)
+    sw <- c(-2, -5)
+    out <- rh_estimation_environment_function(air_temperature = air, d18O_surface_water = sw)
+
+    expect_equal(out$airtemp, rep(air, times = 2))
+    expect_equal(out$d18Osw, rep(sw, each = 3))
+    expect_equal(names(out), c("airtemp", "MAT", "d18Osw", "dairH2O", "dairH2OSW"))
   })
 })

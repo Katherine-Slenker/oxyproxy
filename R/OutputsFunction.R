@@ -1,8 +1,8 @@
 #' Calculates all variables of oxygen input from physiology and diet.
 #'
 #' This function combines the Species, Food, and Inputs functions to calculate oxygen outputs
-#' such as dry fecal mass, water loss from feces, water vapor losses through feces,sweat, respiration (CO2), and panting,
-#' and losses through metabolic functions, like urea production.
+#' such as dry fecal mass, water loss from feces, water vapor losses through
+#' feces,sweat, respiration (CO2), and panting, and losses through metabolic functions, like urea production.
 #'
 #' @param inputs A data frame containing the following required columns:
 #'   \describe{
@@ -134,11 +134,7 @@ validate_inputs <- function(inputs) {
     "Oprotein", "foodproteincontent", "EEE", "MolesO2Air",
     "dryHinflux", "dryOinflux"
   )
-
-  missing_cols <- setdiff(required_cols, names(inputs))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
+  check_required_columns(inputs, required_cols)
 
   if (nrow(inputs) == 0) {
     stop("Input data frame is empty")
@@ -162,7 +158,6 @@ validate_inputs <- function(inputs) {
   }
 }
 
-fecal_water_multiplier <- 55.56
 FECAL_WATER_CONTENT <- 0.6
 WATER_VAPOR_FRACTION <- 0.5
 SWEAT_HEAT_FRACTION <- 0.75
@@ -182,7 +177,7 @@ calculate_dry_fecal_output <- function(df) {
 #' @keywords internal
 calculate_fecal_water_loss <- function(df) {
   fecal_water_ratio <- FECAL_WATER_CONTENT / (1 - FECAL_WATER_CONTENT)
-  df$DryFecalOutput * fecal_water_multiplier * fecal_water_ratio
+  df$DryFecalOutput * MOLES_WATER_PER_KG * fecal_water_ratio
 }
 
 #' Calculate water vapor from fecal loss
@@ -194,7 +189,8 @@ calculate_wv_fecal <- function(df) {
 }
 
 #' Calculate water used for heat loss
-#' @param df Data frame containing values from Species function (TotalH2OTurnover, TranscutaneousH2OLoss, H2OOral, H2ONasal, UrinaryH2O) and calculated FecalH2OLoss
+#' @param df Data frame containing values from Species function
+#' (TotalH2OTurnover, TranscutaneousH2OLoss, H2OOral, H2ONasal, UrinaryH2O) and calculated FecalH2OLoss
 #' @return Numeric vector of water heat loss values (moles H2O)
 #' @keywords internal
 calculate_water_heat_loss <- function(df) {
@@ -220,7 +216,8 @@ calculate_wv_mouth <- function(df) {
 }
 
 #' Calculate urea production
-#' @param df Data frame containing values from Food (Oprotein, foodproteincontent, EEE, Digestibility) and Inputs function (FoodMassIngested)
+#' @param df Data frame containing values from Food (Oprotein,
+#' foodproteincontent, EEE, Digestibility) and Inputs function (FoodMassIngested)
 #' @return Numeric vector of urea production values
 #' @keywords internal
 calculate_urea_produced <- function(df) {
@@ -229,7 +226,8 @@ calculate_urea_produced <- function(df) {
 }
 
 #' Calculate water vapor from CO2
-#' @param df Data frame containing values from Species (MolesO2Air) and Inputs (dryHinflux,dryOinflux), and calculated value(s) of Ureaproduced
+#' @param df Data frame containing values from Species (MolesO2Air) and
+#' Inputs (dryHinflux,dryOinflux), and calculated value(s) of Ureaproduced
 #' @return Numeric vector of CO2 water vapor values (moles H2O)
 #' @keywords internal
 calculate_wv_co2 <- function(df) {
@@ -261,25 +259,38 @@ calculate_wv_not_sweating <- function(df) {
   rep(0, nrow(df))
 }
 
+#' Calculate oxygen outputs weighted by their d18O fractionation
+#' @param df Data frame containing values from Species (WVNose, WVSkin) and Outputs (WVCO2, WVMouth, WVSweat,
+#' WVUrine, WVFecal) functions
+#' @return Numeric vector of fractionation-weighted outputs
+#' @keywords internal
+calculate_fractional_outputs <- function(df) {
+  df$WVCO2 * 38.6 +
+    df$WVMouth * -8.2 +
+    df$WVNose * -17 +
+    df$WVSkin * -18 +
+    df$WVSweat * 0 +
+    df$WVUrine * 0 +
+    df$WVFecal * 0
+}
 
-#' Prepare outputs dataframe with initialized calculation columns
+#' Calculate total oxygen outputs
+#' @param df Data frame containing the same columns as [calculate_fractional_outputs()] plus Urea
+#' @return Numeric vector of total oxygen outputs (moles)
+#' @keywords internal
+calculate_total_outputs <- function(df) {
+  df$WVCO2 + df$WVMouth +
+    df$WVNose + df$WVSkin +
+    df$WVSweat + df$WVUrine +
+    df$WVFecal + df$Urea
+}
+
+
+#' Prepare outputs dataframe for the calculation pipeline
 #'
 #' @param inputs A dataframe containing inputs for calculations
-#' @return A dataframe with original inputs and new columns. Initialized to 0
+#' @return The inputs as a plain data frame with its row names reset
 #' @keywords internal
 prepare_outputs_dataframe <- function(inputs) {
-  data.frame(
-    inputs,
-    DryFecalOutput = 0,
-    FecalH20Loss = 0,
-    WVFecal = 0,
-    WaterHeatLoss = 0,
-    Sweating = 0,
-    WVSweat = 0,
-    Panting = 0,
-    WVMouth = 0,
-    UreaProduced = 0,
-    WVCO2 = 0,
-    row.names = NULL
-  )
+  data.frame(inputs, row.names = NULL)
 }

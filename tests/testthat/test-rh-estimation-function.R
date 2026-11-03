@@ -17,15 +17,10 @@ mock_rh_d18O <- function() {
 }
 
 describe("rh_function()", {
-  it("returns the documented calculated columns", {
-    out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
-
-    expect_s3_class(out, "data.frame")
-    expect_true(all(c(
-      "Humidity", "WVinLungs", "WV", "d18OleafH2O", "d18Oleafcellulose",
-      "dfoodO2SW", "dfoodH2Osw", "DrinkingH2OIngested", "DrinkingWater"
-    ) %in% names(out)))
-  })
+  derived <- c(
+    "Humidity", "WVinLungs", "WV", "d18OleafH2O", "d18Oleafcellulose",
+    "dfoodO2SW", "dfoodH2Osw", "DrinkingH2OIngested", "DrinkingWater"
+  )
 
   it("computes WV as half of WVinLungs", {
     out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
@@ -64,5 +59,23 @@ describe("rh_function()", {
       rh_function(rh_estimation_d18O = mock_rh_d18O()[0, ], outputs = mock_outputs()),
       "cannot be empty"
     )
+  })
+
+  it("gives each row the same derived values it would get on its own", {
+    outputs <- mock_outputs()[rep(1, 3), ]
+    outputs$MolesO2Air <- c(181.5283, 150, 210)
+    outputs$airtemp <- c(4, 10, -2)
+    outputs$d18Osw <- c(-8, -4, -12)
+
+    out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = outputs)
+    for (i in seq_len(nrow(outputs))) {
+      one <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = outputs[i, ])
+      expect_equal(unlist(out[i, derived]), unlist(one[derived]))
+    }
+  })
+
+  it("appends the derived columns after the merged inputs", {
+    out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
+    expect_equal(names(out), c(names(mock_outputs()), "d18Obodywater", derived))
   })
 })

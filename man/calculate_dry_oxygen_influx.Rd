@@ -7,7 +7,8 @@
 calculate_dry_oxygen_influx(df)
 }
 \arguments{
-\item{df}{Data frame containing values from Food function (Digestibility, EEE, oxygen composition per macronutrient unit)
+\item{df}{Data frame containing values from Food function (Digestibility, EEE,
+oxygen composition per macronutrient unit)
 and}
 }
 \value{

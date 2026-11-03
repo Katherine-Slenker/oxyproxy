@@ -28,78 +28,56 @@
 ### SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
 rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) {
   ### PREPPING DATASET =========================================================
-  DF_outputs <- merge(outputs, rh_estimation_d18O)
+  DF_outputs <- fast_merge(outputs, rh_estimation_d18O)
   if (nrow(DF_outputs) == 0) {
     stop("rh_estimation_d18O and outputs cannot be empty")
   }
-  DF_outputs_temp <- matrix(data = 0, nrow = nrow(DF_outputs), ncol = 9)
-  colnames(DF_outputs_temp) <- c(
-    "Humidity", "WVinLungs", "WV",
-    "d18OleafH2O", "d18Oleafcellulose", "dfoodO2SW",
-    "dfoodH2Osw", "DrinkingH2OIngested", "DrinkingWater"
-  )
-  DF_outputs_temp <- as.data.frame(DF_outputs_temp)
-  DF_outputs <- cbind(DF_outputs, DF_outputs_temp)
-
 
   ### HUMIDITY COMPUTATION FROM Outputs
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$Humidity[i] <- (DF_outputs$d18Obodywater[i] * (DF_outputs$WVCO2[i] + DF_outputs$WVMouth[i] + DF_outputs$WVNose[i] +
-      DF_outputs$WVSkin[i] + DF_outputs$WVSweat[i] + DF_outputs$WVUrine[i] +
-      DF_outputs$WVFecal[i] + DF_outputs$Urea[i]) -
-      (DF_outputs$MolesO2Air[i] * DF_outputs$d18Oairtakenup[i] - (DF_outputs$WVCO2[i] * 38.6 + DF_outputs$WVMouth[i] * -8.2 + DF_outputs$WVNose[i] * -17 + DF_outputs$WVSkin[i] * -18 + DF_outputs$WVSweat[i] * 0 + DF_outputs$WVUrine[i] * 0 + DF_outputs$WVFecal[i] * 0)) -
-      ((DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 43) * DF_outputs$dryOinflux[i]) -
-      (0.5 * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$WaterinFood[i]) -
-      ((0.5 * (DF_outputs$TotalH2OTurnover[i] - DF_outputs$FreeH2Oinfood[i] - DF_outputs$dryHinflux[i]) * DF_outputs$d18Osw[i])) -
-      (DF_outputs$WaterinFood[i] * DF_outputs$d18Osw[i]) -
-      (DF_outputs$dryOinflux[i] * DF_outputs$d18Osw[i])) /
-      (((10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * (12400 / (760 * 22.4)) * (DF_outputs$dairH2OSW[i] / 2)) - ((DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$dryOinflux[i]) - (0.5 * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$WaterinFood[i]))
-  }
+  fractional_outputs <- calculate_fractional_outputs(DF_outputs)
+  total_outputs <- calculate_total_outputs(DF_outputs)
 
-  # Water Vapor Taken in Lungs <- Humidity * 10^(0.686+0.027*airtemp) * 12400/(760*22.4)
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$WVinLungs[i] <- DF_outputs$Humidity[i] * (10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * 12400 / (760 * 22.4)
-  }
+  # Leaf-water offset, and its cellulose equivalent (43 = 16 + 27)
+  leaf_offset <- calculate_leaf_offset(DF_outputs$d18Osw, DF_outputs$dairH2O)
+  cellulose_offset <- DF_outputs$d18Osw - DF_outputs$dairH2O + 43
+  leaf_food_water <- 0.5 * leaf_offset * DF_outputs$WaterinFood
+
+  saturation_vapor_pressure <- calculate_saturation_vapor_pressure(DF_outputs$airtemp)
+
+  humidity_numerator <- DF_outputs$d18Obodywater * total_outputs -
+    (DF_outputs$MolesO2Air * DF_outputs$d18Oairtakenup - fractional_outputs) -
+    cellulose_offset * DF_outputs$dryOinflux -
+    leaf_food_water -
+    0.5 * (DF_outputs$TotalH2OTurnover - DF_outputs$FreeH2Oinfood - DF_outputs$dryHinflux) *
+      DF_outputs$d18Osw -
+    DF_outputs$WaterinFood * DF_outputs$d18Osw -
+    DF_outputs$dryOinflux * DF_outputs$d18Osw
+
+  humidity_denominator <- saturation_vapor_pressure * (12400 / (760 * 22.4)) *
+    (DF_outputs$dairH2OSW / 2) -
+    leaf_offset * DF_outputs$dryOinflux -
+    leaf_food_water
+
+  DF_outputs$Humidity <- humidity_numerator / humidity_denominator
+
+  DF_outputs$WVinLungs <- calculate_wv_in_lungs(DF_outputs$Humidity, DF_outputs$airtemp)
 
   # Water Vapor <- Water Vapor in Lungs / 2
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$WV[i] <- DF_outputs$WVinLungs[i] / 2
-  }
+  DF_outputs$WV <- DF_outputs$WVinLungs / 2
 
-  # d18OleafH2O <-d18Osw + (1-Humidity) * (d18Osw - dairH2O + 16)
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$d18OleafH2O[i] <- DF_outputs$d18Osw[i] + (1 - DF_outputs$Humidity[i]) * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16)
-  }
-
-  # d18Oleafcellulose <- d18OleafH2O + 27
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$d18Oleafcellulose[i] <- DF_outputs$d18OleafH2O[i] + 27
-  }
-
-  # dfoodO2SW <-d18Oleafcellulose - d18Osw
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dfoodO2SW[i] <- DF_outputs$d18Oleafcellulose[i] - DF_outputs$d18Osw[i]
-  }
-
-  # dfoodH2Osw  <- (0.5 * d18OstemH2O + 0.5 * d18OleafH2O) -d18Osw
-  # d18OstemH2O = d18Osw
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dfoodH2Osw[i] <- (0.5 * DF_outputs$d18Osw[i] + 0.5 * DF_outputs$d18OleafH2O[i]) - DF_outputs$d18Osw[i]
-  }
+  # d18OleafH2O, d18Oleafcellulose, dfoodO2SW, dfoodH2Osw
+  leaf_and_food <- calculate_leaf_and_food_d18O(DF_outputs$d18Osw, DF_outputs$dairH2O, DF_outputs$Humidity)
+  DF_outputs[names(leaf_and_food)] <- leaf_and_food
 
   # Drinking H2O Ingested = Total H2O Turnover - free H2O in food - dry food H influx - water vapor in lungs
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$DrinkingH2OIngested[i] <- DF_outputs$TotalH2OTurnover[i] - DF_outputs$FreeH2Oinfood[i] - DF_outputs$dryHinflux[i] - DF_outputs$WVinLungs[i]
-  }
+  DF_outputs$DrinkingH2OIngested <- calculate_drinking_water_ingested(DF_outputs)
 
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$DrinkingWater[i] <- DF_outputs$DrinkingH2OIngested[i] / 2
-  }
+  DF_outputs$DrinkingWater <- calculate_drinking_water(DF_outputs)
 
   if (printinfo == TRUE) {
     message("Humidity: ")
-    print(paste(round(DF_outputs[, c("Humidity")] * 100), "%"))
+    print(paste(round(DF_outputs$Humidity * 100), "%"))
   }
 
-  return(DF_outputs)
+  DF_outputs
 }

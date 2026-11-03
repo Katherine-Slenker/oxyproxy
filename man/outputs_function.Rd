@@ -47,8 +47,8 @@ calculated output columns:
 }
 \description{
 This function combines the Species, Food, and Inputs functions to calculate oxygen outputs
-such as dry fecal mass, water loss from feces, water vapor losses through feces,sweat, respiration (CO2), and panting,
-and losses through metabolic functions, like urea production.
+such as dry fecal mass, water loss from feces, water vapor losses through
+feces,sweat, respiration (CO2), and panting, and losses through metabolic functions, like urea production.
 }
 \details{
 The function performs calculations in a specific sequence to handle dependencies:

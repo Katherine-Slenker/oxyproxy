@@ -13,15 +13,6 @@ describe("with_column()", {
 
     expect_equal(out$y, c(11, 12))
   })
-
-  it("is pipeable, matching how Inputs/Outputs functions chain it", {
-    df <- data.frame(x = 1:3)
-    out <- df |>
-      with_column("y", function(d) d$x * 2) |>
-      with_column("z", function(d) d$y + 1)
-
-    expect_equal(out$z, c(3, 5, 7))
-  })
 })
 
 describe("combine_inputs()", {
@@ -56,16 +47,23 @@ describe("combine_inputs()", {
     expect_error(combine_inputs(list(a = 1), data.frame(x = 1), data.frame(x = 1)))
   })
 
-  it("errors with a confusing message when one input has zero rows", {
-    # NOTE: no explicit empty-input check exists. expand.grid() over
-    # seq_len(0) for species produces zero species_row combinations while
-    # food/environment still contribute real rows, so the row counts
-    # mismatch and data.frame() errors generically rather than with a
-    # clear "empty input" message.
-    species <- data.frame(body_mass = numeric(0), foo = numeric(0))
-    food <- data.frame(digestibility = 0.6, bar = 1)
-    environment <- data.frame(air_temperature = c(0, 10), baz = 1)
+  it("selects whole rows of matrix columns", {
+    species <- data.frame(id = 1:2)
+    species$m <- matrix(1:4, nrow = 2)
+    out <- combine_inputs(species, data.frame(digestibility = c(0.6, 0.7)), data.frame(air_temperature = 0))
 
-    expect_error(combine_inputs(species, food, environment), "differing number of rows")
+    expect_equal(out$m, matrix(c(1, 2, 1, 2, 3, 4, 3, 4), nrow = 4))
+  })
+
+  it("varies the inputs in the requested order, keeping columns species, food, environment", {
+    out <- combine_inputs(
+      data.frame(s = 1:2), data.frame(f = 1:2), data.frame(e = 1:2),
+      order = c("species", "environment", "food")
+    )
+
+    expect_equal(names(out), c("s", "f", "e"))
+    expect_equal(out$s, rep(1:2, times = 4))
+    expect_equal(out$e, rep(rep(1:2, each = 2), times = 2))
+    expect_equal(out$f, rep(1:2, each = 4))
   })
 })

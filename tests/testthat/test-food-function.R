@@ -1,23 +1,4 @@
 describe("food_function()", {
-  it("returns one row with the documented columns for a valid herbivore diet", {
-    out <- food_function(
-      digestibility_of_food = 0.6,
-      Carbohydrate_Content = 0.8,
-      Protein_Content = 0.1,
-      Fat_Content = 0.1,
-      Free_Water_Content_Food = 0.4
-    )
-
-    expect_s3_class(out, "data.frame")
-    expect_equal(nrow(out), 1)
-    expect_true(all(c(
-      "Digestibility", "EEE", "foodcarbenergy", "foodcarbcontent", "Ocarb", "Hcarb",
-      "foodproteinenergy", "Oprotein", "Hprotein", "foodfatenergy", "Ofat", "Hfat",
-      "foodproteincontent", "foodfatcontent", "freeH20food"
-    ) %in% names(out)))
-    expect_equal(out$EEE, 0.9)
-  })
-
   it("errors when Free_Water_Content_Food is omitted", {
     expect_error(
       food_function(digestibility_of_food = 0.6, Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1),
@@ -27,18 +8,26 @@ describe("food_function()", {
 
   it("errors when digestibility_of_food is omitted", {
     expect_error(
-      food_function(Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4),
+      food_function(
+        Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4
+      ),
       "Digestibility"
     )
   })
 
   it("errors when digestibility_of_food is zero or negative", {
     expect_error(
-      food_function(digestibility_of_food = 0, Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4),
+      food_function(
+        digestibility_of_food = 0, Carbohydrate_Content = 0.8, Protein_Content = 0.1,
+        Fat_Content = 0.1, Free_Water_Content_Food = 0.4
+      ),
       "Digestibility"
     )
     expect_error(
-      food_function(digestibility_of_food = -0.5, Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4),
+      food_function(
+        digestibility_of_food = -0.5, Carbohydrate_Content = 0.8, Protein_Content = 0.1,
+        Fat_Content = 0.1, Free_Water_Content_Food = 0.4
+      ),
       "Digestibility"
     )
   })
@@ -59,26 +48,48 @@ describe("food_function()", {
     expect_equal(out$foodcarbcontent, 0)
   })
 
-  it("returns the full factorial cross for vector inputs", {
-    out <- food_function(
-      digestibility_of_food = c(0.5, 0.6), Carbohydrate_Content = c(0.7, 0.8),
-      Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4
-    )
-    expect_equal(nrow(out), 2 * 2)
-  })
-
   it("accepts digestibility at the upper boundary of 1", {
-    out <- food_function(digestibility_of_food = 1, Carbohydrate_Content = 0.8, Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4)
+    out <- food_function(
+      digestibility_of_food = 1, Carbohydrate_Content = 0.8, Protein_Content = 0.1,
+      Fat_Content = 0.1, Free_Water_Content_Food = 0.4
+    )
     expect_equal(out$Digestibility, 1)
   })
 
   it("doesn't enforce that Carbohydrate/Protein/Fat content sum to 1", {
     # Only a caution message is printed; nothing rejects macronutrients
     # that don't sum to 1.
-    out <- food_function(digestibility_of_food = 0.6, Carbohydrate_Content = 0.9, Protein_Content = 0.9, Fat_Content = 0.9, Free_Water_Content_Food = 0.4)
+    out <- food_function(
+      digestibility_of_food = 0.6, Carbohydrate_Content = 0.9, Protein_Content = 0.9,
+      Fat_Content = 0.9, Free_Water_Content_Food = 0.4
+    )
     expect_equal(out$EEE, 0.9)
   })
 
+  it("lays out the grid freeH20food fastest through Digestibility slowest", {
+    dig <- c(0.5, 0.6)
+    carb <- c(0.6, 0.7, 0.8)
+    prot <- c(0.1, 0.2, 0.3, 0.4)
+    fat <- c(0, 0.1)
+    fw <- c(0.3, 0.4, 0.5)
+
+    out <- food_function(
+      digestibility_of_food = dig, Carbohydrate_Content = carb, Protein_Content = prot,
+      Fat_Content = fat, Free_Water_Content_Food = fw
+    )
+    grid <- expand.grid(
+      freeH20food = fw, foodfatcontent = fat, foodproteincontent = prot,
+      foodcarbcontent = carb, Digestibility = dig
+    )
+
+    expect_equal(nrow(out), nrow(grid))
+    for (col in names(grid)) expect_equal(out[[col]], grid[[col]], label = col)
+    expect_equal(names(out), c(
+      "Digestibility", "EEE", "foodcarbenergy", "foodcarbcontent", "Ocarb", "Hcarb",
+      "foodproteinenergy", "Oprotein", "Hprotein", "foodfatenergy", "Ofat", "Hfat",
+      "foodproteincontent", "foodfatcontent", "freeH20food"
+    ))
+  })
 })
 
 describe("food_function() proportion bounds", {

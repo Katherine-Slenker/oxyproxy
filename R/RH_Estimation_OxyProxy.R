@@ -70,9 +70,10 @@
 
 
 humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature = 0, model_d18O_Surfacewater = 0,
-                               model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
-                               model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_Body_mass = 0,
-                               model_WaterEconomyIndex = 0, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE) {
+                               model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0,
+                               model_Protein_Content = 0, model_Fat_Content = 0, model_Free_Water_Content_Food = 0,
+                               model_Body_mass = 0, model_WaterEconomyIndex = 0, changeConstant = FALSE,
+                               sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE) {
   ### First layer : d180 Enamel ==================================================
   d18Result <- d18O_enamel(d18O_carbonate = sampled_d18Ocarbonate)
 
@@ -92,7 +93,9 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
     substituted <- c(substituted, "model_d18O_Surfacewater")
   }
 
-  OEM <- rh_estimation_environment_function(air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater)
+  OEM <- rh_estimation_environment_function(
+    air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater
+  )
 
   # Food function (unmodified from base function)
   if (length(model_Digestibility_of_food) == 1 && model_Digestibility_of_food[1] == 0) {
@@ -118,8 +121,8 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
 
   OF <- food_function(
     digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content,
-    Protein_Content = model_Protein_Content, Fat_Content = model_Fat_Content, Free_Water_Content_Food = model_Free_Water_Content_Food,
-    changeConstant = FALSE
+    Protein_Content = model_Protein_Content, Fat_Content = model_Fat_Content,
+    Free_Water_Content_Food = model_Free_Water_Content_Food, changeConstant = FALSE
   )
 
   # Species function (unmofidied from base function)
@@ -139,7 +142,9 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
     )
   }
 
-  OS <- species_function(body_mass = model_Body_mass, water_economy_index = model_WaterEconomyIndex, changeConstant = FALSE)
+  OS <- species_function(
+    body_mass = model_Body_mass, water_economy_index = model_WaterEconomyIndex, changeConstant = FALSE
+  )
 
   ### Third layer : Inputs fed with first layer values then Inputs results are used in Outputs function ========
   # What is going in (e.g. drinking water, food, leaf water content, etc...)
@@ -153,39 +158,24 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
 
   ### Potential plots if PlotRange == TRUE =======================================
   if (isTRUE(PlotRange) && nrow(RH) > 1) {
-    message("Variables with more than one values are compared to relative humidity, all plots can be redone and improved from function outputs")
-    if (length(model_Body_mass) > 1) {
-      plot(RH$Humidity * 100 ~ RH$Bodymass, xlab = "Body mass (in Kg)", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_WaterEconomyIndex) > 1) {
-      plot(RH$Humidity * 100 ~ RH$WEI, xlab = "Water Economy Index", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_Digestibility_of_food) > 1) {
-      plot(RH$Humidity * 100 ~ RH$Digestibility, xlab = "Digestibility", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_Carbohydrate_Content) > 1) {
-      plot(RH$Humidity * 100 ~ RH$foodcarbcontent, xlab = "Carbohydrate content in food", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_Protein_Content) > 1) {
-      plot(RH$Humidity * 100 ~ RH$foodproteincontent, xlab = "Protein content in food", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_Fat_Content) > 1) {
-      plot(RH$Humidity * 100 ~ RH$foodfatcontent, xlab = "Fat content in food", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_Free_Water_Content_Food) > 1) {
-      plot(RH$Humidity * 100 ~ RH$freeH20food, xlab = "Free water content in food", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_air_temperature) > 1) {
-      plot(RH$Humidity * 100 ~ RH$airtemp, xlab = "Air temperature", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(model_d18O_Surfacewater) > 1) {
-      plot(RH$Humidity * 100 ~ RH$d18Osw, xlab = "d18 O surface water", ylab = "Relative Humidity (%)", pch = 16)
-    }
-    if (length(sampled_d18Ocarbonate) > 1) {
-      plot(RH$Humidity * 100 ~ RH$d18Ocarbonate, xlab = "d18 O Carbonate", ylab = "Relative Humidity (%)", pch = 16)
-    }
+    message(
+      "Variables with more than one values are compared to relative humidity, ",
+      "all plots can be redone and improved from function outputs"
+    )
+    plot_varied_arguments(RH, RH$Humidity * 100, "Relative Humidity (%)", list(
+      Bodymass = model_Body_mass,
+      WEI = model_WaterEconomyIndex,
+      Digestibility = model_Digestibility_of_food,
+      foodcarbcontent = model_Carbohydrate_Content,
+      foodproteincontent = model_Protein_Content,
+      foodfatcontent = model_Fat_Content,
+      freeH20food = model_Free_Water_Content_Food,
+      airtemp = model_air_temperature,
+      d18Osw = model_d18O_Surfacewater,
+      d18Ocarbonate = sampled_d18Ocarbonate
+    ))
   }
 
   # Return of the wrapper function, large dataset could be returned ===============
-  return(RH)
+  RH
 }

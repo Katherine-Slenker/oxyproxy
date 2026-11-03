@@ -7,7 +7,8 @@
 calculate_wv_co2(df)
 }
 \arguments{
-\item{df}{Data frame containing values from Species (MolesO2Air) and Inputs (dryHinflux,dryOinflux), and calculated value(s) of Ureaproduced}
+\item{df}{Data frame containing values from Species (MolesO2Air) and
+Inputs (dryHinflux,dryOinflux), and calculated value(s) of Ureaproduced}
 }
 \value{
 Numeric vector of CO2 water vapor values (moles H2O)

@@ -7,7 +7,8 @@
 calculate_energy_density(df)
 }
 \arguments{
-\item{df}{Data frame containing values from Food function (macronutrient content in diet, energy content of macronutrient)}
+\item{df}{Data frame containing values from Food function (macronutrient content in diet,
+energy content of macronutrient)}
 }
 \value{
 Numeric vector of energy densities (kJ/kg)

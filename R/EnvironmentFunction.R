@@ -44,7 +44,11 @@
 
 ### SET FUNCTION FOR ENVIRONMENT
 
-environment_function <- function(air_temperature = numeric(0), relative_humidity = numeric(0), d18O_surface_water = numeric(0)) {
+environment_function <- function(
+  air_temperature = numeric(0),
+  relative_humidity = numeric(0),
+  d18O_surface_water = numeric(0)
+) {
   ## 0. VALIDATING ARGUMENTS =====================================================
   if (length(air_temperature) == 0) {
     stop("Enter Air Temperature value (in  deg C)")
@@ -60,88 +64,106 @@ environment_function <- function(air_temperature = numeric(0), relative_humidity
     stop("Enter Relative Humidity value between 0 and 1 (%)")
   }
 
-  ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables
-  # Length = number of combination of results
-  DF_outputs <- matrix(data = 0, nrow = length(air_temperature) * length(relative_humidity) * length(d18O_surface_water), ncol = 12)
-  colnames(DF_outputs) <- c(
-    "airtemp", "MAT", "Humidity", "WVinLungs", "WV", "d18Osw", "dairH2O",
-    "dairH2OSW", "d18OleafH2O", "d18Oleafcellulose", "dfoodO2SW", "dfoodH2Osw"
-  )
-  DF_outputs <- as.data.frame(DF_outputs)
+  n_air <- length(air_temperature)
+  n_rh <- length(relative_humidity)
+  n_sw <- length(d18O_surface_water)
 
   # FILLING DATAFRAME WITH ARGUMENTS VALUES
+  # One row per combination: airtemp varies fastest, then d18Osw, then Humidity
 
   # air temperature (C)
-  airtemp <- air_temperature
-  DF_outputs$airtemp <- airtemp
+  airtemp <- rep(air_temperature, times = n_sw * n_rh)
 
-  # mean annual temperature (K)OE
+  # mean annual temperature (K)
   MAT <- airtemp + 273
-  DF_outputs$MAT <- MAT
 
   # Humidity
-  Humidity <- relative_humidity
-  DF_outputs_Humidity_temp <- c()
-  for (i in seq_along(Humidity)) {
-    DF_outputs_Humidity_temp <- c(DF_outputs_Humidity_temp, rep(Humidity[i], nrow(DF_outputs) / length(Humidity)))
-  } ## the dataframe is split in X part for X values of humidity
-  DF_outputs$Humidity <- DF_outputs_Humidity_temp
-
+  Humidity <- rep(relative_humidity, each = n_air * n_sw)
   # d18Osurfacewater
-  d18Osw <- d18O_surface_water
-  DF_outputs_d18Osw_temp <- c()
-  for (i in seq_along(d18Osw)) {
-    DF_outputs_d18Osw_temp <- c(DF_outputs_d18Osw_temp, rep(d18Osw[i], nrow(DF_outputs) / length(Humidity) / length(d18Osw)))
-  }
-  DF_outputs_d18Osw_temp <- rep(DF_outputs_d18Osw_temp, length(Humidity))
-  DF_outputs$d18Osw <- DF_outputs_d18Osw_temp
+  d18Osw <- rep(d18O_surface_water, each = n_air, times = n_rh)
 
 
   ### 1. CALCULATION WITH HUMIDITY AND AIR TEMPERATURE =========================
 
-  # Water Vapor Taken in Lungs <- Humidity * 10^(0.686+0.027*airtemp) * 12400/(760*22.4)
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$WVinLungs[i] <- DF_outputs$Humidity[i] * (10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * 12400 / (760 * 22.4)
-  }
+  WVinLungs <- calculate_wv_in_lungs(Humidity, airtemp)
 
   # Water Vapor <- Water Vapor in Lungs / 2
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$WV[i] <- DF_outputs$WVinLungs[i] / 2
-  }
+  WV <- WVinLungs / 2
 
   ### 2. ADDING D18 SURFACE WATER TO CALCULATION ===============================
 
-  # dairH2O <- d18Osw - 2.644 + 3206/MAT - 1.534 * 10^6 / MAT^2
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dairH2O[i] <- DF_outputs$d18Osw[i] - 2.644 + 3206 / DF_outputs$MAT[i] - 1.534 * (10^6) / (DF_outputs$MAT[i]^2)
-  }
+  dairH2O <- calculate_dair_h2o(d18Osw, MAT)
 
   # dairH2OSW <- dairH2O -d18Osw
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dairH2OSW[i] <- DF_outputs$dairH2O[i] - DF_outputs$d18Osw[i]
-  }
+  dairH2OSW <- dairH2O - d18Osw
 
+  # d18OleafH2O, d18Oleafcellulose, dfoodO2SW, dfoodH2Osw
+  leaf_and_food <- calculate_leaf_and_food_d18O(d18Osw, dairH2O, Humidity)
+
+  data.frame(
+    airtemp, MAT, Humidity, WVinLungs, WV, d18Osw, dairH2O,
+    dairH2OSW, leaf_and_food,
+    row.names = NULL
+  )
+}
+
+#' Calculate saturation vapor pressure of air
+#' @param airtemp Numeric. Air temperature (deg C)
+#' @return Numeric vector of saturation vapor pressure (mm Hg)
+#' @keywords internal
+calculate_saturation_vapor_pressure <- function(airtemp) {
+  10^(0.686 + 0.027 * airtemp)
+}
+
+#' Calculate water vapor taken in through the lungs
+#' @param humidity Numeric. Relative humidity (proportion, 0-1)
+#' @param airtemp Numeric. Air temperature (deg C)
+#' @return Numeric vector of water vapor taken in lungs via respiration (mol)
+#' @keywords internal
+calculate_wv_in_lungs <- function(humidity, airtemp) {
+  # Water Vapor Taken in Lungs <- Humidity * 10^(0.686+0.027*airtemp) * 12400/(760*22.4)
+  humidity * calculate_saturation_vapor_pressure(airtemp) * 12400 / (760 * 22.4)
+}
+
+#' Calculate d18O enrichment of inhaled air
+#' @param d18Osw Numeric. d18O of surface water (per mil)
+#' @param MAT Numeric. Mean annual temperature (deg K)
+#' @return Numeric vector of d18O enrichment of inhaled air (per mil)
+#' @keywords internal
+calculate_dair_h2o <- function(d18Osw, MAT) {
+  # dairH2O <- d18Osw - 2.644 + 3206/MAT - 1.534 * 10^6 / MAT^2
+  d18Osw - 2.644 + 3206 / MAT - 1.534 * (10^6) / (MAT^2)
+}
+
+#' Calculate the leaf-water offset from surface water
+#' @param d18Osw Numeric. d18O of surface water (per mil)
+#' @param dairH2O Numeric. d18O enrichment of inhaled air (per mil)
+#' @return Numeric vector of d18Osw - dairH2O + 16 (per mil)
+#' @keywords internal
+calculate_leaf_offset <- function(d18Osw, dairH2O) {
+  d18Osw - dairH2O + 16
+}
+
+#' Calculate d18O of leaf water, leaf cellulose, and food relative to surface water
+#' @param d18Osw Numeric. d18O of surface water (per mil)
+#' @param dairH2O Numeric. d18O enrichment of inhaled air (per mil)
+#' @param humidity Numeric. Relative humidity (proportion, 0-1)
+#' @return List of numeric vectors: d18OleafH2O, d18Oleafcellulose, dfoodO2SW, dfoodH2Osw (per mil)
+#' @keywords internal
+calculate_leaf_and_food_d18O <- function(d18Osw, dairH2O, humidity) {
   # d18OleafH2O <-d18Osw + (1-Humidity) * (d18Osw - dairH2O + 16)
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$d18OleafH2O[i] <- DF_outputs$d18Osw[i] + (1 - DF_outputs$Humidity[i]) * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16)
-  }
+  d18OleafH2O <- d18Osw + (1 - humidity) * calculate_leaf_offset(d18Osw, dairH2O)
 
   # d18Oleafcellulose <- d18OleafH2O + 27
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$d18Oleafcellulose[i] <- DF_outputs$d18OleafH2O[i] + 27
-  }
+  d18Oleafcellulose <- d18OleafH2O + 27
 
-  # dfoodO2SW <-d18Oleafcellulose - d18Osw
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dfoodO2SW[i] <- DF_outputs$d18Oleafcellulose[i] - DF_outputs$d18Osw[i]
-  }
-
-  # dfoodH2Osw  <- (0.5 * d18OstemH2O + 0.5 * d18OleafH2O) -d18Osw
-  # d18OstemH2O = d18Osw
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dfoodH2Osw[i] <- (0.5 * DF_outputs$d18Osw[i] + 0.5 * DF_outputs$d18OleafH2O[i]) - DF_outputs$d18Osw[i]
-  }
-
-  return(DF_outputs)
+  list(
+    d18OleafH2O = d18OleafH2O,
+    d18Oleafcellulose = d18Oleafcellulose,
+    # dfoodO2SW <-d18Oleafcellulose - d18Osw
+    dfoodO2SW = d18Oleafcellulose - d18Osw,
+    # dfoodH2Osw  <- (0.5 * d18OstemH2O + 0.5 * d18OleafH2O) -d18Osw
+    # d18OstemH2O = d18Osw
+    dfoodH2Osw = (0.5 * d18Osw + 0.5 * d18OleafH2O) - d18Osw
+  )
 }
