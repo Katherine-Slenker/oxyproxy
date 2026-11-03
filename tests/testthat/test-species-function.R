@@ -53,3 +53,34 @@ describe("species_function()", {
     expect_true(is.na(out$Urea))
   })
 })
+
+describe("species_function() refactor guards", {
+  it("lays out the grid with Bodymass fastest and WEI slowest", {
+    out <- species_function(body_mass = c(10, 20), water_economy_index = c(0.1, 0.2, 0.3))
+
+    expect_equal(out$Bodymass, rep(c(10, 20), times = 3))
+    expect_equal(out$WEI, rep(c(0.1, 0.2, 0.3), each = 2))
+    expect_equal(names(out), c(
+      "Bodymass", "EnergyExp", "WEI", "TranscutaneousH2OLoss", "WVSkin", "MolesO2Air", "O2FluxLungs",
+      "H2OOral", "H2ONasal", "WVNose", "TotalH2OTurnover", "UrinaryH2OLoss", "WVUrine", "Urea", "d18Oairtakenup"
+    ))
+  })
+
+  it("computes every derived column from that row's Bodymass and WEI", {
+    out <- species_function(body_mass = c(10, 20), water_economy_index = c(0.1, 0.2, 0.3))
+
+    expect_equal(out$EnergyExp, 900 * out$Bodymass^0.73)
+    expect_equal(out$TranscutaneousH2OLoss, 1.44 * out$Bodymass^0.667)
+    expect_equal(out$WVSkin, out$TranscutaneousH2OLoss / 2)
+    expect_equal(out$MolesO2Air, out$EnergyExp * 0.00216)
+    expect_equal(out$O2FluxLungs, (22.4 * out$MolesO2Air) / (0.2 * 0.21))
+    expect_equal(out$H2OOral, out$O2FluxLungs * 0.5 * 0.003)
+    expect_equal(out$H2ONasal, out$O2FluxLungs * 0.5 * 0.5 * 0.003)
+    expect_equal(out$WVNose, out$H2ONasal / 2)
+    expect_equal(out$TotalH2OTurnover, out$WEI * (out$EnergyExp / 18))
+    expect_equal(out$UrinaryH2OLoss, 0.25 * out$TotalH2OTurnover)
+    expect_equal(out$WVUrine, out$UrinaryH2OLoss / 2)
+    expect_equal(out$Urea, rep(0.2, 6))
+    expect_equal(out$d18Oairtakenup, rep(23.2 - 10.5 * (1 - 0.2), 6))
+  })
+})
