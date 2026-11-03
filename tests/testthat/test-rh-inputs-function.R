@@ -70,3 +70,23 @@ describe("inverse_input_function()", {
     expect_equal(sort(combos), sort(unique(combos)))
   })
 })
+
+describe("inverse_input_function() refactor guards", {
+  it("orders rows species fastest, then environment, then food", {
+    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
+    three_food <- mock_food()[rep(1, 3), , drop = FALSE]
+    three_food$Digestibility <- c(0.4, 0.5, 0.6)
+    two_env <- rh_estimation_environment_function(air_temperature = c(10, 20), d18O_surface_water = -5)
+
+    out <- inverse_input_function(species = two_species, food = three_food, environment = two_env)
+
+    expect_equal(out$EnergyExp, rep(c(500, 600), times = 6))
+    expect_equal(out$airtemp, rep(rep(c(10, 20), each = 2), times = 3))
+    expect_equal(out$Digestibility, rep(c(0.4, 0.5, 0.6), each = 4))
+    expect_equal(rownames(out), as.character(1:12))
+    expect_equal(names(out), c(
+      names(two_species), names(three_food), names(two_env),
+      "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood", "WaterinFood"
+    ))
+  })
+})

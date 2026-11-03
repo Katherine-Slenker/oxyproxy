@@ -54,32 +54,27 @@
 #' @export
 ### SET INPUT FUNCTION
 inverse_input_function <- function(species = 0, food = 0, environment = 0) {
-  ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables
-  # Length = number of combination of results
   # Dataframe size is determined by Species x Food x Environment dataframe
   n_species <- nrow(species)
   n_food <- nrow(food)
   n_env <- nrow(environment)
   n_rows <- n_species * n_food * n_env
 
-  DF_outputs <- matrix(data = 0, nrow = n_rows, ncol = ncol(species) + ncol(food) + ncol(environment) + 5)
-  colnames(DF_outputs) <- c(
-    colnames(species), colnames(food), colnames(environment),
-    "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood",
-    "WaterinFood"
-  )
-  DF_outputs <- as.data.frame(DF_outputs)
-
   ## 1. FILLING IT WITH PREVIOUS DATA COMING FROM FOOD SPECIES AND ENVIRONMENT FUNCTION
   ### THIS FOLLOWING ALGORITHM IS MADE TO FIND ALL COMBINATION OF VALUES TO COMPUTE THE INPUTS VALUES IN THE NEXT STEPS
   # Species cycles fastest, food is blocked slowest, environment sits between.
-  DF_outputs[, colnames(species)] <- species[rep(seq_len(n_species), length.out = n_rows), , drop = FALSE]
-  DF_outputs[, colnames(food)] <- food[rep(seq_len(n_food), each = n_rows / n_food), , drop = FALSE]
-
+  species_rows <- rep(seq_len(n_species), length.out = n_rows)
+  food_rows <- rep(seq_len(n_food), each = n_rows / n_food)
   env_block <- rep(seq_len(n_env), each = n_rows / n_env / n_food)
-  DF_outputs[, colnames(environment)] <-
-    environment[env_block[rep(seq_along(env_block), length.out = n_rows)], , drop = FALSE]
+  env_rows <- rep(env_block, length.out = n_rows)
+
+  DF_outputs <- data.frame(
+    species[species_rows, , drop = FALSE],
+    food[food_rows, , drop = FALSE],
+    environment[env_rows, , drop = FALSE],
+    row.names = NULL,
+    check.names = FALSE
+  )
 
   ## 2. COMPUTATION OF INPUT VARIABLES
 
