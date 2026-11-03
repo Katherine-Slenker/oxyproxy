@@ -37,46 +37,29 @@ rh_estimation_environment_function <- function(air_temperature = numeric(0), d18
     stop("Enter d18Osw value")
   }
 
-  ## 1. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables
-  # Length = number of combination of results
-  DF_outputs <- matrix(data = 0, nrow = length(air_temperature) * length(d18O_surface_water), ncol = 5)
-  colnames(DF_outputs) <- c(
-    "airtemp", "MAT", "d18Osw", "dairH2O",
-    "dairH2OSW"
-  )
-  DF_outputs <- as.data.frame(DF_outputs)
+  n_air <- length(air_temperature)
+  n_sw <- length(d18O_surface_water)
 
   # FILLING DATAFRAME WITH ARGUMENTS VALUES
+  # One row per combination: airtemp varies fastest, then d18Osw
 
   # air temperature (C)
-  airtemp <- air_temperature
-  DF_outputs$airtemp <- airtemp
+  airtemp <- rep(air_temperature, times = n_sw)
 
-  # mean annual temperature (K)OE
+  # mean annual temperature (K)
   MAT <- airtemp + 273
-  DF_outputs$MAT <- MAT
 
   # d18Osurfacewater
-  d18Osw <- d18O_surface_water
-  DF_outputs_d18Osw_temp <- c()
-  for (i in seq_along(d18Osw)) {
-    DF_outputs_d18Osw_temp <- c(DF_outputs_d18Osw_temp, rep(d18Osw[i], nrow(DF_outputs) / length(d18Osw)))
-  }
-  DF_outputs$d18Osw <- DF_outputs_d18Osw_temp
+  d18Osw <- rep(d18O_surface_water, each = n_air)
 
 
   ### 1. ADDING D18O SURFACE WATER TO CALCULATION ===============================
 
   # dairH2O <- d18Osw - 2.644 + 3206/MAT - 1.534 * 10^6 / MAT^2
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dairH2O[i] <- DF_outputs$d18Osw[i] - 2.644 + 3206 / DF_outputs$MAT[i] - 1.534 * (10^6) / (DF_outputs$MAT[i]^2)
-  }
+  dairH2O <- d18Osw - 2.644 + 3206 / MAT - 1.534 * (10^6) / (MAT^2)
 
   # dairH2OSW <- dairH2O -d18Osw
-  for (i in seq_len(nrow(DF_outputs))) {
-    DF_outputs$dairH2OSW[i] <- DF_outputs$dairH2O[i] - DF_outputs$d18Osw[i]
-  }
+  dairH2OSW <- dairH2O - d18Osw
 
-  return(DF_outputs)
+  data.frame(airtemp, MAT, d18Osw, dairH2O, dairH2OSW, row.names = NULL)
 }

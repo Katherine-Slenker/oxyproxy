@@ -44,3 +44,17 @@ describe("rh_estimation_environment_function()", {
     expect_equal(out$MAT, -10 + 273)
   })
 })
+
+describe("rh_estimation_environment_function() refactor guards", {
+  it("lays out airtemp fastest and computes dairH2O per row", {
+    air <- c(0, 10, 20)
+    sw <- c(-2, -5)
+    out <- rh_estimation_environment_function(air_temperature = air, d18O_surface_water = sw)
+
+    expect_equal(out$airtemp, rep(air, times = 2))
+    expect_equal(out$d18Osw, rep(sw, each = 3))
+    expect_equal(out$dairH2O, out$d18Osw - 2.644 + 3206 / out$MAT - 1.534 * (10^6) / (out$MAT^2))
+    expect_equal(out$dairH2OSW, out$dairH2O - out$d18Osw)
+    expect_equal(names(out), c("airtemp", "MAT", "d18Osw", "dairH2O", "dairH2OSW"))
+  })
+})
