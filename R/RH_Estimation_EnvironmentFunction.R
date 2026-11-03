@@ -28,7 +28,11 @@
 #' @export
 ### SET FUNCTION FOR ENVIRONMENT
 
-rh_estimation_environment_function <- function(air_temperature = numeric(0), d18O_surface_water = numeric(0)) {
+rh_estimation_environment_function <- function(
+  # nolint: object_length_linter.
+  air_temperature = numeric(0),
+  d18O_surface_water = numeric(0)
+) {
   ## 0. VALIDATING ARGUMENTS =====================================================
   if (length(air_temperature) == 0) {
     stop("Enter Air Temperature value")

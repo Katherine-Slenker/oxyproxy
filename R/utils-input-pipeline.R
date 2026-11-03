@@ -9,7 +9,7 @@
 #' @keywords internal
 with_column <- function(df, column_name, func) {
   df[[column_name]] <- func(df)
-  return(df)
+  df
 }
 
 #' Stop if a data frame is missing any required columns

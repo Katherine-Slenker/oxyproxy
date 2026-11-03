@@ -79,11 +79,15 @@ inverse_input_function <- function(species = 0, food = 0, environment = 0) {
   ## 2. COMPUTATION OF INPUT VARIABLES
   # Same calculate_* helpers as input_function(), see R/InputsFunction.R
   DF_outputs |>
-    # Food Mass Ingested = (Energy Exp)/ (Digestibility*EEE*(foodcarbcontent * foodcarbernergy + foodproteincontent * foodproteinenergy + foodfatcontent * foodfatenergy))
+    # Food Mass Ingested = (Energy Exp) /
+    # (Digestibility*EEE*(foodcarbcontent * foodcarbernergy +
+    # foodproteincontent * foodproteinenergy + foodfatcontent * foodfatenergy))
     with_column("FoodMassIngested", calculate_food_mass) |>
-    # dry O influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Ocarb + foodproteincontent * Oprotein + foodfatcontent * Ofat)
+    # dry O influx = Digestibility * EEE * FoodMassIngested *
+    # (foodcarbcontent *Ocarb + foodproteincontent * Oprotein + foodfatcontent * Ofat)
     with_column("dryOinflux", calculate_dry_oxygen_influx) |>
-    # dry H influx = Digestibility * EEE * FoodMassIngested * (foodcarbcontent *Hcarb + foodproteincontent * Hprotein + foodfatcontent * Hfat)
+    # dry H influx = Digestibility * EEE * FoodMassIngested *
+    # (foodcarbcontent *Hcarb + foodproteincontent * Hprotein + foodfatcontent * Hfat)
     with_column("dryHinflux", calculate_dry_hydrogen_influx) |>
     # Free H2O in food = Food Mass Ingested * 55.56 * (Free H2O of food/(1-free H20 of food))
     with_column("FreeH2Oinfood", calculate_free_water_in_food) |>

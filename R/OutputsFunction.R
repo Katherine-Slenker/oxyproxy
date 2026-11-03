@@ -1,8 +1,8 @@
 #' Calculates all variables of oxygen input from physiology and diet.
 #'
 #' This function combines the Species, Food, and Inputs functions to calculate oxygen outputs
-#' such as dry fecal mass, water loss from feces, water vapor losses through feces,sweat, respiration (CO2), and panting,
-#' and losses through metabolic functions, like urea production.
+#' such as dry fecal mass, water loss from feces, water vapor losses through
+#' feces,sweat, respiration (CO2), and panting, and losses through metabolic functions, like urea production.
 #'
 #' @param inputs A data frame containing the following required columns:
 #'   \describe{
@@ -190,7 +190,8 @@ calculate_wv_fecal <- function(df) {
 }
 
 #' Calculate water used for heat loss
-#' @param df Data frame containing values from Species function (TotalH2OTurnover, TranscutaneousH2OLoss, H2OOral, H2ONasal, UrinaryH2O) and calculated FecalH2OLoss
+#' @param df Data frame containing values from Species function
+#' (TotalH2OTurnover, TranscutaneousH2OLoss, H2OOral, H2ONasal, UrinaryH2O) and calculated FecalH2OLoss
 #' @return Numeric vector of water heat loss values (moles H2O)
 #' @keywords internal
 calculate_water_heat_loss <- function(df) {
@@ -216,7 +217,8 @@ calculate_wv_mouth <- function(df) {
 }
 
 #' Calculate urea production
-#' @param df Data frame containing values from Food (Oprotein, foodproteincontent, EEE, Digestibility) and Inputs function (FoodMassIngested)
+#' @param df Data frame containing values from Food (Oprotein,
+#' foodproteincontent, EEE, Digestibility) and Inputs function (FoodMassIngested)
 #' @return Numeric vector of urea production values
 #' @keywords internal
 calculate_urea_produced <- function(df) {
@@ -225,7 +227,8 @@ calculate_urea_produced <- function(df) {
 }
 
 #' Calculate water vapor from CO2
-#' @param df Data frame containing values from Species (MolesO2Air) and Inputs (dryHinflux,dryOinflux), and calculated value(s) of Ureaproduced
+#' @param df Data frame containing values from Species (MolesO2Air) and
+#' Inputs (dryHinflux,dryOinflux), and calculated value(s) of Ureaproduced
 #' @return Numeric vector of CO2 water vapor values (moles H2O)
 #' @keywords internal
 calculate_wv_co2 <- function(df) {

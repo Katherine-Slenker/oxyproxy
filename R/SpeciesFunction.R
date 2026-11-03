@@ -25,7 +25,8 @@
 #'     \item WVUrine - Water vapor loss via urine (moles H2O)
 #'     }
 
-#' @param changeConstant Boolean. Default is FALSE. If changed to TRUE, user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)
+#' @param changeConstant Boolean. Default is FALSE. If changed to TRUE,
+#' user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)
 #' @examples
 #' # Example for a plains bison (Bison bison bison)
 #' result <- species_function(
