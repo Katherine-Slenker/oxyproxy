@@ -12,7 +12,7 @@ take_rows(df, rows)
 \item{rows}{Integer row indices, repeats allowed}
 }
 \value{
-Named list of columns, for passing to \code{\link[=data.frame]{data.frame()}}
+Data frame with default row names
 }
 \description{
 Same values as \code{df[rows, , drop = FALSE]}, but skips building unique row

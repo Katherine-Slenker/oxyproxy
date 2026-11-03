@@ -158,8 +158,6 @@ validate_inputs <- function(inputs) {
   }
 }
 
-# Moles of water per kg, also used by calculate_free_water_in_food()
-MOLES_WATER_PER_KG <- 55.56
 FECAL_WATER_CONTENT <- 0.6
 WATER_VAPOR_FRACTION <- 0.5
 SWEAT_HEAT_FRACTION <- 0.75
@@ -291,9 +289,8 @@ calculate_total_outputs <- function(df) {
 #' Prepare outputs dataframe for the calculation pipeline
 #'
 #' @param inputs A dataframe containing inputs for calculations
-#' @return The inputs dataframe with its row names reset
+#' @return The inputs as a plain data frame with its row names reset
 #' @keywords internal
 prepare_outputs_dataframe <- function(inputs) {
-  row.names(inputs) <- NULL
-  inputs
+  data.frame(inputs, row.names = NULL)
 }

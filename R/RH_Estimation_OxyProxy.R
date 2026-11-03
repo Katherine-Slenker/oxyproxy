@@ -177,5 +177,5 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
   }
 
   # Return of the wrapper function, large dataset could be returned ===============
-  return(RH)
+  RH
 }

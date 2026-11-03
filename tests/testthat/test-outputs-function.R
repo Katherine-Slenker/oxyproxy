@@ -71,4 +71,9 @@ describe("outputs_function()", {
     inputs <- mock_inputs()[c(1, 1), ]
     expect_equal(rownames(outputs_function(inputs)), c("1", "2"))
   })
+
+  it("returns a plain data frame for a data frame subclass input", {
+    inputs <- structure(mock_inputs(), class = c("custom_df", "data.frame"))
+    expect_identical(class(outputs_function(inputs)), "data.frame")
+  })
 })

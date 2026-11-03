@@ -10,7 +10,7 @@ prepare_outputs_dataframe(inputs)
 \item{inputs}{A dataframe containing inputs for calculations}
 }
 \value{
-The inputs dataframe with its row names reset
+The inputs as a plain data frame with its row names reset
 }
 \description{
 Prepare outputs dataframe for the calculation pipeline

@@ -100,5 +100,5 @@ oxy_proxy_function <- function(model_bodymass = 0, model_WaterEconomyIndex = 0, 
   }
 
   # Output of Oxy Proxy Function ========
-  return(d18O)
+  d18O
 }

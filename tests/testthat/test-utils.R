@@ -46,4 +46,24 @@ describe("combine_inputs()", {
   it("errors if any argument isn't a data frame", {
     expect_error(combine_inputs(list(a = 1), data.frame(x = 1), data.frame(x = 1)))
   })
+
+  it("selects whole rows of matrix columns", {
+    species <- data.frame(id = 1:2)
+    species$m <- matrix(1:4, nrow = 2)
+    out <- combine_inputs(species, data.frame(digestibility = c(0.6, 0.7)), data.frame(air_temperature = 0))
+
+    expect_equal(out$m, matrix(c(1, 2, 1, 2, 3, 4, 3, 4), nrow = 4))
+  })
+
+  it("varies the inputs in the requested order, keeping columns species, food, environment", {
+    out <- combine_inputs(
+      data.frame(s = 1:2), data.frame(f = 1:2), data.frame(e = 1:2),
+      order = c("species", "environment", "food")
+    )
+
+    expect_equal(names(out), c("s", "f", "e"))
+    expect_equal(out$s, rep(1:2, times = 4))
+    expect_equal(out$e, rep(rep(1:2, each = 2), times = 2))
+    expect_equal(out$f, rep(1:2, each = 4))
+  })
 })

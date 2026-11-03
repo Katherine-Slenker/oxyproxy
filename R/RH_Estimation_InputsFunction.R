@@ -59,18 +59,9 @@ inverse_input_function <- function(species = 0, food = 0, environment = 0) {
   ## 1. FILLING IT WITH PREVIOUS DATA COMING FROM FOOD SPECIES AND ENVIRONMENT FUNCTION
   ### THIS FOLLOWING ALGORITHM IS MADE TO FIND ALL COMBINATION OF VALUES TO COMPUTE THE INPUTS VALUES IN THE NEXT STEPS
   # Species cycles fastest, food is blocked slowest, environment sits between.
-  combinations <- expand.grid(
-    species_row     = seq_len(nrow(species)),
-    environment_row = seq_len(nrow(environment)),
-    food_row        = seq_len(nrow(food))
-  )
-
-  DF_outputs <- data.frame(
-    take_rows(species, combinations$species_row),
-    take_rows(food, combinations$food_row),
-    take_rows(environment, combinations$environment_row),
-    row.names = NULL,
-    check.names = FALSE
+  DF_outputs <- combine_inputs(
+    species, food, environment,
+    order = c("species", "environment", "food"), check.names = FALSE
   )
 
   ## 2. COMPUTATION OF INPUT VARIABLES

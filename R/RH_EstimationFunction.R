@@ -28,15 +28,7 @@
 ### SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
 rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) {
   ### PREPPING DATASET =========================================================
-  # For two data frames with no shared columns merge() is a plain cross join, which
-  # cross_join() does far cheaper. Anything else keeps merge()'s coercion and join rules.
-  plain_cross <- is.data.frame(outputs) && is.data.frame(rh_estimation_d18O) &&
-    length(intersect(names(outputs), names(rh_estimation_d18O))) == 0
-  DF_outputs <- if (plain_cross) {
-    cross_join(outputs, rh_estimation_d18O)
-  } else {
-    merge(outputs, rh_estimation_d18O)
-  }
+  DF_outputs <- fast_merge(outputs, rh_estimation_d18O)
   if (nrow(DF_outputs) == 0) {
     stop("rh_estimation_d18O and outputs cannot be empty")
   }

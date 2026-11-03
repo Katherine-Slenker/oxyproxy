@@ -28,8 +28,7 @@
 #' @export
 ### SET FUNCTION FOR ENVIRONMENT
 
-rh_estimation_environment_function <- function(
-  # nolint: object_length_linter.
+rh_estimation_environment_function <- function( # nolint: object_length_linter.
   air_temperature = numeric(0),
   d18O_surface_water = numeric(0)
 ) {

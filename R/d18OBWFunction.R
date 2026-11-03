@@ -85,10 +85,3 @@ d18_obw_function <- function(outputs = 0) {
 
   outputs
 }
-
-# Enamel conversion constants. d18O_enamel() applies them in reverse.
-# d18Ophosphate = d18Obw + 25.9 - 37 / 4.38
-PHOSPHATE_WATER_INTERCEPT <- 25.9
-PHOSPHATE_WATER_OFFSET <- 37 / 4.38
-# d18Ocarbonate = d18Ophosphate + 8.5
-CARBONATE_PHOSPHATE_OFFSET <- 8.5

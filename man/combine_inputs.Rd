@@ -4,7 +4,13 @@
 \alias{combine_inputs}
 \title{Create combinations dataframe from Species, Food, and Environment inputs}
 \usage{
-combine_inputs(species, food, environment)
+combine_inputs(
+  species,
+  food,
+  environment,
+  order = c("species", "food", "environment"),
+  check.names = TRUE
+)
 }
 \arguments{
 \item{species}{Data frame with species parameters}
@@ -12,6 +18,11 @@ combine_inputs(species, food, environment)
 \item{food}{Data frame with food composition data}
 
 \item{environment}{Data frame with environmental conditions}
+
+\item{order}{Character. The three inputs from fastest- to slowest-varying.
+Columns are always returned species, then food, then environment.}
+
+\item{check.names}{Passed to \code{\link[=data.frame]{data.frame()}}}
 }
 \value{
 Data frame with all input combinations
