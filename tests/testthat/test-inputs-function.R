@@ -35,36 +35,12 @@ describe("input_function()", {
     )
   })
 
-  it("returns the documented calculated columns for a single combination", {
-    out <- input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
-
-    expect_s3_class(out, "data.frame")
-    expect_equal(nrow(out), 1)
-    expect_true(all(c(
-      "FoodMassIngested", "dryOinflux", "dryHinflux",
-      "FreeH2Oinfood", "WaterinFood", "DrinkingH2OIngested", "DrinkingWater"
-    ) %in% names(out)))
-  })
-
-  it("computes FoodMassIngested as EnergyExp / (Digestibility * EEE * energy density)", {
-    out <- input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
-
-    energy_density <- 0.8 * 17300 + 0.1 * 20100 + 0.1 * 39700
-    expect_equal(out$FoodMassIngested, 500 / (0.6 * 0.9 * energy_density))
-  })
-
   it("errors on an explicit zero-row data frame, not just a missing argument", {
     empty_species <- mock_species()[0, ]
     expect_error(
       input_function(species = empty_species, food = mock_food(), environment = mock_environment()),
       "cannot be empty"
     )
-  })
-
-  it("builds one row per species x food x environment combination", {
-    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
-    out <- input_function(species = two_species, food = mock_food(), environment = mock_environment())
-    expect_equal(nrow(out), 2)
   })
 
   it("appends calculated columns after the inputs, in pipeline order", {

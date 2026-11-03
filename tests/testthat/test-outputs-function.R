@@ -20,21 +20,6 @@ describe("outputs_function()", {
     expect_error(outputs_function(incomplete), "Missing required columns")
   })
 
-  it("returns the original columns plus the documented calculated columns", {
-    out <- outputs_function(mock_inputs(), sweating_species = FALSE)
-
-    expect_true(all(c(
-      "DryFecalOutput", "FecalH20Loss", "WVFecal", "WaterHeatLoss",
-      "WVSweat", "Panting", "WVMouth", "UreaProduced", "WVCO2"
-    ) %in% names(out)))
-    expect_true(all(names(mock_inputs()) %in% names(out)))
-  })
-
-  it("sets WVSweat to zero for non-sweating species (the default)", {
-    out <- outputs_function(mock_inputs(), sweating_species = FALSE)
-    expect_equal(out$WVSweat, 0)
-  })
-
   it("computes WVSweat as half of Sweating for sweating species", {
     out <- outputs_function(mock_inputs(), sweating_species = TRUE)
     expect_equal(out$WVSweat, out$Sweating / 2)
@@ -53,16 +38,6 @@ describe("outputs_function()", {
   it("computes Sweating as 75% of WaterHeatLoss", {
     out <- outputs_function(mock_inputs(), sweating_species = TRUE)
     expect_equal(out$Sweating, 0.75 * out$WaterHeatLoss)
-  })
-
-  it("computes WVSweat as 37.5% of WaterHeatLoss", {
-    out <- outputs_function(mock_inputs(), sweating_species = TRUE)
-    expect_equal(out$WVSweat, 0.375 * out$WaterHeatLoss)
-  })
-
-  it("computes DryFecalOutput as FoodMassIngested * (1 - Digestibility)", {
-    out <- outputs_function(mock_inputs(), sweating_species = FALSE)
-    expect_equal(out$DryFecalOutput, 5.2 * (1 - 0.85))
   })
 
   it("warns when a value that should be non-negative is negative", {

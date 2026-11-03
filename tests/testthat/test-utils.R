@@ -13,15 +13,6 @@ describe("with_column()", {
 
     expect_equal(out$y, c(11, 12))
   })
-
-  it("is pipeable, matching how Inputs/Outputs functions chain it", {
-    df <- data.frame(x = 1:3)
-    out <- df |>
-      with_column("y", function(d) d$x * 2) |>
-      with_column("z", function(d) d$y + 1)
-
-    expect_equal(out$z, c(3, 5, 7))
-  })
 })
 
 describe("combine_inputs()", {

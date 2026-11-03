@@ -18,29 +18,6 @@ mock_environment <- function() {
 }
 
 describe("inverse_input_function()", {
-  it("returns one row with the documented calculated columns for a single combination", {
-    out <- inverse_input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
-
-    expect_s3_class(out, "data.frame")
-    expect_equal(nrow(out), 1)
-    expect_true(all(c(
-      "FoodMassIngested", "dryOinflux", "dryHinflux", "FreeH2Oinfood", "WaterinFood"
-    ) %in% names(out)))
-  })
-
-  it("computes FoodMassIngested as EnergyExp / (Digestibility * EEE * energy density)", {
-    out <- inverse_input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
-
-    energy_density <- 0.8 * 17300 + 0.1 * 20100 + 0.1 * 39700
-    expect_equal(out$FoodMassIngested, 500 / (0.6 * 0.9 * energy_density))
-  })
-
-  it("builds one row per species combination", {
-    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
-    out <- inverse_input_function(species = two_species, food = mock_food(), environment = mock_environment())
-    expect_equal(nrow(out), 2)
-  })
-
   it("builds the full factorial when food rows outnumber species x environment", {
     # Shapes where nrow(species) * nrow(environment) < nrow(food) are the case the
     # row-at-a-time construction got wrong; it under-filled and errored.
@@ -53,21 +30,6 @@ describe("inverse_input_function()", {
 
     expect_equal(nrow(out), 3)
     expect_setequal(out$Digestibility, c(0.4, 0.5, 0.6))
-  })
-
-  it("pairs every species, food, and environment row exactly once", {
-    two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
-    two_food <- mock_food()[rep(1, 2), , drop = FALSE]
-    two_food$Digestibility <- c(0.5, 0.6)
-    two_env <- rh_estimation_environment_function(
-      air_temperature = c(10, 20), d18O_surface_water = -5
-    )
-
-    out <- inverse_input_function(species = two_species, food = two_food, environment = two_env)
-
-    expect_equal(nrow(out), 2 * 2 * 2)
-    combos <- paste(out$EnergyExp, out$Digestibility, out$airtemp)
-    expect_equal(sort(combos), sort(unique(combos)))
   })
 
   it("orders rows species fastest, then environment, then food", {

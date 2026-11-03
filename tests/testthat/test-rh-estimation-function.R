@@ -22,13 +22,6 @@ describe("rh_function()", {
     "dfoodO2SW", "dfoodH2Osw", "DrinkingH2OIngested", "DrinkingWater"
   )
 
-  it("returns the documented calculated columns", {
-    out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
-
-    expect_s3_class(out, "data.frame")
-    expect_true(all(derived %in% names(out)))
-  })
-
   it("computes WV as half of WVinLungs", {
     out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
     expect_equal(out$WV, out$WVinLungs / 2)

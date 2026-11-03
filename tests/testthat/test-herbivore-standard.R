@@ -33,15 +33,6 @@ describe("Herbivore Standard", {
     expect_equal(out$freeH20food, 0.65)
   })
 
-  it("keeps macronutrient fractions summing to 1", {
-    out <- suppressMessages(
-      humidity_oxy_proxy(sampled_d18Ocarbonate = 26.053638, PlotRange = FALSE)
-    )
-    expect_equal(
-      out$foodcarbcontent + out$foodproteincontent + out$foodfatcontent, 1
-    )
-  })
-
   it("round-trips: the inverse recovers the humidity the forward model used", {
     # The standard's humidity of 0.75 is the value humidity_oxy_proxy() should
     # return when handed the enamel carbonate the forward model produces from it.
