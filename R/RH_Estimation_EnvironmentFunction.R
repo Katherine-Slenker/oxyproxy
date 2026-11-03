@@ -55,8 +55,7 @@ rh_estimation_environment_function <- function(air_temperature = numeric(0), d18
 
   ### 1. ADDING D18O SURFACE WATER TO CALCULATION ===============================
 
-  # dairH2O <- d18Osw - 2.644 + 3206/MAT - 1.534 * 10^6 / MAT^2
-  dairH2O <- d18Osw - 2.644 + 3206 / MAT - 1.534 * (10^6) / (MAT^2)
+  dairH2O <- calculate_dair_h2o(d18Osw, MAT)
 
   # dairH2OSW <- dairH2O -d18Osw
   dairH2OSW <- dairH2O - d18Osw

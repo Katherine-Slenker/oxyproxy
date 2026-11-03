@@ -30,10 +30,10 @@ d18O_enamel <- function(d18O_carbonate = numeric(0)) {
   ## 1. d18Ophosphate and d18Obodywater calculation==============================
 
   # d18Ophosphate <- d18Oc - 8.5
-  d18Ophosphate <- d18Ocarbonate - 8.5
+  d18Ophosphate <- d18Ocarbonate - CARBONATE_PHOSPHATE_OFFSET
 
   # d18Obodywater <- d18Ophosphate + (37/4.38) - 25.9
-  d18Obodywater <- d18Ophosphate + (37 / 4.38) - 25.9
+  d18Obodywater <- d18Ophosphate + PHOSPHATE_WATER_OFFSET - PHOSPHATE_WATER_INTERCEPT
 
   data.frame(d18Ocarbonate, d18Ophosphate, d18Obodywater, row.names = NULL)
 }

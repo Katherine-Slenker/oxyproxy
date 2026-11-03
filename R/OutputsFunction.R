@@ -134,11 +134,7 @@ validate_inputs <- function(inputs) {
     "Oprotein", "foodproteincontent", "EEE", "MolesO2Air",
     "dryHinflux", "dryOinflux"
   )
-
-  missing_cols <- setdiff(required_cols, names(inputs))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
+  check_required_columns(inputs, required_cols)
 
   if (nrow(inputs) == 0) {
     stop("Input data frame is empty")
@@ -259,6 +255,32 @@ calculate_wv_sweating <- function(df) {
 #' @keywords internal
 calculate_wv_not_sweating <- function(df) {
   rep(0, nrow(df))
+}
+
+#' Calculate oxygen outputs weighted by their d18O fractionation
+#' @param df Data frame containing values from Species (WVNose, WVSkin) and Outputs (WVCO2, WVMouth, WVSweat,
+#' WVUrine, WVFecal) functions
+#' @return Numeric vector of fractionation-weighted outputs
+#' @keywords internal
+calculate_fractional_outputs <- function(df) {
+  df$WVCO2 * 38.6 +
+    df$WVMouth * -8.2 +
+    df$WVNose * -17 +
+    df$WVSkin * -18 +
+    df$WVSweat * 0 +
+    df$WVUrine * 0 +
+    df$WVFecal * 0
+}
+
+#' Calculate total oxygen outputs
+#' @param df Data frame containing the same columns as [calculate_fractional_outputs()] plus Urea
+#' @return Numeric vector of total oxygen outputs (moles)
+#' @keywords internal
+calculate_total_outputs <- function(df) {
+  df$WVCO2 + df$WVMouth +
+    df$WVNose + df$WVSkin +
+    df$WVSweat + df$WVUrine +
+    df$WVFecal + df$Urea
 }
 
 

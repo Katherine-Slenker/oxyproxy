@@ -12,6 +12,23 @@ with_column <- function(df, column_name, func) {
   return(df)
 }
 
+#' Stop if a data frame is missing any required columns
+#'
+#' The error is reported as coming from the caller, not from this helper.
+#'
+#' @param df Data frame to check
+#' @param required_cols Character vector of column names df must contain
+#' @keywords internal
+check_required_columns <- function(df, required_cols) {
+  missing_cols <- setdiff(required_cols, names(df))
+  if (length(missing_cols) > 0) {
+    stop(simpleError(
+      paste0("Missing required columns: ", paste(missing_cols, collapse = ", ")),
+      call = sys.call(-1)
+    ))
+  }
+}
+
 #' Create combinations dataframe from Species, Food, and Environment inputs
 #'
 #' @param species Data frame with species parameters

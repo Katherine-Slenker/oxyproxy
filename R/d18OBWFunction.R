@@ -51,10 +51,7 @@ d18_obw_function <- function(outputs = 0) {
     "dfoodH2Osw", "WaterinFood", "DrinkingWater", "WVCO2", "WVMouth", "WVNose",
     "WVSkin", "WVSweat", "WVUrine", "WVFecal", "Urea", "d18Osw"
   )
-  missing_cols <- setdiff(required_cols, names(outputs))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
-  }
+  check_required_columns(outputs, required_cols)
 
   if (nrow(outputs) == 0) {
     stop("outputs cannot be empty")
@@ -72,18 +69,8 @@ d18_obw_function <- function(outputs = 0) {
     DF_outputs$dfoodH2Osw * DF_outputs$WaterinFood +
     DF_outputs$DrinkingWater * 0
 
-  fractional_outputs <- DF_outputs$WVCO2 * 38.6 +
-    DF_outputs$WVMouth * -8.2 +
-    DF_outputs$WVNose * -17 +
-    DF_outputs$WVSkin * -18 +
-    DF_outputs$WVSweat * 0 +
-    DF_outputs$WVUrine * 0 +
-    DF_outputs$WVFecal * 0
-
-  total_outputs <- DF_outputs$WVCO2 + DF_outputs$WVMouth +
-    DF_outputs$WVNose + DF_outputs$WVSkin +
-    DF_outputs$WVSweat + DF_outputs$WVUrine +
-    DF_outputs$WVFecal + DF_outputs$Urea
+  fractional_outputs <- calculate_fractional_outputs(DF_outputs)
+  total_outputs <- calculate_total_outputs(DF_outputs)
 
   surface_water_inputs <- DF_outputs$DrinkingWater * DF_outputs$d18Osw +
     DF_outputs$WV * DF_outputs$d18Osw +
@@ -94,13 +81,20 @@ d18_obw_function <- function(outputs = 0) {
     surface_water_inputs / total_outputs
 
   # d18Ophosphate = d18Obw + 25.9 - 37 / 4.38
-  DF_outputs$d18Ophos <- DF_outputs$d18Obw + 25.9 - 37 / 4.38
+  DF_outputs$d18Ophos <- DF_outputs$d18Obw + PHOSPHATE_WATER_INTERCEPT - PHOSPHATE_WATER_OFFSET
 
   # d18Ocarbonate = d18Ophosphate + 8.5
-  DF_outputs$d18Ocarb <- DF_outputs$d18Ophos + 8.5
+  DF_outputs$d18Ocarb <- DF_outputs$d18Ophos + CARBONATE_PHOSPHATE_OFFSET
 
   # message("d18O body water, d180 phosphate, d180 carbonate : ")
   print(DF_outputs[, c("d18Obw", "d18Ophos", "d18Ocarb")])
 
   DF_outputs
 }
+
+# Enamel conversion constants. d18O_enamel() applies them in reverse.
+# d18Ophosphate = d18Obw + 25.9 - 37 / 4.38
+PHOSPHATE_WATER_INTERCEPT <- 25.9
+PHOSPHATE_WATER_OFFSET <- 37 / 4.38
+# d18Ocarbonate = d18Ophosphate + 8.5
+CARBONATE_PHOSPHATE_OFFSET <- 8.5

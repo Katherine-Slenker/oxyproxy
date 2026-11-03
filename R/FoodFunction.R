@@ -202,5 +202,6 @@ food_function <- function(digestibility_of_food = numeric(0),
     Ocarb, Hcarb, foodproteinenergy,
     Oprotein, Hprotein, foodfatenergy,
     Ofat, Hfat, foodproteincontent, foodfatcontent, freeH20food,
+    row.names = NULL
   )
 }
