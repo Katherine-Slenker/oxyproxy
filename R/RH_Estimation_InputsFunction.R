@@ -55,42 +55,24 @@
 ### SET INPUT FUNCTION
 inverse_input_function <- function(species = 0, food = 0, environment = 0) {
   # Dataframe size is determined by Species x Food x Environment dataframe
-  n_species <- nrow(species)
-  n_food <- nrow(food)
-  n_env <- nrow(environment)
-  n_rows <- n_species * n_food * n_env
 
   ## 1. FILLING IT WITH PREVIOUS DATA COMING FROM FOOD SPECIES AND ENVIRONMENT FUNCTION
   ### THIS FOLLOWING ALGORITHM IS MADE TO FIND ALL COMBINATION OF VALUES TO COMPUTE THE INPUTS VALUES IN THE NEXT STEPS
   # Species cycles fastest, food is blocked slowest, environment sits between.
-  species_rows <- rep(seq_len(n_species), length.out = n_rows)
-  food_rows <- rep(seq_len(n_food), each = n_rows / n_food)
-  env_block <- rep(seq_len(n_env), each = n_rows / n_env / n_food)
-  env_rows <- rep(env_block, length.out = n_rows)
+  combinations <- expand.grid(
+    species_row     = seq_len(nrow(species)),
+    environment_row = seq_len(nrow(environment)),
+    food_row        = seq_len(nrow(food))
+  )
 
   DF_outputs <- data.frame(
-    species[species_rows, , drop = FALSE],
-    food[food_rows, , drop = FALSE],
-    environment[env_rows, , drop = FALSE],
+    take_rows(species, combinations$species_row),
+    take_rows(food, combinations$food_row),
+    take_rows(environment, combinations$environment_row),
     row.names = NULL,
     check.names = FALSE
   )
 
   ## 2. COMPUTATION OF INPUT VARIABLES
-  # Same calculate_* helpers as input_function(), see R/InputsFunction.R
-  DF_outputs |>
-    # Food Mass Ingested = (Energy Exp) /
-    # (Digestibility*EEE*(foodcarbcontent * foodcarbernergy +
-    # foodproteincontent * foodproteinenergy + foodfatcontent * foodfatenergy))
-    with_column("FoodMassIngested", calculate_food_mass) |>
-    # dry O influx = Digestibility * EEE * FoodMassIngested *
-    # (foodcarbcontent *Ocarb + foodproteincontent * Oprotein + foodfatcontent * Ofat)
-    with_column("dryOinflux", calculate_dry_oxygen_influx) |>
-    # dry H influx = Digestibility * EEE * FoodMassIngested *
-    # (foodcarbcontent *Hcarb + foodproteincontent * Hprotein + foodfatcontent * Hfat)
-    with_column("dryHinflux", calculate_dry_hydrogen_influx) |>
-    # Free H2O in food = Food Mass Ingested * 55.56 * (Free H2O of food/(1-free H20 of food))
-    with_column("FreeH2Oinfood", calculate_free_water_in_food) |>
-    # Water in Food = Free Water in Food / 2
-    with_column("WaterinFood", calculate_water_in_food)
+  add_food_input_columns(DF_outputs)
 }

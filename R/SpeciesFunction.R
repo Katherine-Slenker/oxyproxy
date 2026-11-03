@@ -66,8 +66,10 @@ species_function <- function(body_mass = numeric(0), water_economy_index = numer
   Zfactor <- 10.5
   # Urea
   Urea <- 0.2
-  message("OCF, Zfactor, d18Oairtakenup, and Urea are standardized constants,
-  but can be modified by user by inputing changeConstant == TRUE")
+  message(
+    "OCF, Zfactor, d18Oairtakenup, and Urea are standardized constants,\n",
+    "         but can be modified by user by inputing changeConstant == TRUE"
+  )
 
   if (changeConstant == TRUE) {
     ocf_temp <- readline("Please enter a SINGLE value for oxygen utilization factor, 0.2 is the default value : ")

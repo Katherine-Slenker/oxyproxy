@@ -28,7 +28,15 @@
 ### SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
 rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) {
   ### PREPPING DATASET =========================================================
-  DF_outputs <- merge(outputs, rh_estimation_d18O)
+  # For two data frames with no shared columns merge() is a plain cross join, which
+  # cross_join() does far cheaper. Anything else keeps merge()'s coercion and join rules.
+  plain_cross <- is.data.frame(outputs) && is.data.frame(rh_estimation_d18O) &&
+    length(intersect(names(outputs), names(rh_estimation_d18O))) == 0
+  DF_outputs <- if (plain_cross) {
+    cross_join(outputs, rh_estimation_d18O)
+  } else {
+    merge(outputs, rh_estimation_d18O)
+  }
   if (nrow(DF_outputs) == 0) {
     stop("rh_estimation_d18O and outputs cannot be empty")
   }
@@ -40,13 +48,14 @@ rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) 
   # Leaf-water offset, and its cellulose equivalent (43 = 16 + 27)
   leaf_offset <- calculate_leaf_offset(DF_outputs$d18Osw, DF_outputs$dairH2O)
   cellulose_offset <- DF_outputs$d18Osw - DF_outputs$dairH2O + 43
+  leaf_food_water <- 0.5 * leaf_offset * DF_outputs$WaterinFood
 
   saturation_vapor_pressure <- calculate_saturation_vapor_pressure(DF_outputs$airtemp)
 
   humidity_numerator <- DF_outputs$d18Obodywater * total_outputs -
     (DF_outputs$MolesO2Air * DF_outputs$d18Oairtakenup - fractional_outputs) -
     cellulose_offset * DF_outputs$dryOinflux -
-    0.5 * leaf_offset * DF_outputs$WaterinFood -
+    leaf_food_water -
     0.5 * (DF_outputs$TotalH2OTurnover - DF_outputs$FreeH2Oinfood - DF_outputs$dryHinflux) *
       DF_outputs$d18Osw -
     DF_outputs$WaterinFood * DF_outputs$d18Osw -
@@ -55,7 +64,7 @@ rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) 
   humidity_denominator <- saturation_vapor_pressure * (12400 / (760 * 22.4)) *
     (DF_outputs$dairH2OSW / 2) -
     leaf_offset * DF_outputs$dryOinflux -
-    0.5 * leaf_offset * DF_outputs$WaterinFood
+    leaf_food_water
 
   DF_outputs$Humidity <- humidity_numerator / humidity_denominator
 

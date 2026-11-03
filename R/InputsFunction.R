@@ -53,13 +53,35 @@ input_function <- function(species = 0, food = 0, environment = 0) {
   }
 
   combine_inputs(species, food, environment) |>
-    with_column("FoodMassIngested", calculate_food_mass) |>
-    with_column("dryOinflux", calculate_dry_oxygen_influx) |>
-    with_column("dryHinflux", calculate_dry_hydrogen_influx) |>
-    with_column("FreeH2Oinfood", calculate_free_water_in_food) |>
-    with_column("WaterinFood", calculate_water_in_food) |>
+    add_food_input_columns() |>
     with_column("DrinkingH2OIngested", calculate_drinking_water_ingested) |>
     with_column("DrinkingWater", calculate_drinking_water)
+}
+
+#' Add the food-derived input columns
+#'
+#' Shared by [input_function()] and [inverse_input_function()].
+#'
+#' @param df Data frame of combined species, food, and environment rows
+#' @return df with FoodMassIngested, dryOinflux, dryHinflux, FreeH2Oinfood, and
+#'   WaterinFood appended, in that order
+#' @keywords internal
+add_food_input_columns <- function(df) {
+  df |>
+    # Food Mass Ingested = (Energy Exp) /
+    # (Digestibility*EEE*(foodcarbcontent * foodcarbernergy +
+    # foodproteincontent * foodproteinenergy + foodfatcontent * foodfatenergy))
+    with_column("FoodMassIngested", calculate_food_mass) |>
+    # dry O influx = Digestibility * EEE * FoodMassIngested *
+    # (foodcarbcontent *Ocarb + foodproteincontent * Oprotein + foodfatcontent * Ofat)
+    with_column("dryOinflux", calculate_dry_oxygen_influx) |>
+    # dry H influx = Digestibility * EEE * FoodMassIngested *
+    # (foodcarbcontent *Hcarb + foodproteincontent * Hprotein + foodfatcontent * Hfat)
+    with_column("dryHinflux", calculate_dry_hydrogen_influx) |>
+    # Free H2O in food = Food Mass Ingested * 55.56 * (Free H2O of food/(1-free H20 of food))
+    with_column("FreeH2Oinfood", calculate_free_water_in_food) |>
+    # Water in Food = Free Water in Food / 2
+    with_column("WaterinFood", calculate_water_in_food)
 }
 
 #' Calculate effective food mass for metabolic processes
@@ -120,8 +142,7 @@ calculate_dry_hydrogen_influx <- function(df) {
 #' @return Numeric vector of free water in food (moles H2O)
 #' @keywords internal
 calculate_free_water_in_food <- function(df) {
-  mole_water <- 55.56
-  df$FoodMassIngested * mole_water * (df$freeH20food / (1 - df$freeH20food))
+  df$FoodMassIngested * MOLES_WATER_PER_KG * (df$freeH20food / (1 - df$freeH20food))
 }
 
 #' Calculate water in food (vapor)

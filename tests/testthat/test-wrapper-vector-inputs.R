@@ -1,29 +1,8 @@
 # End-to-end checks through oxy_proxy_function(). The stage functions' own tests
 # cover their guards and grid layouts; these only check behavior that needs the
-# whole pipeline.
+# whole pipeline. They start from golden_inputs() in helper-fixtures.R.
 
-bison_args <- function(...) {
-  utils::modifyList(
-    list(
-      model_bodymass                = 612.5,
-      model_WaterEconomyIndex       = 0.43,
-      model_Digestibility_of_food   = 0.592,
-      model_Carbohydrate_Content    = 0.82,
-      model_Protein_Content         = 0.11,
-      model_Fat_Content             = 0.07,
-      model_Free_Water_Content_Food = 0.6,
-      model_air_temperature         = 8.6,
-      model_Relative_Humidity       = 0.605,
-      model_d18O_surfacewater       = -9.9,
-      changeConstant                = FALSE,
-      sweating_species              = FALSE,
-      PlotRange                     = FALSE
-    ),
-    list(...)
-  )
-}
-
-run_bison <- function(...) suppressMessages(do.call(oxy_proxy_function, bison_args(...)))
+run_bison <- function(...) suppressMessages(do.call(oxy_proxy_function, golden_inputs(...)))
 
 describe("oxy_proxy_function() with vectorized inputs", {
   it("reproduces the manuscript's Step 2 example at 726 rows", {

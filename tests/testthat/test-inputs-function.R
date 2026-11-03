@@ -1,22 +1,3 @@
-# Minimal synthetic species/food/environment frames carrying exactly the
-# columns the calculate_* helpers in R/InputsFunction.R actually read, so
-# these tests exercise input_function() in isolation from species_function()/
-# food_function(), both of which have their own unrelated bugs (see
-# test-species-function.R and test-food-function.R).
-mock_species <- function() {
-  data.frame(EnergyExp = 500, TotalH2OTurnover = 100)
-}
-
-mock_food <- function() {
-  data.frame(
-    Digestibility = 0.6, EEE = 0.9,
-    foodcarbcontent = 0.8, foodcarbenergy = 17300, Ocarb = 15.4, Hcarb = 30.9,
-    foodproteincontent = 0.1, foodproteinenergy = 20100, Oprotein = 3, Hprotein = 11,
-    foodfatcontent = 0.1, foodfatenergy = 39700, Ofat = 2, Hfat = 60,
-    freeH20food = 0.4
-  )
-}
-
 mock_environment <- function() {
   data.frame(WVinLungs = 5, airtemp = 20)
 }

@@ -57,39 +57,33 @@ d18_obw_function <- function(outputs = 0) {
     stop("outputs cannot be empty")
   }
 
-  ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
-  # Width = number of variables from  OUTPUTS dataframe + the three d180 computed here
-  # Length = number of rows from OUTPUTS dataframe
-  DF_outputs <- outputs
+  enriched_inputs <- outputs$MolesO2Air * outputs$d18Oairtakenup +
+    outputs$WV * outputs$dairH2OSW +
+    outputs$dfoodO2SW * outputs$dryOinflux +
+    outputs$dfoodH2Osw * outputs$WaterinFood +
+    outputs$DrinkingWater * 0
 
+  fractional_outputs <- calculate_fractional_outputs(outputs)
+  total_outputs <- calculate_total_outputs(outputs)
 
-  enriched_inputs <- DF_outputs$MolesO2Air * DF_outputs$d18Oairtakenup +
-    DF_outputs$WV * DF_outputs$dairH2OSW +
-    DF_outputs$dfoodO2SW * DF_outputs$dryOinflux +
-    DF_outputs$dfoodH2Osw * DF_outputs$WaterinFood +
-    DF_outputs$DrinkingWater * 0
+  surface_water_inputs <- outputs$DrinkingWater * outputs$d18Osw +
+    outputs$WV * outputs$d18Osw +
+    outputs$WaterinFood * outputs$d18Osw +
+    outputs$dryOinflux * outputs$d18Osw
 
-  fractional_outputs <- calculate_fractional_outputs(DF_outputs)
-  total_outputs <- calculate_total_outputs(DF_outputs)
-
-  surface_water_inputs <- DF_outputs$DrinkingWater * DF_outputs$d18Osw +
-    DF_outputs$WV * DF_outputs$d18Osw +
-    DF_outputs$WaterinFood * DF_outputs$d18Osw +
-    DF_outputs$dryOinflux * DF_outputs$d18Osw
-
-  DF_outputs$d18Obw <- (enriched_inputs - fractional_outputs) / total_outputs +
+  outputs$d18Obw <- (enriched_inputs - fractional_outputs) / total_outputs +
     surface_water_inputs / total_outputs
 
   # d18Ophosphate = d18Obw + 25.9 - 37 / 4.38
-  DF_outputs$d18Ophos <- DF_outputs$d18Obw + PHOSPHATE_WATER_INTERCEPT - PHOSPHATE_WATER_OFFSET
+  outputs$d18Ophos <- outputs$d18Obw + PHOSPHATE_WATER_INTERCEPT - PHOSPHATE_WATER_OFFSET
 
   # d18Ocarbonate = d18Ophosphate + 8.5
-  DF_outputs$d18Ocarb <- DF_outputs$d18Ophos + CARBONATE_PHOSPHATE_OFFSET
+  outputs$d18Ocarb <- outputs$d18Ophos + CARBONATE_PHOSPHATE_OFFSET
 
   # message("d18O body water, d180 phosphate, d180 carbonate : ")
-  print(DF_outputs[, c("d18Obw", "d18Ophos", "d18Ocarb")])
+  print(outputs[, c("d18Obw", "d18Ophos", "d18Ocarb")])
 
-  DF_outputs
+  outputs
 }
 
 # Enamel conversion constants. d18O_enamel() applies them in reverse.

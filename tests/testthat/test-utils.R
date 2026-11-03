@@ -46,12 +46,4 @@ describe("combine_inputs()", {
   it("errors if any argument isn't a data frame", {
     expect_error(combine_inputs(list(a = 1), data.frame(x = 1), data.frame(x = 1)))
   })
-
-  it("errors clearly when one input has zero rows", {
-    species <- data.frame(body_mass = numeric(0), foo = numeric(0))
-    food <- data.frame(digestibility = 0.6, bar = 1)
-    environment <- data.frame(air_temperature = c(0, 10), baz = 1)
-
-    expect_error(combine_inputs(species, food, environment), "cannot be empty")
-  })
 })

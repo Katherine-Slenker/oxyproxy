@@ -158,7 +158,8 @@ validate_inputs <- function(inputs) {
   }
 }
 
-fecal_water_multiplier <- 55.56
+# Moles of water per kg, also used by calculate_free_water_in_food()
+MOLES_WATER_PER_KG <- 55.56
 FECAL_WATER_CONTENT <- 0.6
 WATER_VAPOR_FRACTION <- 0.5
 SWEAT_HEAT_FRACTION <- 0.75
@@ -178,7 +179,7 @@ calculate_dry_fecal_output <- function(df) {
 #' @keywords internal
 calculate_fecal_water_loss <- function(df) {
   fecal_water_ratio <- FECAL_WATER_CONTENT / (1 - FECAL_WATER_CONTENT)
-  df$DryFecalOutput * fecal_water_multiplier * fecal_water_ratio
+  df$DryFecalOutput * MOLES_WATER_PER_KG * fecal_water_ratio
 }
 
 #' Calculate water vapor from fecal loss

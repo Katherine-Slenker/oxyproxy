@@ -1,17 +1,3 @@
-mock_species <- function() {
-  data.frame(EnergyExp = 500, TotalH2OTurnover = 100)
-}
-
-mock_food <- function() {
-  data.frame(
-    Digestibility = 0.6, EEE = 0.9,
-    foodcarbcontent = 0.8, foodcarbenergy = 17300, Ocarb = 15.4, Hcarb = 30.9,
-    foodproteincontent = 0.1, foodproteinenergy = 20100, Oprotein = 3, Hprotein = 11,
-    foodfatcontent = 0.1, foodfatenergy = 39700, Ofat = 2, Hfat = 60,
-    freeH20food = 0.4
-  )
-}
-
 mock_environment <- function() {
   # Matches the 5 columns rh_estimation_environment_function() actually returns.
   rh_estimation_environment_function(air_temperature = 20, d18O_surface_water = -5)

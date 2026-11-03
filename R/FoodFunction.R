@@ -101,12 +101,13 @@ food_function <- function(digestibility_of_food = numeric(0),
   # FILLING DATAFRAME WITH ARGUMENTS VALUES AND CONSTANTS
   # One row per combination: freeH20food varies fastest, then fat, protein, carbohydrate,and Digestibility
 
-  message("CAUTION !!! Carbohydrate_Content, Protein_Content and Fat_Content arguments must
-  sum to 1")
+  message("CAUTION !!! Carbohydrate_Content, Protein_Content and Fat_Content arguments must sum to 1")
 
-  message("Energy Extraction Efficiency, fractions (O, H, energy) of carbohydrate, protein
-  and fat are standardized constants extracted from Kohn models and litterature,
-           but it can be modified by user by modifying the argument changeConstant to TRUE")
+  message(
+    "Energy Extraction Efficiency, fractions (O, H, energy) of carbohydrate, protein and fat are standardized ",
+    "constants extracted from Kohn models and litterature,\n",
+    "         but it can be modified by user by modifying the argument changeConstant to TRUE"
+  )
 
   # free H2O content of food ===================================================
   freeH20food <- rep(Free_Water_Content_Food, times = n_dig * n_carb * n_prot * n_fat)
@@ -123,8 +124,9 @@ food_function <- function(digestibility_of_food = numeric(0),
   }
 
   if (changeConstant == TRUE) {
-    EEE_temp <- readline("Please enter a SINGLE value for Energy Extraction Efficiency
-  between 0 and 1 (%), 0.9 is the default value : ")
+    EEE_temp <- readline(
+      "Please enter a SINGLE value for Energy Extraction Efficiency between 0 and 1 (%), 0.9 is the default value : "
+    )
     EEE <- as.numeric(EEE_temp)
   }
 
@@ -134,16 +136,19 @@ food_function <- function(digestibility_of_food = numeric(0),
   Hcarb <- 30.9
 
   if (changeConstant == TRUE) {
-    foodcarbenergy_temp <- readline("Please enter a SINGLE value for the energy coming from
-  carbohydrate, 17300 J is the default value : ")
+    foodcarbenergy_temp <- readline(
+      "Please enter a SINGLE value for the energy coming from carbohydrate, 17300 J is the default value : "
+    )
     foodcarbenergy <- as.numeric(foodcarbenergy_temp)
 
-    Ocarb_temp <- readline("Please enter a SINGLE value for the oxygen coming from
-  carbohydrate, 15.4 is the default value : ")
+    Ocarb_temp <- readline(
+      "Please enter a SINGLE value for the oxygen coming from carbohydrate, 15.4 is the default value : "
+    )
     Ocarb <- as.numeric(Ocarb_temp)
 
-    Hcarb_temp <- readline("Please enter a SINGLE value for the hydrogen coming from
-  carbohydrate, 30.9 is the default value : ")
+    Hcarb_temp <- readline(
+      "Please enter a SINGLE value for the hydrogen coming from carbohydrate, 30.9 is the default value : "
+    )
     Hcarb <- as.numeric(Hcarb_temp)
   }
 
@@ -159,16 +164,17 @@ food_function <- function(digestibility_of_food = numeric(0),
   Hprotein <- 11
 
   if (changeConstant == TRUE) {
-    foodproteinenergy_temp <- readline("Please enter a SINGLE value for the energy coming
-  from protein, 20100 J is the default value : ")
+    foodproteinenergy_temp <- readline(
+      "Please enter a SINGLE value for the energy coming from protein, 20100 J is the default value : "
+    )
     foodproteinenergy <- as.numeric(foodproteinenergy_temp)
 
-    Opro_temp <- readline("Please enter a SINGLE value for the oxygen coming from protein, 3
-  is the default value : ")
+    Opro_temp <- readline("Please enter a SINGLE value for the oxygen coming from protein, 3 is the default value : ")
     Oprotein <- as.numeric(Opro_temp)
 
-    Hpro_temp <- readline("Please enter a SINGLE value for the hydrogen coming from protein,
-  11 is the default value : ")
+    Hpro_temp <- readline(
+      "Please enter a SINGLE value for the hydrogen coming from protein, 11 is the default value : "
+    )
     Hprotein <- as.numeric(Hpro_temp)
   }
 
@@ -181,16 +187,15 @@ food_function <- function(digestibility_of_food = numeric(0),
   Hfat <- 60
 
   if (changeConstant == TRUE) {
-    foodfatenergy_temp <- readline("Please enter a SINGLE value for the energy coming from
-  fat, 39700 J is the default value : ")
+    foodfatenergy_temp <- readline(
+      "Please enter a SINGLE value for the energy coming from fat, 39700 J is the default value : "
+    )
     foodfatenergy <- as.numeric(foodfatenergy_temp)
 
-    Ofat_temp <- readline("Please enter a SINGLE value for the oxygen coming from fat, 2 is
-  the default value : ")
+    Ofat_temp <- readline("Please enter a SINGLE value for the oxygen coming from fat, 2 is the default value : ")
     Ofat <- as.numeric(Ofat_temp)
 
-    Hfat_temp <- readline("Please enter a SINGLE value for the hydrogen coming from fat, 6
-  is the default value : ")
+    Hfat_temp <- readline("Please enter a SINGLE value for the hydrogen coming from fat, 6 is the default value : ")
     Hfat <- as.numeric(Hfat_temp)
   }
 
