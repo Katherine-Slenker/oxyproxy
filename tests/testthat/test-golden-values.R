@@ -27,19 +27,19 @@ golden_inputs <- function(...) {
 
 describe("golden reference case", {
   it("reproduces the published d18Obw of -6.23", {
-    out <- do.call(oxy_proxy_function, golden_inputs())
+    out <- do.call(OxyProxy, golden_inputs())
 
     expect_equal(nrow(out), 1)
     expect_equal(out$d18Obw, -6.23, tolerance = 0.01)
   })
 
   it("holds d18Obw exactly, so any model change surfaces as a failure", {
-    out <- do.call(oxy_proxy_function, golden_inputs())
+    out <- do.call(OxyProxy, golden_inputs())
     expect_equal(out$d18Obw, -6.2235465687, tolerance = 1e-8)
   })
 
   it("holds the phosphate and carbonate conversions", {
-    out <- do.call(oxy_proxy_function, golden_inputs())
+    out <- do.call(OxyProxy, golden_inputs())
 
     expect_equal(out$d18Ophos, 11.2289648468, tolerance = 1e-8)
     expect_equal(out$d18Ocarb, 19.7289648468, tolerance = 1e-8)

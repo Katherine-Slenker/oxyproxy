@@ -1,7 +1,7 @@
-describe("humidity_oxy_proxy()", {
+describe("RH_Estimation_OxyProxy()", {
   it("reports which arguments had Herbivore Standard values substituted", {
     expect_message(
-      humidity_oxy_proxy(
+      RH_Estimation_OxyProxy(
         sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
         model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0, model_Protein_Content = 0.1,
         model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
@@ -13,7 +13,7 @@ describe("humidity_oxy_proxy()", {
 
   it("names every substituted argument, not just the first", {
     expect_message(
-      humidity_oxy_proxy(
+      RH_Estimation_OxyProxy(
         sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
         model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
         model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
@@ -25,7 +25,7 @@ describe("humidity_oxy_proxy()", {
 
   it("reports nothing when every argument is supplied", {
     expect_no_message(
-      humidity_oxy_proxy(
+      RH_Estimation_OxyProxy(
         sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
         model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.1,
         model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
@@ -36,7 +36,7 @@ describe("humidity_oxy_proxy()", {
   })
 
   it("runs the full inverse pipeline end-to-end and returns Humidity estimates", {
-    out <- humidity_oxy_proxy(
+    out <- RH_Estimation_OxyProxy(
       sampled_d18Ocarbonate = 20, model_air_temperature = 4, model_d18O_Surfacewater = -8,
       model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.1,
       model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
@@ -54,8 +54,8 @@ describe("humidity_oxy_proxy()", {
       model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
       model_WaterEconomyIndex = 0.4, changeConstant = FALSE, PlotRange = FALSE
     )
-    sweating <- do.call(humidity_oxy_proxy, c(args, sweating_species = TRUE))
-    non_sweating <- do.call(humidity_oxy_proxy, c(args, sweating_species = FALSE))
+    sweating <- do.call(RH_Estimation_OxyProxy, c(args, sweating_species = TRUE))
+    non_sweating <- do.call(RH_Estimation_OxyProxy, c(args, sweating_species = FALSE))
 
     expect_false(sweating$Humidity == non_sweating$Humidity)
   })
@@ -64,7 +64,7 @@ describe("humidity_oxy_proxy()", {
     pdf(NULL)
     on.exit(dev.off(), add = TRUE)
 
-    out <- humidity_oxy_proxy(
+    out <- RH_Estimation_OxyProxy(
       sampled_d18Ocarbonate = c(20, 22), model_air_temperature = 4, model_d18O_Surfacewater = -8,
       model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.1,
       model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
@@ -76,7 +76,7 @@ describe("humidity_oxy_proxy()", {
 
   it("errors informatively when a model argument is NULL", {
     expect_error(
-      humidity_oxy_proxy(
+      RH_Estimation_OxyProxy(
         sampled_d18Ocarbonate = 20, model_air_temperature = NULL, model_d18O_Surfacewater = -8,
         model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.15,
         model_Fat_Content = 0.05, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,
@@ -88,7 +88,7 @@ describe("humidity_oxy_proxy()", {
 
   it("treats a non-scalar PlotRange as FALSE instead of crashing", {
     expect_no_error(
-      humidity_oxy_proxy(
+      RH_Estimation_OxyProxy(
         sampled_d18Ocarbonate = 20, model_air_temperature = c(4, 10), model_d18O_Surfacewater = -8,
         model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8, model_Protein_Content = 0.1,
         model_Fat_Content = 0.1, model_Free_Water_Content_Food = 0.5, model_Body_mass = 500,

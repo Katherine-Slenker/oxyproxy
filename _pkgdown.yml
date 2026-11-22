@@ -13,13 +13,13 @@ reference:
     Estimate oxygen-18 enrichment of animal body water from oxygen inputs
     and outputs.
   contents:
-  - species_function
-  - food_function
-  - environment_function
+  - species
+  - food
+  - environment
   - input_function
   - outputs_function
   - d18_obw_function
-  - oxy_proxy_function
+  - oxyproxy
 
 - title: Relative humidity estimation
   desc: >
@@ -27,7 +27,7 @@ reference:
     d18O enamel carbonate value.
   contents:
   - d18O_enamel
-  - rh_estimation_environment_function
+  - rh_estimation_environment
   - inverse_input_function
   - rh_function
   - humidity_oxy_proxy

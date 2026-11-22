@@ -34,7 +34,7 @@
 #'
 #' @examples
 #' # Example usage with vector inputs
-#' environment_function(
+#' Environment(
 #'   air_temperature = c(10, 20),
 #'   relative_humidity = c(0.5, 0.75),
 #'   d18O_surface_water = c(-2, -5)
@@ -44,7 +44,7 @@
 
 ### SET FUNCTION FOR ENVIRONMENT
 
-environment_function <- function(air_temperature = numeric(0), relative_humidity = numeric(0), d18O_surface_water = numeric(0)) {
+Environment <- function(air_temperature = numeric(0), relative_humidity = numeric(0), d18O_surface_water = numeric(0)) {
   ## 0. VALIDATING ARGUMENTS =====================================================
   if (length(air_temperature) == 0) {
     stop("Enter Air Temperature value (in  deg C)")

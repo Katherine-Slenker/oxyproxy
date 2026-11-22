@@ -13,13 +13,13 @@
 #' # Example for a herbivore
 
 #' # Calculate outputs for d18O enamel-phosphate and body water
-#' herbivore_d18Oenamel <- d18O_enamel(d18O_carbonate = 26)
+#' herbivore_d18Oenamel <- RH_Estimation_d18O(d18O_carbonate = 26)
 #'
 #'
 #'
 #' @export
 ## Set d18Oenamel function
-d18O_enamel <- function(d18O_carbonate = numeric(0)) {
+RH_Estimation_d18O <- function(d18O_carbonate = numeric(0)) {
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results

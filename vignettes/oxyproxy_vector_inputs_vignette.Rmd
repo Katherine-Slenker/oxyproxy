@@ -33,10 +33,10 @@ library(oxyproxy)
 
 ## Step 1 — Provide vector environmental inputs
 
-`environment_function()` accepts vectors and returns a **full factorial** design.
+`Environment()` accepts vectors and returns a **full factorial** design.
 
 ```{r}
-env_grid <- environment_function(
+env_grid <- Environment(
   air_temperature = c(10, 20),
   relative_humidity = c(0.50, 0.75),
   d18O_surface_water = c(-2, -5)
@@ -57,10 +57,10 @@ In this example: `2 * 2 * 2 = 8` rows.
 ## Step 2 — Hold species and food constant, vary environment via the wrapper
 
 This is a typical sensitivity analysis: one species + one diet, many environments, run in a single
-call to `oxy_proxy_function()`.
+call to `OxyProxy()`.
 
 ```{r}
-oxyproxy_many <- oxy_proxy_function(
+oxyproxy_many <- OxyProxy(
   model_bodymass = 70,
   model_WaterEconomyIndex = 0.40,
   model_Digestibility_of_food = 0.8,
@@ -101,9 +101,9 @@ nrow(scenarios)
 
 ```{r}
 run_scenario <- function(row) {
-  sp <- species_function(body_mass = row$body_mass, water_economy_index = 0.1)
+  sp <- Species(body_mass = row$body_mass, water_economy_index = 0.1)
 
-  fd <- food_function(
+  fd <- Food(
     digestibility_of_food = 0.1,
     Carbohydrate_Content = 0.1,
     Protein_Content = 0.2,
@@ -112,15 +112,15 @@ run_scenario <- function(row) {
     changeConstant = FALSE
   )
 
-  env <- environment_function(
+  env <- Environment(
     air_temperature = row$air_temperature,
     relative_humidity = row$relative_humidity,
     d18O_surface_water = row$d18O_surface_water
   )
 
-  inputs_out <- input_function(species = sp, food = fd, environment = env)
-  outputs_out <- outputs_function(inputs = inputs_out, sweating_species = FALSE)
-  d18_obw_function(outputs = outputs_out)
+  inputs_out <- Inputs(species = sp, food = fd, environment = env)
+  outputs_out <- Outputs(inputs = inputs_out, sweating_species = FALSE)
+  d18Obw_Estimation(outputs = outputs_out)
 }
 
 outs <- lapply(seq_len(nrow(scenarios)), function(i) run_scenario(scenarios[i, , drop = FALSE]))

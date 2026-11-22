@@ -1,6 +1,6 @@
-describe("oxy_proxy_function()", {
+describe("OxyProxy()", {
   it("runs the full pipeline end-to-end and returns d18Obw estimates", {
-    out <- oxy_proxy_function(
+    out <- OxyProxy(
       model_bodymass = 600, model_WaterEconomyIndex = 0.4,
       model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8,
       model_Protein_Content = 0.1, model_Fat_Content = 0.1,
@@ -15,7 +15,7 @@ describe("oxy_proxy_function()", {
 
   it("treats a non-scalar PlotRange as FALSE instead of crashing", {
     expect_no_error(
-      oxy_proxy_function(
+      OxyProxy(
         model_bodymass = 600, model_WaterEconomyIndex = c(0.3, 0.4),
         model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8,
         model_Protein_Content = 0.1, model_Fat_Content = 0.1,
@@ -35,8 +35,8 @@ describe("oxy_proxy_function()", {
       model_Relative_Humidity = 0.67, model_d18O_surfacewater = -10,
       changeConstant = FALSE, PlotRange = FALSE
     )
-    sweating <- do.call(oxy_proxy_function, c(args, sweating_species = TRUE))
-    non_sweating <- do.call(oxy_proxy_function, c(args, sweating_species = FALSE))
+    sweating <- do.call(OxyProxy, c(args, sweating_species = TRUE))
+    non_sweating <- do.call(OxyProxy, c(args, sweating_species = FALSE))
 
     expect_true(sweating$WVSweat > 0)
     expect_equal(non_sweating$WVSweat, 0)
@@ -47,7 +47,7 @@ describe("oxy_proxy_function()", {
     pdf(NULL)
     on.exit(dev.off(), add = TRUE)
 
-    out <- oxy_proxy_function(
+    out <- OxyProxy(
       model_bodymass = 600, model_WaterEconomyIndex = 0.4,
       model_Digestibility_of_food = 0.6, model_Carbohydrate_Content = 0.8,
       model_Protein_Content = 0.1, model_Fat_Content = 0.1,

@@ -15,23 +15,23 @@ animal body water from Kohn (1996), and runs it in both directions.
 \strong{Forward: physiology and environment to d18Obw.} Given body mass, water
 economy index, diet composition, air temperature, relative humidity, and
 d18O of surface water, estimate the oxygen-18 enrichment of body water,
-enamel phosphate, and enamel carbonate. Use \code{\link[=oxy_proxy_function]{oxy_proxy_function()}}, or call
-the stages individually via \code{\link[=species_function]{species_function()}}, \code{\link[=food_function]{food_function()}},
-\code{\link[=environment_function]{environment_function()}}, \code{\link[=input_function]{input_function()}}, \code{\link[=outputs_function]{outputs_function()}} and
-\code{\link[=d18_obw_function]{d18_obw_function()}}.
+enamel phosphate, and enamel carbonate. Use \code{\link[=OxyProxy]{OxyProxy()}}, or call
+the stages individually via \code{\link[=Species]{Species()}}, \code{\link[=Food]{Food()}},
+\code{\link[=Environment]{Environment()}}, \code{\link[=Inputs]{Inputs()}}, \code{\link[=Outputs]{Outputs()}} and
+\code{\link[=d18Obw_Estimation]{d18Obw_Estimation()}}.
 
 \strong{Inverse: measured enamel to relative humidity.} Given a measured d18O of
 enamel carbonate plus the same physiological and dietary parameters, recover
-the relative humidity consistent with it. Use \code{\link[=humidity_oxy_proxy]{humidity_oxy_proxy()}}, or the
-stages \code{\link[=d18O_enamel]{d18O_enamel()}}, \code{\link[=rh_estimation_environment_function]{rh_estimation_environment_function()}},
-\code{\link[=inverse_input_function]{inverse_input_function()}} and \code{\link[=rh_function]{rh_function()}}.
+the relative humidity consistent with it. Use \code{\link[=RH_Estimation_OxyProxy]{RH_Estimation_OxyProxy()}}, or the
+stages \code{\link[=RH_Estimation_d18O]{RH_Estimation_d18O()}}, \code{\link[=RH_Estimation_Environment]{RH_Estimation_Environment()}},
+\code{\link[=RH_Estimation_Inputs]{RH_Estimation_Inputs()}} and \code{\link[=RH_Estimation]{RH_Estimation()}}.
 
 Any argument accepts a vector, in which case the model is evaluated over
 every combination of the supplied values.
 }
 \examples{
 # Forward: estimate d18O body water for a herbivore
-oxy_proxy_function(
+OxyProxy(
   model_bodymass = 30, model_WaterEconomyIndex = 0.25,
   model_Carbohydrate_Content = 0.85, model_Protein_Content = 0.1,
   model_Fat_Content = 0.05, model_Digestibility_of_food = 0.7,
@@ -41,7 +41,7 @@ oxy_proxy_function(
 )
 
 # Inverse: recover relative humidity from the enamel carbonate value
-humidity_oxy_proxy(
+RH_Estimation_OxyProxy(
   sampled_d18Ocarbonate = 26.053638,
   model_air_temperature = 15, model_d18O_Surfacewater = -3.25,
   model_Digestibility_of_food = 0.7, model_Carbohydrate_Content = 0.85,
@@ -64,8 +64,11 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Katherine Slenker \email{kslenker3@gatech.edu}
   \item Corentin Gibert Bret
+  \item Mark Clementz
+  \item Ryan Barley
+  \item Quinn Mattison
+  \item Jenny McGuire
 }
 
 }

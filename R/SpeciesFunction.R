@@ -28,7 +28,7 @@
 #' @param changeConstant Boolean. Default is FALSE. If changed to TRUE, user can modify constants injected in calculus (e.g. OCF, Zfactor, d18Oairtakenup)
 #' @examples
 #' # Example for a plains bison (Bison bison bison)
-#' result <- species_function(
+#' result <- Species(
 #'   body_mass = 600, water_economy_index = 0.45, changeConstant = FALSE
 #' )
 #' str(result)
@@ -37,7 +37,7 @@
 
 ## SET FUNCTION FOR SPECIES
 
-species_function <- function(body_mass = numeric(0), water_economy_index = numeric(0), changeConstant = FALSE) {
+Species <- function(body_mass = numeric(0), water_economy_index = numeric(0), changeConstant = FALSE) {
   ## 0. VALIDATING ARGUMENTS =====================================================
   if (length(body_mass) == 0) {
     stop("Enter bodymass value in Kg")

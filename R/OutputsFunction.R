@@ -75,10 +75,10 @@
 #' )
 #'
 #' # Calculate outputs for non-sweating species (default)
-#' mouse_outputs <- outputs_function(mouse_data)
+#' mouse_outputs <- Outputs(mouse_data)
 #'
 #' # Calculate outputs for a sweating species
-#' sweating_outputs <- outputs_function(mouse_data, sweating_species = TRUE)
+#' sweating_outputs <- Outputs(mouse_data, sweating_species = TRUE)
 #'
 #' # Multiple animals
 #' multi_animal_data <- data.frame(
@@ -96,10 +96,10 @@
 #'   dryHinflux = c(4, 5, 3),
 #'   dryOinflux = c(2, 2.5, 1.5)
 #' )
-#' multi_outputs <- outputs_function(multi_animal_data, sweating_species = FALSE)
+#' multi_outputs <- Outputs(multi_animal_data, sweating_species = FALSE)
 #'
 #' @export
-outputs_function <- function(inputs = 0, sweating_species = FALSE) {
+Outputs <- function(inputs = 0, sweating_species = FALSE) {
   if (!sweating_species) {
     message("Using non-sweating species model (WVSweat = 0)")
   }

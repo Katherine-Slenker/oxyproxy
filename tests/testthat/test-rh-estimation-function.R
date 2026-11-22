@@ -12,13 +12,13 @@ mock_outputs <- function() {
 }
 
 mock_rh_d18O <- function() {
-  # d18O_enamel(d18O_carbonate = 20)$d18Obodywater
+  # RH_Estimation_d18O(d18O_carbonate = 20)$d18Obodywater
   data.frame(d18Obodywater = -5.952511)
 }
 
-describe("rh_function()", {
+describe("RH_Estimation()", {
   it("returns the documented calculated columns", {
-    out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
+    out <- RH_Estimation(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
 
     expect_s3_class(out, "data.frame")
     expect_true(all(c(
@@ -28,23 +28,23 @@ describe("rh_function()", {
   })
 
   it("computes WV as half of WVinLungs", {
-    out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
+    out <- RH_Estimation(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
     expect_equal(out$WV, out$WVinLungs / 2)
   })
 
   it("estimates a Humidity in the physically valid range for realistic inputs", {
-    out <- rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
+    out <- RH_Estimation(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs())
     expect_gt(out$Humidity, 0)
     expect_lt(out$Humidity, 1)
   })
 
   it("defaults printinfo to FALSE and doesn't print", {
-    expect_silent(rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs()))
+    expect_silent(RH_Estimation(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs()))
   })
 
   it("prints Humidity when printinfo = TRUE", {
     expect_message(
-      rh_function(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs(), printinfo = TRUE),
+      RH_Estimation(rh_estimation_d18O = mock_rh_d18O(), outputs = mock_outputs(), printinfo = TRUE),
       "Humidity"
     )
   })
@@ -55,13 +55,13 @@ describe("rh_function()", {
     two_outputs$MolesO2Air <- c(0.42, 0.5)
     two_d18O <- data.frame(d18Obodywater = c(0.05, 0.06))
 
-    out <- rh_function(rh_estimation_d18O = two_d18O, outputs = two_outputs)
+    out <- RH_Estimation(rh_estimation_d18O = two_d18O, outputs = two_outputs)
     expect_equal(nrow(out), 2 * 2)
   })
 
   it("errors clearly when the merged result is empty instead of crashing on 1:0", {
     expect_error(
-      rh_function(rh_estimation_d18O = mock_rh_d18O()[0, ], outputs = mock_outputs()),
+      RH_Estimation(rh_estimation_d18O = mock_rh_d18O()[0, ], outputs = mock_outputs()),
       "cannot be empty"
     )
   })

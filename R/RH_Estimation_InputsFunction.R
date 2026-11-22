@@ -9,7 +9,7 @@
 #'   Must include: Digestibility, EEE, foodcarbcontent, foodcarbenergy, Ocarb,
 #'   Hcarb, foodproteincontent, foodproteinenergy, Oprotein, Hprotein,
 #'   foodfatcontent, foodfatenergy, Ofat, Hfat,  and freeH20food.
-#' @param environment Data frame from rh_estimation_environment_function(),
+#' @param environment Data frame from RH_Estimation_Environment(),
 #'   i.e. environmental parameters excluding relative humidity and everything
 #'   derived from it.
 #' @return Data frame with all input combinations and calculated physiological
@@ -39,13 +39,13 @@
 #'   freeH20food = 0.75
 #' )
 #'
-#' # As returned by rh_estimation_environment_function()
-#' environment_data <- rh_estimation_environment_function(
+#' # As returned by RH_Estimation_Environment()
+#' environment_data <- RH_Estimation_Environment(
 #'   air_temperature = 25,
 #'   d18O_surface_water = -5
 #' )
 #'
-#' result <- inverse_input_function(
+#' result <- RH_Estimation_Inputs(
 #'   species = species_data,
 #'   food = food_data,
 #'   environment = environment_data
@@ -53,7 +53,7 @@
 #'
 #' @export
 ### SET INPUT FUNCTION
-inverse_input_function <- function(species = 0, food = 0, environment = 0) {
+RH_Estimation_Inputs <- function(species = 0, food = 0, environment = 0) {
   ## 0. PREPPING DATAFRAME FOR OUTPUTS ===========================================
   # Width = number of variables
   # Length = number of combination of results

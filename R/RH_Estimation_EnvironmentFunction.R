@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' # Example usage with vector inputs
-#' rh_estimation_environment_function(
+#' RH_Estimation_Environment(
 #'   air_temperature = c(10, 20),
 #'   d18O_surface_water = c(-2, -5)
 #' )
@@ -28,7 +28,7 @@
 #' @export
 ### SET FUNCTION FOR ENVIRONMENT
 
-rh_estimation_environment_function <- function(air_temperature = numeric(0), d18O_surface_water = numeric(0)) {
+RH_Estimation_Environment <- function(air_temperature = numeric(0), d18O_surface_water = numeric(0)) {
   ## 0. VALIDATING ARGUMENTS =====================================================
   if (length(air_temperature) == 0) {
     stop("Enter Air Temperature value")

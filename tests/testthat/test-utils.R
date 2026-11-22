@@ -26,8 +26,8 @@ describe("with_column()", {
 
 describe("combine_inputs()", {
   it("builds the full factorial cross of species x food x environment", {
-    # Multi-column, matching real species_function()/food_function()/
-    # environment_function() output (see next test for single-column inputs).
+    # Multi-column, matching real Species()/Food()/
+    # Environment() output (see next test for single-column inputs).
     species <- data.frame(body_mass = c(10, 20), foo = 1)
     food <- data.frame(digestibility = 0.6, bar = 1)
     environment <- data.frame(air_temperature = c(0, 10, 20), baz = 1)

@@ -14,19 +14,19 @@
 #' to that of surface waters.
 #'
 #' @param rh_estimation_d18O Data frame containing d18Obodywater values, as
-#'   returned by [d18O_enamel()].
+#'   returned by [RH_Estimation_d18O()].
 #' @param outputs Data frame of oxygen output data, as returned by
-#'   [outputs_function()].
+#'   [Outputs()].
 #' @param printinfo Logical. If TRUE, prints the computed Humidity values.
 #'
 #' @return Data frame relative humidity estimates and values of dependent variables.
 #'
 #' @examples
-#' # herbivore_d18OBW <- rh_function(df)
+#' # herbivore_d18OBW <- RH_Estimation(df)
 #'
 #' @export
 ### SET VARIABLE-OF-INTEREST FUNCTION (EX:RELATIVE HUMIDITY)
-rh_function <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) {
+RH_Estimation <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE) {
   ### PREPPING DATASET =========================================================
   DF_outputs <- merge(outputs, rh_estimation_d18O)
   if (nrow(DF_outputs) == 0) {

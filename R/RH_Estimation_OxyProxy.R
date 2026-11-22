@@ -41,7 +41,7 @@
 #' function reports which arguments it substituted.
 #'
 #' The standard also fixes a relative humidity of 0.75. Running
-#' [oxy_proxy_function()] on the same parameters and feeding the resulting
+#' [OxyProxy()] on the same parameters and feeding the resulting
 #' d18Ocarb back through this function recovers that value.
 #'
 #' @return Plots of estimates of relative humidity versus d18Obodywater values
@@ -49,7 +49,7 @@
 #'
 #' @examples
 #' # Estimate relative humidity from a measured enamel carbonate value
-#' humidity_oxy_proxy(
+#' RH_Estimation_OxyProxy(
 #'   sampled_d18Ocarbonate = 20,
 #'   model_air_temperature = 4,
 #'   model_d18O_Surfacewater = -8,
@@ -69,12 +69,12 @@
 ### as well as two originals functions dedicated to Humidity (last layer) and d180enamel (first layer) computation
 
 
-humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature = 0, model_d18O_Surfacewater = 0,
+RH_Estimation_OxyProxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature = 0, model_d18O_Surfacewater = 0,
                                model_Digestibility_of_food = 0, model_Carbohydrate_Content = 0, model_Protein_Content = 0,
                                model_Fat_Content = 0, model_Free_Water_Content_Food = 0, model_Body_mass = 0,
                                model_WaterEconomyIndex = 0, changeConstant = FALSE, sweating_species = FALSE, PlotRange = TRUE, printinfo = FALSE) {
   ### First layer : d180 Enamel ==================================================
-  d18Result <- d18O_enamel(d18O_carbonate = sampled_d18Ocarbonate)
+  d18Result <- RH_Estimation_d18O(d18O_carbonate = sampled_d18Ocarbonate)
 
   #### Second layer : Species, Food and mod_environment ==========================
   message("NOTE : If you are missing information about species, food or environment, enter 0 -zero- for that argument
@@ -92,7 +92,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
     substituted <- c(substituted, "model_d18O_Surfacewater")
   }
 
-  OEM <- rh_estimation_environment_function(air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater)
+  OEM <- RH_Estimation_Environment(air_temperature = model_air_temperature, d18O_surface_water = model_d18O_Surfacewater)
 
   # Food function (unmodified from base function)
   if (length(model_Digestibility_of_food) == 1 && model_Digestibility_of_food[1] == 0) {
@@ -116,7 +116,7 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
     substituted <- c(substituted, "model_Free_Water_Content_Food")
   }
 
-  OF <- food_function(
+  OF <- Food(
     digestibility_of_food = model_Digestibility_of_food, Carbohydrate_Content = model_Carbohydrate_Content,
     Protein_Content = model_Protein_Content, Fat_Content = model_Fat_Content, Free_Water_Content_Food = model_Free_Water_Content_Food,
     changeConstant = FALSE
@@ -139,17 +139,17 @@ humidity_oxy_proxy <- function(sampled_d18Ocarbonate = 0, model_air_temperature 
     )
   }
 
-  OS <- species_function(body_mass = model_Body_mass, water_economy_index = model_WaterEconomyIndex, changeConstant = FALSE)
+  OS <- Species(body_mass = model_Body_mass, water_economy_index = model_WaterEconomyIndex, changeConstant = FALSE)
 
   ### Third layer : Inputs fed with first layer values then Inputs results are used in Outputs function ========
   # What is going in (e.g. drinking water, food, leaf water content, etc...)
-  OI <- inverse_input_function(species = OS, food = OF, environment = OEM)
+  OI <- RH_Estimation_Inputs(species = OS, food = OF, environment = OEM)
 
   # What is going out (e.g. feces, pee, sweat, etc...)
-  OOM <- outputs_function(inputs = OI, sweating_species = sweating_species)
+  OOM <- Outputs(inputs = OI, sweating_species = sweating_species)
 
   ### Final layer : Computation of the relative humidity =========================
-  RH <- rh_function(rh_estimation_d18O = d18Result, outputs = OOM, printinfo = printinfo)
+  RH <- RH_Estimation(rh_estimation_d18O = d18Result, outputs = OOM, printinfo = printinfo)
 
   ### Potential plots if PlotRange == TRUE =======================================
   if (isTRUE(PlotRange) && nrow(RH) > 1) {

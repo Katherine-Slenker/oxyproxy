@@ -5,7 +5,7 @@
 #'  and enamel-carbonate.
 #'
 #' @param outputs Data frame of oxygen output data, as returned by
-#'   [outputs_function()]. Must carry the columns listed below.
+#'   [Outputs()]. Must carry the columns listed below.
 #'    \describe{
 #'    \item{MolesO2Air}{Numeric. Moles of oxygen from air}
 #'     \item{d18Oairtakenup}{Numeric. }
@@ -31,7 +31,7 @@
 #' @return Data frame with estimated d18Obw, d18Oenamel-phosphate, and d18Oenamel-carbonate.
 #'
 #' @examples
-#' # One row of oxygen fluxes, as outputs_function() would return
+#' # One row of oxygen fluxes, as Outputs() would return
 #' herbivore_data <- data.frame(
 #'   MolesO2Air = 0.42, d18Oairtakenup = 12, WV = 3, dairH2OSW = 2,
 #'   dfoodO2SW = 10, dryOinflux = 0.08, dfoodH2Osw = 5, WaterinFood = 1,
@@ -40,11 +40,11 @@
 #'   Urea = 0.2, d18Osw = -8
 #' )
 #'
-#' d18_obw_function(outputs = herbivore_data)
+#' d18Obw_Estimation(outputs = herbivore_data)
 #'
 #' @export
 ### SET d18OBODYWATER FUNCTION
-d18_obw_function <- function(outputs = 0) {
+d18Obw_Estimation <- function(outputs = 0) {
   if (nrow(outputs) == 0) {
     stop("outputs cannot be empty")
   }

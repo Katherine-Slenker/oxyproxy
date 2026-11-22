@@ -1,12 +1,3 @@
-# oxyproxy
-
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/Katherine-Slenker/oxyproxy/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Katherine-Slenker/oxyproxy/actions/workflows/R-CMD-check.yaml)
-[![test-coverage](https://github.com/Katherine-Slenker/oxyproxy/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/Katherine-Slenker/oxyproxy/actions/workflows/test-coverage.yaml)
-[![pkgdown](https://github.com/Katherine-Slenker/oxyproxy/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/Katherine-Slenker/oxyproxy/actions/workflows/pkgdown.yaml)
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
-
 # OxyProxy
 
 Predicts the oxygen-18 enrichment (δ¹⁸O) of an animal's **body water** and **tooth enamel** using an oxygen mass-balance model. The model tracks every oxygen input and output for an animal, scaled by species-specific traits and local environmental conditions.
@@ -73,7 +64,7 @@ library(oxyproxy)
 
 ## Usage
 
-OxyProxy has two main functions.
+OxyProxy has two main functions, plus the component functions they are built from.
 
 ### 1. Predict body water and tooth enamel δ¹⁸O: `OxyProxy()`
 
@@ -114,9 +105,34 @@ example <- RH_Estimation_OxyProxy(
   model_Body_mass = 600,
   model_WaterEconomyIndex = seq(0.5, 0.55, 0.01),
   changeConstant = FALSE,
-  sweating_species = FALSE
+  sweating_species = FALSE,
+  PlotRange = TRUE
 )
 ```
+
+### Component functions
+
+The two main functions are built from smaller functions, which you can also call on their own to look at each step of the model.
+
+**Forward model (used by `OxyProxy()`)**
+
+| Function | Step |
+|----------|------|
+| `Species()` | Species-specific values (body mass, water economy index) |
+| `Food()` | Food composition and the oxygen it supplies |
+| `Environment()` | Environmental values (temperature, surface water δ¹⁸O, relative humidity) |
+| `Inputs()` | Oxygen inputs to body water |
+| `Outputs()` | Oxygen outputs from body water |
+| `d18Obw_Estimation()` | Body water δ¹⁸O from the inputs and outputs |
+
+**Relative humidity estimation (used by `RH_Estimation_OxyProxy()`)**
+
+| Function | Step |
+|----------|------|
+| `RH_Estimation_d18O()` | Converts measured enamel δ¹⁸O for the humidity estimate |
+| `RH_Estimation_Environment()` | Environmental values for the humidity estimate |
+| `RH_Estimation_Inputs()` | Oxygen inputs for the humidity estimate |
+| `RH_Estimation()` | Solves for relative humidity |
 
 ### Arguments
 
@@ -136,6 +152,7 @@ example <- RH_Estimation_OxyProxy(
 | `sweating_species` | `TRUE` if the species sweats, `FALSE` if not |
 | `PlotRange` | `TRUE` to plot the range of model results |
 | `changeConstant` | `TRUE` to change the model's default constants |
+| `printinfo` | `TRUE` to print extra information while the model runs (`RH_Estimation_OxyProxy()` only) |
 
 Carbohydrate, protein, and fat content should add up to 1.
 
@@ -149,6 +166,7 @@ See each function's help page (`?OxyProxy`, `?RH_Estimation_OxyProxy`) for full 
 ## Assumptions and limitations
 
 - Assumes body water is at isotopic steady state.
+- Flux sizes come from allometric scaling with body mass, so results are most reliable within the size range the scaling relationships were built on.
 - Leaf water and food water enrichment are estimated from humidity and temperature, not measured directly.
 
 ## Background
@@ -163,12 +181,12 @@ This approach builds on established oxygen isotope mass-balance models for anima
 If you use OxyProxy in your research, please cite:
 
 ```
-Slenker, K., Gibert Bret, C., Clementz, M., Barley, R., Mattison, Q., & McGuire, J. (2026). OxyProxy: An oxygen isotope mass-balance model for animal body water and tooth enamel. GitHub repository. https://github.com/Katherine-Slenker/oxyproxy.
+Slenker, K., Gibert Bret, C., Clementz, M., Barley, R., Mattison, Q., & McGuire, J. (2026). OxyProxy: An oxygen isotope mass-balance model for animal body water and tooth enamel. GitHub repository. https://github.com/Katherine-Slenker/oxyproxy
 ```
 
 ## License
 
-This package is released under the MIT License. See LICENSE for details
+This package is released under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contact
 

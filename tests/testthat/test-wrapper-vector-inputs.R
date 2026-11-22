@@ -24,9 +24,9 @@ bison_args <- function(...) {
   )
 }
 
-run_bison <- function(...) suppressMessages(do.call(oxy_proxy_function, bison_args(...)))
+run_bison <- function(...) suppressMessages(do.call(OxyProxy, bison_args(...)))
 
-describe("oxy_proxy_function() with vectorized inputs", {
+describe("OxyProxy() with vectorized inputs", {
   it("reproduces the manuscript's Step 2 example at 726 rows", {
     out <- run_bison(
       model_bodymass = 85, model_WaterEconomyIndex = seq(0.05, 0.3, 0.05),

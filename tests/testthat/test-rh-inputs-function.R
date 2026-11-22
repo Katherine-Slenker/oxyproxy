@@ -13,13 +13,13 @@ mock_food <- function() {
 }
 
 mock_environment <- function() {
-  # Matches the 5 columns rh_estimation_environment_function() actually returns.
-  rh_estimation_environment_function(air_temperature = 20, d18O_surface_water = -5)
+  # Matches the 5 columns RH_Estimation_Environment() actually returns.
+  RH_Estimation_Environment(air_temperature = 20, d18O_surface_water = -5)
 }
 
-describe("inverse_input_function()", {
+describe("RH_Estimation_Inputs()", {
   it("returns one row with the documented calculated columns for a single combination", {
-    out <- inverse_input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
+    out <- RH_Estimation_Inputs(species = mock_species(), food = mock_food(), environment = mock_environment())
 
     expect_s3_class(out, "data.frame")
     expect_equal(nrow(out), 1)
@@ -29,7 +29,7 @@ describe("inverse_input_function()", {
   })
 
   it("computes FoodMassIngested as EnergyExp / (Digestibility * EEE * energy density)", {
-    out <- inverse_input_function(species = mock_species(), food = mock_food(), environment = mock_environment())
+    out <- RH_Estimation_Inputs(species = mock_species(), food = mock_food(), environment = mock_environment())
 
     energy_density <- 0.8 * 17300 + 0.1 * 20100 + 0.1 * 39700
     expect_equal(out$FoodMassIngested, 500 / (0.6 * 0.9 * energy_density))
@@ -37,7 +37,7 @@ describe("inverse_input_function()", {
 
   it("builds one row per species combination", {
     two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
-    out <- inverse_input_function(species = two_species, food = mock_food(), environment = mock_environment())
+    out <- RH_Estimation_Inputs(species = two_species, food = mock_food(), environment = mock_environment())
     expect_equal(nrow(out), 2)
   })
 
@@ -47,7 +47,7 @@ describe("inverse_input_function()", {
     three_food <- mock_food()[rep(1, 3), , drop = FALSE]
     three_food$Digestibility <- c(0.4, 0.5, 0.6)
 
-    out <- inverse_input_function(
+    out <- RH_Estimation_Inputs(
       species = mock_species(), food = three_food, environment = mock_environment()
     )
 
@@ -59,11 +59,11 @@ describe("inverse_input_function()", {
     two_species <- rbind(mock_species(), data.frame(EnergyExp = 600, TotalH2OTurnover = 120))
     two_food <- mock_food()[rep(1, 2), , drop = FALSE]
     two_food$Digestibility <- c(0.5, 0.6)
-    two_env <- rh_estimation_environment_function(
+    two_env <- RH_Estimation_Environment(
       air_temperature = c(10, 20), d18O_surface_water = -5
     )
 
-    out <- inverse_input_function(species = two_species, food = two_food, environment = two_env)
+    out <- RH_Estimation_Inputs(species = two_species, food = two_food, environment = two_env)
 
     expect_equal(nrow(out), 2 * 2 * 2)
     combos <- paste(out$EnergyExp, out$Digestibility, out$airtemp)

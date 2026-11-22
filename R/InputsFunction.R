@@ -25,21 +25,21 @@
 #'     \item DrinkingWater - Drinking water vapor (half of ingested) (moles H2O)
 #'   }
 #' @examples
-#' species_data <- species_function(body_mass = 600, water_economy_index = 0.4)
-#' food_data <- food_function(
+#' species_data <- Species(body_mass = 600, water_economy_index = 0.4)
+#' food_data <- Food(
 #'   digestibility_of_food = 0.6, Carbohydrate_Content = 0.8,
 #'   Protein_Content = 0.1, Fat_Content = 0.1, Free_Water_Content_Food = 0.4
 #' )
-#' environment_data <- environment_function(
+#' environment_data <- Environment(
 #'   air_temperature = 20, relative_humidity = 0.6, d18O_surface_water = -5
 #' )
 #'
-#' input_function(
+#' Inputs(
 #'   species = species_data, food = food_data, environment = environment_data
 #' )
 #'
 #' @export
-input_function <- function(species = 0, food = 0, environment = 0) {
+Inputs <- function(species = 0, food = 0, environment = 0) {
   if (identical(species, 0) || identical(food, 0) || identical(environment, 0)) {
     stop("All three arguments (Species, Food, Environment) must be provided as data frames")
   }
