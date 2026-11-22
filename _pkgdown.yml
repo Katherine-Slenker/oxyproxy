@@ -31,3 +31,10 @@ reference:
   - RH_Estimation_Inputs
   - RH_Estimation
   - RH_Estimation_OxyProxy
+- title: Deprecated functions
+  desc: >
+    Compatibility wrappers for scripts written using
+    previous versions of oxyproxy.
+  contents:
+  - oxy_proxy_function
+  - humidity_oxy_proxy

@@ -64,7 +64,6 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Katherine Slenker \email{kslenker3@gatech.edu}
   \item Corentin Gibert Bret
   \item Mark Clementz
   \item Ryan Barley
