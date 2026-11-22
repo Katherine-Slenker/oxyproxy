@@ -2,7 +2,7 @@
 #' on values of relative humidity that are needed to calculate oxygen-18 enrichment
 #' of animal body water.
 #'
-#' This function combines the rh_estimation_d18O, Species, Food,
+#' This function combines the RH_Estimation_d18O, Species, Food,
 #' RH_Estimation_Environment, RH_Estimation_Inputs, and Outputs functions to calculate
 #' estimates of relative humidity and variables that are dependent upon relative
 #' humidity values, including water vapor in the lungs, water vapor in  the
@@ -20,6 +20,8 @@
 #' @param printinfo Logical. If TRUE, prints the computed Humidity values.
 #'
 #' @return Data frame relative humidity estimates and values of dependent variables.
+#'   Estimated humidity is not constrained to 0-1; the function warns when any
+#'   estimate falls outside this range or requires negative drinking water intake.
 #'
 #' @examples
 #' # herbivore_d18OBW <- RH_Estimation(df)
@@ -40,66 +42,95 @@ RH_Estimation <- function(rh_estimation_d18O = 0, outputs = 0, printinfo = FALSE
   )
   DF_outputs_temp <- as.data.frame(DF_outputs_temp)
   DF_outputs <- cbind(DF_outputs, DF_outputs_temp)
-
-
+  
+  
   ### HUMIDITY COMPUTATION FROM Outputs
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$Humidity[i] <- (DF_outputs$d18Obodywater[i] * (DF_outputs$WVCO2[i] + DF_outputs$WVMouth[i] + DF_outputs$WVNose[i] +
-      DF_outputs$WVSkin[i] + DF_outputs$WVSweat[i] + DF_outputs$WVUrine[i] +
-      DF_outputs$WVFecal[i] + DF_outputs$Urea[i]) -
-      (DF_outputs$MolesO2Air[i] * DF_outputs$d18Oairtakenup[i] - (DF_outputs$WVCO2[i] * 38.6 + DF_outputs$WVMouth[i] * -8.2 + DF_outputs$WVNose[i] * -17 + DF_outputs$WVSkin[i] * -18 + DF_outputs$WVSweat[i] * 0 + DF_outputs$WVUrine[i] * 0 + DF_outputs$WVFecal[i] * 0)) -
-      ((DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 43) * DF_outputs$dryOinflux[i]) -
-      (0.5 * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$WaterinFood[i]) -
-      ((0.5 * (DF_outputs$TotalH2OTurnover[i] - DF_outputs$FreeH2Oinfood[i] - DF_outputs$dryHinflux[i]) * DF_outputs$d18Osw[i])) -
-      (DF_outputs$WaterinFood[i] * DF_outputs$d18Osw[i]) -
-      (DF_outputs$dryOinflux[i] * DF_outputs$d18Osw[i])) /
+                                                                DF_outputs$WVSkin[i] + DF_outputs$WVSweat[i] + DF_outputs$WVUrine[i] +
+                                                                DF_outputs$WVFecal[i] + DF_outputs$Urea[i]) -
+                                 (DF_outputs$MolesO2Air[i] * DF_outputs$d18Oairtakenup[i] - (DF_outputs$WVCO2[i] * 38.6 + DF_outputs$WVMouth[i] * -8.2 + DF_outputs$WVNose[i] * -17 + DF_outputs$WVSkin[i] * -18 + DF_outputs$WVSweat[i] * 0 + DF_outputs$WVUrine[i] * 0 + DF_outputs$WVFecal[i] * 0)) -
+                                 ((DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 43) * DF_outputs$dryOinflux[i]) -
+                                 (0.5 * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$WaterinFood[i]) -
+                                 ((0.5 * (DF_outputs$TotalH2OTurnover[i] - DF_outputs$FreeH2Oinfood[i] - DF_outputs$dryHinflux[i]) * DF_outputs$d18Osw[i])) -
+                                 (DF_outputs$WaterinFood[i] * DF_outputs$d18Osw[i]) -
+                                 (DF_outputs$dryOinflux[i] * DF_outputs$d18Osw[i])) /
       (((10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * (12400 / (760 * 22.4)) * (DF_outputs$dairH2OSW[i] / 2)) - ((DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$dryOinflux[i]) - (0.5 * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16) * DF_outputs$WaterinFood[i]))
   }
-
+  
   # Water Vapor Taken in Lungs <- Humidity * 10^(0.686+0.027*airtemp) * 12400/(760*22.4)
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$WVinLungs[i] <- DF_outputs$Humidity[i] * (10^(0.686 + 0.027 * DF_outputs$airtemp[i])) * 12400 / (760 * 22.4)
   }
-
+  
   # Water Vapor <- Water Vapor in Lungs / 2
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$WV[i] <- DF_outputs$WVinLungs[i] / 2
   }
-
+  
   # d18OleafH2O <-d18Osw + (1-Humidity) * (d18Osw - dairH2O + 16)
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$d18OleafH2O[i] <- DF_outputs$d18Osw[i] + (1 - DF_outputs$Humidity[i]) * (DF_outputs$d18Osw[i] - DF_outputs$dairH2O[i] + 16)
   }
-
+  
   # d18Oleafcellulose <- d18OleafH2O + 27
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$d18Oleafcellulose[i] <- DF_outputs$d18OleafH2O[i] + 27
   }
-
+  
   # dfoodO2SW <-d18Oleafcellulose - d18Osw
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dfoodO2SW[i] <- DF_outputs$d18Oleafcellulose[i] - DF_outputs$d18Osw[i]
   }
-
+  
   # dfoodH2Osw  <- (0.5 * d18OstemH2O + 0.5 * d18OleafH2O) -d18Osw
   # d18OstemH2O = d18Osw
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$dfoodH2Osw[i] <- (0.5 * DF_outputs$d18Osw[i] + 0.5 * DF_outputs$d18OleafH2O[i]) - DF_outputs$d18Osw[i]
   }
-
+  
   # Drinking H2O Ingested = Total H2O Turnover - free H2O in food - dry food H influx - water vapor in lungs
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$DrinkingH2OIngested[i] <- DF_outputs$TotalH2OTurnover[i] - DF_outputs$FreeH2Oinfood[i] - DF_outputs$dryHinflux[i] - DF_outputs$WVinLungs[i]
   }
-
+  
   for (i in seq_len(nrow(DF_outputs))) {
     DF_outputs$DrinkingWater[i] <- DF_outputs$DrinkingH2OIngested[i] / 2
   }
-
+  
+  ### CHECK THAT ESTIMATES ARE PHYSICALLY POSSIBLE =============================
+  # Humidity is solved directly from the mass balance and is not constrained to
+  # 0-1. Values outside that range mean no humidity reproduces the sampled d18O
+  # with the given inputs.
+  out_of_range <- DF_outputs$Humidity < 0 | DF_outputs$Humidity > 1
+  if (any(out_of_range, na.rm = TRUE)) {
+    warning(
+      sum(out_of_range, na.rm = TRUE), " of ", nrow(DF_outputs),
+      " estimated relative humidity values fall outside 0-100% (range: ",
+      round(min(DF_outputs$Humidity, na.rm = TRUE) * 100), "% to ",
+      round(max(DF_outputs$Humidity, na.rm = TRUE) * 100), "%). ",
+      "No humidity reproduces the sampled d18O with these inputs; ",
+      "check d18O of surface water, water economy index, and diet parameters.",
+      call. = FALSE
+    )
+  }
+  
+  # Drinking water is calculated from humidity, so an impossible humidity can
+  # also produce an impossible (negative) drinking water intake.
+  negative_drinking <- DF_outputs$DrinkingH2OIngested < 0
+  if (any(negative_drinking, na.rm = TRUE)) {
+    warning(
+      sum(negative_drinking, na.rm = TRUE), " of ", nrow(DF_outputs),
+      " estimates require negative drinking water intake, which is not ",
+      "physically possible with these inputs.",
+      call. = FALSE
+    )
+  }
+  
   if (printinfo == TRUE) {
     message("Humidity: ")
     print(paste(round(DF_outputs[, c("Humidity")] * 100), "%"))
   }
-
+  
   return(DF_outputs)
 }

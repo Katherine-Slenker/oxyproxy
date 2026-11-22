@@ -19,9 +19,11 @@ returned by \code{\link[=RH_Estimation_d18O]{RH_Estimation_d18O()}}.}
 }
 \value{
 Data frame relative humidity estimates and values of dependent variables.
+Estimated humidity is not constrained to 0-1; the function warns when any
+estimate falls outside this range or requires negative drinking water intake.
 }
 \description{
-This function combines the rh_estimation_d18O, Species, Food,
+This function combines the RH_Estimation_d18O, Species, Food,
 RH_Estimation_Environment, RH_Estimation_Inputs, and Outputs functions to calculate
 estimates of relative humidity and variables that are dependent upon relative
 humidity values, including water vapor in the lungs, water vapor in  the

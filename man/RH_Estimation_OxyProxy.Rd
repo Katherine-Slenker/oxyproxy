@@ -83,6 +83,10 @@ function reports which arguments it substituted.
 The standard also fixes a relative humidity of 0.75. Running
 \code{\link[=OxyProxy]{OxyProxy()}} on the same parameters and feeding the resulting
 d18Ocarb back through this function recovers that value.
+
+Estimated humidity is not constrained to 0-1. Values outside this range mean
+no humidity reproduces the sampled d18O with the given inputs; the function
+warns when this happens and marks those estimates in red on the plots.
 }
 \examples{
 # Estimate relative humidity from a measured enamel carbonate value
