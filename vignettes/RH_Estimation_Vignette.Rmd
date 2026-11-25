@@ -1,0 +1,251 @@
+---
+title: "OxyProxy: Estimating Relative Humidity"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{OxyProxy: Estimating Relative Humidity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = TRUE,
+  message = FALSE,
+  fig.width = 6,
+  fig.height = 4
+)
+```
+
+## Overview
+
+`OxyProxy()` predicts the δ18O of body water and tooth enamel from an animal's physiology, diet, and
+environment. `RH_Estimation_OxyProxy()` runs the model in reverse: given a **measured δ18O of tooth
+enamel carbonate**, it estimates the **relative humidity** the animal lived in.
+
+This vignette shows how to:
+
+1. Estimate relative humidity in a single call with `RH_Estimation_OxyProxy()`
+2. Run the same estimate step by step through the individual functions
+3. Explore how the estimate depends on uncertain inputs
+4. Recognize and interpret estimates that fall outside 0–100%
+
+Examples use a measured enamel carbonate δ18O of **23 ‰** and, for the animal and environment, the
+**Herbivore Standard**, a self-consistent reference animal built into oxyproxy:
+
+| Parameter | Herbivore Standard value |
+|-----------|--------------------------|
+| Body mass | 30 kg |
+| Water economy index (WEI) | 0.25 |
+| Digestibility of food | 0.7 |
+| Carbohydrate content | 0.85 |
+| Protein content | 0.1 |
+| Fat content | 0.05 |
+| Free water content of food | 0.65 |
+| Air temperature | 15 °C |
+| Surface water δ18O | −3.25 ‰ |
+
+All δ18O values are reported relative to VSMOW. Relative humidity is a **proportion between 0 and 1**
+(0.75 = 75%).
+
+## Load the package
+
+```{r}
+library(oxyproxy)
+```
+
+## The measured sample
+
+```{r}
+sample_carbonate <- 23 # measured d18O of enamel carbonate (per mil VSMOW)
+```
+
+## Step 1 — Estimate relative humidity with `RH_Estimation_OxyProxy()`
+
+Give `RH_Estimation_OxyProxy()` the measured carbonate value along with the animal's physiology,
+diet, and environment. Note that relative humidity is **not** an input here: it is what the function
+estimates.
+
+```{r}
+rh_out <- RH_Estimation_OxyProxy(
+  sampled_d18Ocarbonate = sample_carbonate,
+  model_air_temperature = 15,
+  model_d18O_Surfacewater = -3.25,
+  model_Digestibility_of_food = 0.7,
+  model_Carbohydrate_Content = 0.85,
+  model_Protein_Content = 0.1,
+  model_Fat_Content = 0.05,
+  model_Free_Water_Content_Food = 0.65,
+  model_Body_mass = 30,
+  model_WaterEconomyIndex = 0.25,
+  changeConstant = FALSE,
+  sweating_species = FALSE,
+  PlotRange = FALSE
+)
+
+rh_out$Humidity
+```
+
+`Humidity` is the estimated relative humidity as a proportion (multiply by 100 for a percentage).
+
+**Shortcut:** any argument left at `0` (the default) is replaced with its Herbivore Standard value, and
+the function reports which arguments it substituted. So the call below gives the same result:
+
+```{r}
+RH_Estimation_OxyProxy(
+  sampled_d18Ocarbonate = sample_carbonate,
+  PlotRange = FALSE
+)$Humidity
+```
+
+### What the function returns
+
+Besides `Humidity`, the output includes the converted body water δ18O and every intermediate value,
+including the drinking water intake implied by the estimate:
+
+```{r}
+rh_out[, c("d18Obodywater", "Humidity", "DrinkingH2OIngested")]
+```
+
+## Step 2 — The same estimate, step by step
+
+`RH_Estimation_OxyProxy()` chains six functions. Running them individually shows each stage and
+gives the same estimate as Step 1:
+
+```{r}
+# 1. Convert measured enamel carbonate to body water d18O
+d18O_bw <- RH_Estimation_d18O(d18O_carbonate = sample_carbonate)
+
+# 2. Species and diet (the same functions used by the forward model)
+species_out <- Species(body_mass = 30, water_economy_index = 0.25, changeConstant = FALSE)
+
+food_out <- Food(
+  digestibility_of_food = 0.7,
+  Carbohydrate_Content = 0.85,
+  Protein_Content = 0.1,
+  Fat_Content = 0.05,
+  Free_Water_Content_Food = 0.65,
+  changeConstant = FALSE
+)
+
+# 3. Environment, without humidity (humidity is what we are solving for)
+env_out <- RH_Estimation_Environment(air_temperature = 15, d18O_surface_water = -3.25)
+
+# 4. Oxygen inputs and outputs
+inputs_out <- RH_Estimation_Inputs(species = species_out, food = food_out, environment = env_out)
+outputs_out <- Outputs(inputs = inputs_out, sweating_species = FALSE)
+
+# 5. Solve for relative humidity
+rh_steps <- RH_Estimation(rh_estimation_d18O = d18O_bw, outputs = outputs_out)
+
+rh_steps$Humidity
+```
+
+## Step 3 — Sensitivity to uncertain inputs
+
+Some inputs, such as the water economy index, are rarely known exactly for a fossil or modern
+population. Giving any argument a vector of values estimates humidity for every combination. With
+`PlotRange = TRUE`, the function plots humidity against each argument that has more than one value.
+
+```{r}
+rh_wei <- RH_Estimation_OxyProxy(
+  sampled_d18Ocarbonate = sample_carbonate,
+  model_air_temperature = 15,
+  model_d18O_Surfacewater = -3.25,
+  model_Digestibility_of_food = 0.7,
+  model_Carbohydrate_Content = 0.85,
+  model_Protein_Content = 0.1,
+  model_Fat_Content = 0.05,
+  model_Free_Water_Content_Food = 0.65,
+  model_Body_mass = 30,
+  model_WaterEconomyIndex = seq(0.15, 0.35, 0.05),
+  changeConstant = FALSE,
+  sweating_species = FALSE,
+  PlotRange = TRUE
+)
+
+rh_wei[, c("WEI", "Humidity")]
+```
+
+The dashed lines mark 0% and 100%. The steeper the line, the more the humidity estimate depends on
+that input, and the more carefully it needs to be justified.
+
+## Step 4 — When estimates fall outside 0–100%
+
+Humidity is solved directly from the oxygen mass balance, so the estimate is **not** constrained to
+0–1. A value below 0 or above 1 means that **no physically possible humidity reproduces the measured
+carbonate with the given inputs**. The function warns when this happens and draws those estimates in
+red on the plots.
+
+The example below uses a large, non-sweating herbivore at a cool site with strongly negative surface
+water:
+
+```{r}
+rh_site <- RH_Estimation_OxyProxy(
+  sampled_d18Ocarbonate = 18.7,
+  model_air_temperature = 6.7,
+  model_d18O_Surfacewater = -14.7,
+  model_Digestibility_of_food = 0.592,
+  model_Carbohydrate_Content = 0.82,
+  model_Protein_Content = 0.11,
+  model_Fat_Content = 0.07,
+  model_Free_Water_Content_Food = 0.5,
+  model_Body_mass = 600,
+  model_WaterEconomyIndex = seq(0.50, 0.55, 0.01),
+  changeConstant = FALSE,
+  sweating_species = FALSE,
+  PlotRange = TRUE
+)
+
+rh_site[, c("WEI", "Humidity")]
+```
+
+Every estimate is negative: with these inputs, the model cannot produce carbonate as enriched as
+18.7 ‰ at any humidity. A negative estimate should **not** be read as a humidity, and its sign should
+not be flipped. Instead, it indicates that one or more inputs do not match the animal or site, for
+example:
+
+- the animals drank water more enriched than the regional surface water value
+- the water economy index is lower than assumed
+- the enamel records a seasonal (e.g., dry-season) signal rather than annual conditions
+- the species sweats (`sweating_species = TRUE`)
+
+### Exploring which inputs are consistent
+
+To see which combinations of uncertain inputs give physically possible estimates, run a grid and
+keep only rows with humidity between 0 and 1 and positive drinking water intake:
+
+```{r}
+rh_grid <- RH_Estimation_OxyProxy(
+  sampled_d18Ocarbonate = 18.7,
+  model_air_temperature = 6.7,
+  model_d18O_Surfacewater = c(-14.7, -11.6),
+  model_Digestibility_of_food = 0.592,
+  model_Carbohydrate_Content = 0.82,
+  model_Protein_Content = 0.11,
+  model_Fat_Content = 0.07,
+  model_Free_Water_Content_Food = 0.5,
+  model_Body_mass = 600,
+  model_WaterEconomyIndex = seq(0.10, 0.30, 0.02),
+  changeConstant = FALSE,
+  sweating_species = FALSE,
+  PlotRange = FALSE
+)
+
+subset(
+  rh_grid,
+  Humidity >= 0 & Humidity <= 1 & DrinkingH2OIngested > 0,
+  select = c(d18Osw, WEI, Humidity, DrinkingH2OIngested)
+)
+```
+
+Treat this as a **sensitivity analysis**, not a way to fit inputs to an expected humidity. Choose
+inputs from independent evidence about the animal and site, then report the humidity they produce,
+including when it falls outside 0–100%.
+
+## Session info
+
+```{r}
+sessionInfo()
+```
