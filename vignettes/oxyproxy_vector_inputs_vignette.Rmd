@@ -11,19 +11,36 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  warning = FALSE,
+  warning = TRUE,
   message = FALSE
 )
 ```
 
 ## Overview
 
-This vignette demonstrates how to run oxyproxy using **vector inputs** to explore multiple scenarios at once.
+This vignette demonstrates how to run OxyProxy using **vector inputs** to explore multiple scenarios at once.
 
 Common use cases:
+
 - Sensitivity to air temperature and humidity
 - Differences in surface water δ18O across sites
-- Comparing diets or species masses across populations
+- Comparing species body masses across populations
+
+Throughout, species, diet, and environment parameters use the **Herbivore Standard**, a self-consistent reference
+animal built into oxyproxy:
+
+| Parameter | Herbivore Standard value |
+|-----------|--------------------------|
+| Body mass | 30 kg |
+| Water economy index (WEI) | 0.25 |
+| Digestibility of food | 0.7 |
+| Carbohydrate content | 0.85 |
+| Protein content | 0.1 |
+| Fat content | 0.05 |
+| Free water content of food | 0.65 |
+| Air temperature | 15 °C |
+| Surface water δ18O | −3.25 ‰ |
+| Relative humidity | 0.75 |
 
 ## Load the package
 
@@ -54,20 +71,20 @@ The number of rows equals:
 
 In this example: `2 * 2 * 2 = 8` rows.
 
-## Step 2 — Hold species and food constant, vary environment via the wrapper
+## Step 2 — Hold species and food constant, vary environment via `OxyProxy()`
 
 This is a typical sensitivity analysis: one species + one diet, many environments, run in a single
-call to `OxyProxy()`.
+call to `OxyProxy()`. Species and diet use the Herbivore Standard values.
 
 ```{r}
 oxyproxy_many <- OxyProxy(
-  model_bodymass = 70,
-  model_WaterEconomyIndex = 0.40,
-  model_Digestibility_of_food = 0.8,
-  model_Carbohydrate_Content = 0.5,
-  model_Protein_Content = 0.2,
-  model_Fat_Content = 0.3,
-  model_Free_Water_Content_Food = 0.7,
+  model_bodymass = 30,
+  model_WaterEconomyIndex = 0.25,
+  model_Digestibility_of_food = 0.7,
+  model_Carbohydrate_Content = 0.85,
+  model_Protein_Content = 0.1,
+  model_Fat_Content = 0.05,
+  model_Free_Water_Content_Food = 0.65,
   model_air_temperature = c(10, 20),
   model_Relative_Humidity = c(0.50, 0.75),
   model_d18O_surfacewater = c(-2, -5),
@@ -79,14 +96,18 @@ oxyproxy_many <- OxyProxy(
 oxyproxy_many
 ```
 
-## Step 3 — Explicit scenario design across species, diet, environment
+To keep track of exactly which inputs produced each result, see Step 3, which labels every
+scenario explicitly.
 
-If you want to vary *everything* (e.g., body mass AND temperature AND diet), build a scenario table
-and run row-wise using the individual pipeline functions.
+## Step 3 — Explicit scenario design across species and environment
+
+If you want to vary body mass as well as the environment, build a scenario table and run it
+row-wise using the individual pipeline functions. Here diet and WEI stay at the Herbivore Standard
+values; only body mass and the environment vary.
 
 ```{r}
 scenarios <- expand.grid(
-  body_mass = c(20, 70),
+  body_mass = c(30, 70),
   air_temperature = c(10, 20),
   relative_humidity = c(0.50, 0.75),
   d18O_surface_water = c(-2, -5),
@@ -101,14 +122,14 @@ nrow(scenarios)
 
 ```{r}
 run_scenario <- function(row) {
-  sp <- Species(body_mass = row$body_mass, water_economy_index = 0.1)
+  sp <- Species(body_mass = row$body_mass, water_economy_index = 0.25)
 
   fd <- Food(
-    digestibility_of_food = 0.1,
-    Carbohydrate_Content = 0.1,
-    Protein_Content = 0.2,
-    Fat_Content = 0.7,
-    Free_Water_Content_Food = 0.1,
+    digestibility_of_food = 0.7,
+    Carbohydrate_Content = 0.85,
+    Protein_Content = 0.1,
+    Fat_Content = 0.05,
+    Free_Water_Content_Food = 0.65,
     changeConstant = FALSE
   )
 
@@ -128,6 +149,9 @@ length(outs)
 ```
 
 ## Summarize results into a data frame
+
+Each scenario returns one body water δ18O value. Binding them to the scenario table labels every
+result with the inputs that produced it.
 
 ```{r}
 extract_one <- function(out) {
