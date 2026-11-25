@@ -5,7 +5,8 @@ First release.
 If you were running the development version from GitHub, three things changed
 that will break existing scripts:
 
-* Wrapper arguments now match the manuscript: `model_digestibility_of_food`
+* OxyProxy arguments now match the manuscript" to "Arguments of OxyProxy() and 
+RH_Estimation_OxyProxy() now match the manuscript: `model_digestibility_of_food`
   became `model_Digestibility_of_food`, `SweatingSpecies` became
   `sweating_species`, and `model_Air_temperature` became
   `model_air_temperature`.

@@ -85,7 +85,7 @@ describe("OxyProxy() with vectorized inputs", {
   })
 })
 
-describe("sweating_species offset through the wrapper", {
+describe("sweating_species offset through OxyProxy", {
   it("adds vapor loss and shifts d18Obw upward", {
     sweating <- run_bison(sweating_species = TRUE)
     non_sweating <- run_bison(sweating_species = FALSE)

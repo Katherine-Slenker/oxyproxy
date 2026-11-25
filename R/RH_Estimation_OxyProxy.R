@@ -184,6 +184,6 @@ RH_Estimation_OxyProxy <- function(sampled_d18Ocarbonate = 0, model_air_temperat
     if (length(sampled_d18Ocarbonate) > 1) plot_rh(RH$d18Ocarbonate, "d18 O Carbonate")
   }
   
-  # Return of the wrapper function, large dataset could be returned ===============
+  # Return of RH_Estimation_OxyProxy(), large dataset could be returned ===============
   return(RH)
 }
