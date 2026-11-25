@@ -11,14 +11,29 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  warning = FALSE,
+  warning = TRUE,
   message = FALSE
 )
 ```
 
 ## Overview
 
-This vignette demonstrates a **single-run** workflow for predicting oxygen isotope ratios (δ18O) using oxyproxy, both step by step through the individual pipeline functions and via the `OxyProxy()` wrapper.
+This vignette demonstrates a **single-run** workflow for predicting oxygen isotope ratios (δ18O) using oxyproxy, both step by step through the individual pipeline functions and in a single call with `OxyProxy()`.
+
+All examples use the **Herbivore Standard**, a self-consistent reference animal built into oxyproxy:
+
+| Parameter | Herbivore Standard value |
+|-----------|--------------------------|
+| Body mass | 30 kg |
+| Water economy index (WEI) | 0.25 |
+| Digestibility of food | 0.7 |
+| Carbohydrate content | 0.85 |
+| Protein content | 0.1 |
+| Fat content | 0.05 |
+| Free water content of food | 0.65 |
+| Air temperature | 15 °C |
+| Surface water δ18O | −3.25 ‰ |
+| Relative humidity | 0.75 |
 
 ## Load the package
 
@@ -35,8 +50,8 @@ library(oxyproxy)
 
 ```{r}
 species_out <- Species(
-  body_mass = 70, # kg
-  water_economy_index = 0.40, # typical range ~0.05-0.6
+  body_mass = 30, # kg
+  water_economy_index = 0.25, # typical range ~0.05-0.6
   changeConstant = FALSE
 )
 
@@ -50,11 +65,11 @@ str(species_out)
 
 ```{r}
 food_out <- Food(
-  digestibility_of_food = 0.8,
-  Carbohydrate_Content = 0.5,
-  Protein_Content = 0.2,
-  Fat_Content = 0.3, # NOTE: must sum with carb+protein to 1.0
-  Free_Water_Content_Food = 0.7,
+  digestibility_of_food = 0.7,
+  Carbohydrate_Content = 0.85,
+  Protein_Content = 0.1,
+  Fat_Content = 0.05, # NOTE: carbohydrate + protein + fat must sum to 1
+  Free_Water_Content_Food = 0.65,
   changeConstant = FALSE
 )
 
@@ -67,9 +82,9 @@ str(food_out)
 
 ```{r}
 env_out <- Environment(
-  air_temperature = 20, # Celsius
-  relative_humidity = 0.60, # proportion in (0, 1]
-  d18O_surface_water = -5 # per mil (‰ VSMOW)
+  air_temperature = 15, # Celsius
+  relative_humidity = 0.75, # proportion between 0 and 1 (not a percentage)
+  d18O_surface_water = -3.25 # per mil (‰ VSMOW)
 )
 
 env_out
@@ -114,23 +129,24 @@ d18o_out <- d18Obw_Estimation(outputs = outputs_out)
 head(d18o_out[, c("d18Obw", "d18Ophos", "d18Ocarb")])
 ```
 
-## Alternative — Call the wrapper `OxyProxy()`
+## Alternative — Call `OxyProxy()`
 
 `OxyProxy()` runs the full pipeline in one call. It does **not** accept `species=`, `food=`, `environment=`;
-instead it accepts a set of `model_*` scalar inputs:
+instead it accepts a set of `model_*` inputs, which can be single values (as here) or vectors (see the
+Vectorized Inputs vignette). With the same Herbivore Standard values, the result matches Step 4C:
 
 ```{r}
 oxyproxy_out <- OxyProxy(
-  model_bodymass = 70,
-  model_WaterEconomyIndex = 0.40,
-  model_Digestibility_of_food = 0.8,
-  model_Carbohydrate_Content = 0.5,
-  model_Protein_Content = 0.2,
-  model_Fat_Content = 0.3,
-  model_Free_Water_Content_Food = 0.7,
-  model_air_temperature = 20,
-  model_Relative_Humidity = 0.60,
-  model_d18O_surfacewater = -5,
+  model_bodymass = 30,
+  model_WaterEconomyIndex = 0.25,
+  model_Digestibility_of_food = 0.7,
+  model_Carbohydrate_Content = 0.85,
+  model_Protein_Content = 0.1,
+  model_Fat_Content = 0.05,
+  model_Free_Water_Content_Food = 0.65,
+  model_air_temperature = 15,
+  model_Relative_Humidity = 0.75,
+  model_d18O_surfacewater = -3.25,
   changeConstant = FALSE,
   sweating_species = FALSE,
   PlotRange = FALSE # avoid plots in vignette by default
