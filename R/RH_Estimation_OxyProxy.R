@@ -169,7 +169,7 @@ RH_Estimation_OxyProxy <- function(sampled_d18Ocarbonate = 0, model_air_temperat
            ylim = range(c(0, 100, y), na.rm = TRUE),
            col = ifelse(y < 0 | y > 100, "red", "black")
       )
-      abline(h = c(0, 100), lty = 2, col = "grey50")
+      graphics::abline(h = c(0, 100), lty = 2, col = "grey50")
     }
     
     if (length(model_Body_mass) > 1) plot_rh(RH$Bodymass, "Body mass (in Kg)")
